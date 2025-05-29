@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <CheckEolTargetFramework>false</CheckEolTargetFramework>
+        <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+        <LangVersion>latest</LangVersion>
+        <NoWarn>CA1416;NU1701;NU1604;1519;1634;0618;1998;1701;1702;1591;1572;1571;1573;1587;1570</NoWarn>
+        <DocumentationFile>bin/$(Configuration)/$(TargetFramework)/$(MSBuildThisFileName).xml</DocumentationFile>
+    </PropertyGroup>
+
+    <Target Name="CleanReferencedBinObj">
+        <RemoveDir Directories="$(BaseIntermediateOutputPath)/$(Configuration)/" />
+        <RemoveDir Directories="$(BaseOutputPath)/$(Configuration)/" />
+    </Target>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="9.5.3" />
+    <ProjectReference Include="..\..\..\megaleios-utilityframework-5af25bfd220b\src\UtilityFramework.Infra.Core3.MongoDb\UtilityFramework.Infra.Core3.MongoDb.csproj" />
+</ItemGroup>
+
+</Project>

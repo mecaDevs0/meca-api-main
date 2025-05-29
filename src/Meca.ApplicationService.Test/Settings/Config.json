@@ -1,0 +1,49 @@
+﻿{
+  "TranslateLanguages":["en","pt","es"],
+  "smsDev": {
+    /* CONTA DE TESTE (MEGALEIOS)*/
+    "apiKey": "5TZVPUYO9XP0567QY2FY1AUW"
+  },
+  "infobip": {
+    /* CONTA DE TESTE (MEGALEIOS)*/
+    "username": "megaapi",
+    "password": "@Mega2020@"
+  },
+  "iagente": {
+    /* CONTA DE TESTE (MEGALEIOS)*/
+    "username": "",
+    "password": ""
+  },
+  "allowAccess": ["127.0.0.1","::1"], /*LISTA DE IP LIBERADO PARA VISUALIZAR DASHBORAD HANGFIRE CASO ATIVO*/
+  "suportEmail": [ "suporte@megaleios.com" ],
+  "contactEmail": "contato@mecabr.com",
+  "FirebaseSettings": {
+    "urlDataBase": "", /* URL DO BANCO DE DADOS*/
+    "apiKey": "", /*CHAVE DA CONTA DO FIREBASE*/
+    "socialKey": "", /*CHAVE DA CONTA DA REDE SOCIAL*/
+    "email": "", /*EMAIL DE ACESSO*/
+    "password": "", /*SENHA DE ACESSO*/
+    "useAuth": false, /*INFORMA SE DESEJA UTILIZAR AUTENTICAÇÃO*/
+    "typeAuth": 0, /*TIPO DE AUTENTICAÇÃO [0=None,1=Social,2=EmailPassword]*/
+    "firebaseAuthType": 0 /*TIPO DE AUTENTICAÇÃO SOCIAL DO FIREBASE [0=Facebook,1=Google,2=Github,3=Twitter,4=EmailAndPassword]*/
+  },
+  "SERVICES": {
+    "ONESIGNAL": [
+      {
+        "KEY": "",
+        "SOUND": "default",
+        "ICON": "default",
+        "APPID": ""
+      }
+    ],
+    "SMTP": {
+      "TEMPLATE": "Template",
+      "HOST": "smtp.gmail.com",
+      "PORT": 587,
+      "SSL": false,
+      "EMAIL": "suporte@megaleios.com",
+      "NAME": "Meca",
+      "PASSWORD": "@@#Mega2020#@@!"
+    }
+  }
+}

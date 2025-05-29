@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <CheckEolTargetFramework>false</CheckEolTargetFramework>
+        <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+        <LangVersion>latest</LangVersion>
+        <NoWarn>CA1416;NU1701;NU1604;1519;1634;0618;1998;1701;1702;1591;1572;1571;1573;1587;1570</NoWarn>
+        <DocumentationFile>bin/$(Configuration)/$(TargetFramework)/$(MSBuildThisFileName).xml</DocumentationFile>
+    </PropertyGroup>
+
+    <Target Name="CleanReferencedBinObj">
+        <RemoveDir Directories="$(BaseIntermediateOutputPath)/$(Configuration)/" />
+        <RemoveDir Directories="$(BaseOutputPath)/$(Configuration)/" />
+    </Target>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+    <PackageReference Include="FluentValidation" Version="9.5.3" />
+    <PackageReference Include="MimeTypeMap.Core" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="5.0.4" />
+    <ProjectReference Include="..\..\..\megaleios-utilityframework-5af25bfd220b\src\UtilityFramework.Application.Core3\UtilityFramework.Application.Core3.csproj" />
+    <ProjectReference Include="..\..\..\megaleios-utilityframework-5af25bfd220b\src\UtilityFramework.Services.Core3\UtilityFramework.Services.Core3.csproj" />
+    <ProjectReference Include="..\..\..\megaleios-utilityframework-5af25bfd220b\src\UtilityFramework.Services.Iugu.Core3\UtilityFramework.Services.Iugu.Core3.csproj" />
+    <!-- <ProjectReference Include="..\..\..\megaleios-utilityframework-5af25bfd220b\src\UtilityFramework.Services.Stripe.Core3\UtilityFramework.Services.Stripe.Core3.csproj" /> -->
+</ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Meca.Data\Meca.Data.csproj" />
+    </ItemGroup>
+
+</Project>

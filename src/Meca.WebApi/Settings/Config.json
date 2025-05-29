@@ -1,0 +1,65 @@
+﻿{
+  "TranslateLanguages": ["en", "pt", "es"],
+  "smsDev": {
+    /* CONTA DE TESTE (MEGALEIOS)*/
+    "apiKey": "5TZVPUYO9XP0567QY2FY1AUW"
+  },
+  "infobip": {
+    /* CONTA DE TESTE (MEGALEIOS)*/
+    "username": "megaapi",
+    "password": "@Mega2020@"
+  },
+  "iagente": {
+    /* CONTA DE TESTE (MEGALEIOS)*/
+    "username": "",
+    "password": ""
+  },
+  "allowAccess": [
+    "127.0.0.1",
+    "::1"
+  ] /*LISTA DE IP LIBERADO PARA VISUALIZAR DASHBORAD HANGFIRE CASO ATIVO*/,
+  "suportEmail": ["suporte@megaleios.com"],
+  "contactEmail": "contato@mecabr.com",
+  "hereApi": {
+    "apiKey": "9eJrn_D6-TJzQOnTi1IuA9U7hcqM-xy4JwAMOlFFqM4"
+  },
+  "googleApi": {
+    "apiKey": "AIzaSyCYwC18HPIVBXRoeM-p1-x6bJR0mM-vp9E"
+  },
+  "FirebaseSettings": {
+    "urlDataBase": "https://console.firebase.google.com/" /* URL DO BANCO DE DADOS*/,
+    "apiKey": "AIzaSyAghycKw5EdhmYeYFRYgLpggKTU7uVHFL4" /*CHAVE DA CONTA DO FIREBASE*/,
+    "socialKey": "" /*CHAVE DA CONTA DA REDE SOCIAL*/,
+    "email": "services@megaleios.com" /*EMAIL DE ACESSO*/,
+    "password": "ru@4kUWhjbp@" /*SENHA DE ACESSO*/,
+    "useAuth": true /*INFORMA SE DESEJA UTILIZAR AUTENTICAÇÃO*/,
+    "typeAuth": 2 /*TIPO DE AUTENTICAÇÃO [0=None,1=Social,2=EmailPassword]*/,
+    "firebaseAuthType": 4 /*TIPO DE AUTENTICAÇÃO SOCIAL DO FIREBASE [0=Facebook,1=Google,2=Github,3=Twitter,4=EmailAndPassword]*/
+  },
+  "SERVICES": {
+    "ONESIGNAL": [
+      {
+        "KEY": "os_v2_app_po7mgpf77rd3dk4qucalonjxmmtigcwsmthu7rujgcwrfkuyutg4sgiyg4fybzj2rp55j24ebdmtqvw7yo24oolisi7uqyh4vs63zdy",
+        "SOUND": "default",
+        "ICON": "default",
+        "APPID": "7bbec33c-bffc-47b1-ab90-a080b7353763"
+      },
+      {
+        "APP_NAME": "Meca Oficina",
+        "KEY": "os_v2_app_wlm6w4w6sjfftk4rgbee2zhuaoyhwjx3t4dedjn762jan52j4pepi7co76ozuo7rjyw5itdesqlvsqv3dtk7ihxh2ag5qvs3s3avyzi",
+        "SOUND": "default",
+        "ICON": "default",
+        "APPID": "b2d9eb72-de92-4a59-ab91-30484d64f403"
+      }
+    ],
+    "SMTP": {
+      "TEMPLATE": "Template",
+      "HOST": "smtp.gmail.com",
+      "PORT": 587,
+      "SSL": false,
+      "EMAIL": "suporte@megaleios.com",
+      "NAME": "Meca",
+      "PASSWORD": "yqgt ctvh jppd idnd"
+    }
+  }
+}
