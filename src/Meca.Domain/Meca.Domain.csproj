@@ -22,7 +22,7 @@
     <ProjectReference Include="..\..\..\megaleios-utilityframework-5af25bfd220b\src\UtilityFramework.Application.Core3\UtilityFramework.Application.Core3.csproj" />
     <ProjectReference Include="..\..\..\megaleios-utilityframework-5af25bfd220b\src\UtilityFramework.Services.Core3\UtilityFramework.Services.Core3.csproj" />
     <ProjectReference Include="..\..\..\megaleios-utilityframework-5af25bfd220b\src\UtilityFramework.Services.Iugu.Core3\UtilityFramework.Services.Iugu.Core3.csproj" />
-    <!-- <ProjectReference Include="..\..\..\megaleios-utilityframework-5af25bfd220b\src\UtilityFramework.Services.Stripe.Core3\UtilityFramework.Services.Stripe.Core3.csproj" /> -->
+    <ProjectReference Include="..\..\..\megaleios-utilityframework-5af25bfd220b\src\UtilityFramework.Services.Stripe.Core3\UtilityFramework.Services.Stripe.Core3.csproj" />
 </ItemGroup>
 
     <ItemGroup>
