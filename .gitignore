@@ -165,6 +165,12 @@ DocProject/Help/*.hhp
 DocProject/Help/Html2
 DocProject/Help/html
 
+
+src/Meca.WebApi/appsettings.Development.json
+src/Meca.WebApi/appsettings.Homolog.json
+src/Meca.WebApi/appsettings.Production.json
+
+
 # Click-Once directory
 publish/
 
