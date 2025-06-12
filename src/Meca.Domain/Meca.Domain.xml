@@ -1,0 +1,2230 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Meca.Domain</name>
+    </assembly>
+    <members>
+        <member name="T:Meca.Domain.Resources.SharedResource">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.Resources.SharedResource.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.Resources.SharedResource.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="M:Meca.Domain.Util.GetIuguSubAccount(System.String,Microsoft.Extensions.Hosting.IHostingEnvironment)">
+            <summary>
+            OBTER DADOS DE SUBCONTA IUGU EM Config.json
+            </summary>
+            <param name="field"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.Domain.Util.SetAddress``1(``0)">
+            <summary>
+            MAPEAR DADOS DE ENDEREÇO PARA IUGU (AddressModel)
+            </summary>
+            <param name="data"></param>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.AccessLevelViewModel.Name">
+            <summary>
+            Nome
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.AccessLevelViewModel.Rules">
+            <summary>
+            Regras
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.AccessLevelViewModel.IsDefault">
+            <summary>
+            É Default
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.AddressInfoViewModel.Cep">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.AddressInfoViewModel.Logradouro">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.AddressInfoViewModel.Complemento">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.AddressInfoViewModel.Bairro">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.AddressInfoViewModel.Localidade">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.AddressInfoViewModel.Uf">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.AddressInfoViewModel.Unidade">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.AddressInfoViewModel.Ibge">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.AddressInfoViewModel.Gia">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.AddressMiniViewModel.FormatedAddress">
+            <summary>
+            Endereço formatado
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.AddressMiniViewModel.State">
+            <summary>
+            Nome do Estado
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.AddressMiniViewModel.City">
+            <summary>
+            Nome da cidade
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.AddressMiniViewModel.Latitude">
+            <summary>
+            Latitude
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.AddressMiniViewModel.Longitude">
+            <summary>
+            Longitude
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Admin.LoginAdminViewModel.Password">
+            <summary>
+            Senha
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Admin.LoginAdminViewModel.Email">
+            <summary>
+            E-mail
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Admin.LoginAdminViewModel.RefreshToken">
+            <summary>
+            Token de renovação
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Admin.UserAdministratorViewModel.Name">
+            <summary>
+            Nome
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Admin.UserAdministratorViewModel.Password">
+            <summary>
+            Senha
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Admin.UserAdministratorViewModel.Email">
+            <summary>
+            E-mail
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Admin.UserAdministratorViewModel.Blocked">
+            <summary>
+            Bloqueado
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Admin.UserAdministratorViewModel.IsDefault">
+            <summary>
+            Padrão do sistema
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Admin.UserAdministratorViewModel.AccessLevel">
+            <summary>
+            Nível de acesso
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Admin.UserAdministratorViewModel.TotalNotificationNoRead">
+            <summary>
+            Total de notifações não lidas
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ApproveOrReproveServiceViewModel.SchedulingId">
+            <summary>
+            ID do agendamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ApproveOrReproveServiceViewModel.ConfirmStatus">
+            <summary>
+            Status (Aprovado/Reprovado)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ApproveOrReproveServiceViewModel.BudgetServices">
+            <summary>
+            Lista de serviços aprovados
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.BaseReferenceAuxViewModel.Id">
+            <summary>
+            Identificador
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.BaseReferenceAuxViewModel.Name">
+            <summary>
+            Name
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.BudgetServicesAuxViewModel.Title">
+            <summary>
+            Titulo do serviço
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.BudgetServicesAuxViewModel.Description">
+            <summary>
+            Descrição do serviço
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.BudgetServicesAuxViewModel.Value">
+            <summary>
+            Valor do serviço
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.CustomBaseViewModel.DataBlocked">
+            <summary>
+            Ativo/Inativo (unix seconds = Inátivo | null = ativo)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.CustomBaseViewModel.Disabled">
+            <summary>
+            Removido logicamente
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.CustomBaseViewModel.Created">
+            <summary>
+            Data de cadastro
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.ProfileAuxViewModel.Id">
+            <summary>
+            Identificador
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.ProfileAuxViewModel.FullName">
+            <summary>
+            Nome completo
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.ProfileAuxViewModel.Email">
+            <summary>
+            Email
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.ProfileAuxViewModel.Phone">
+            <summary>
+            Telefone
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.UserAdministratorAuxViewModel.Id">
+            <summary>
+            Identificador
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.UserAdministratorAuxViewModel.Name">
+            <summary>
+            Nome
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.UserAdministratorAuxViewModel.Email">
+            <summary>
+            E-mail
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.VehicleAuxViewModel.Id">
+            <summary>
+            Identificador
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.VehicleAuxViewModel.Plate">
+            <summary>
+            Placa do carro
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.VehicleAuxViewModel.Manufacturer">
+            <summary>
+            Fabricante
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.VehicleAuxViewModel.Model">
+            <summary>
+            Modelo
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopAuxViewModel.Id">
+            <summary>
+            Identificador
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopAuxViewModel.FullName">
+            <summary>
+            Nome completo
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopAuxViewModel.CompanyName">
+            <summary>
+            Nome da oficina
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopAuxViewModel.Phone">
+            <summary>
+            Telefone do responsável
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopAuxViewModel.Email">
+            <summary>
+            E-mail do responsável
+            </summary>
+            <example>contato@mecabr.com</example>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopAuxViewModel.Cnpj">
+            <summary>
+            Cnpj (99.999.999/9999-99)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopAuxViewModel.ZipCode">
+            <summary>
+            Cep
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopAuxViewModel.StreetAddress">
+            <summary>
+            Rua
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopAuxViewModel.Number">
+            <summary>
+            Número
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopAuxViewModel.CityName">
+            <summary>
+            Nome da Cidade
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopAuxViewModel.CityId">
+            <summary>
+            Identificador da cidade
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopAuxViewModel.StateName">
+            <summary>
+            Nome do Estado
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopAuxViewModel.StateUf">
+            <summary>
+            Uf do Estado
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopAuxViewModel.StateId">
+            <summary>
+            Identificador do estado
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopAuxViewModel.Neighborhood">
+            <summary>
+            Bairro
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopAuxViewModel.Complement">
+            <summary>
+            Complemento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopAuxViewModel.Latitude">
+            <summary>
+            Latitude
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopAuxViewModel.Longitude">
+            <summary>
+            Longitude
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopServicesAuxViewModel.Id">
+            <summary>
+            Identificador
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopServicesAuxViewModel.Service">
+            <summary>
+            Serviço
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopServicesAuxViewModel.MinTimeScheduling">
+            <summary>
+            Antecedência mínima para agendamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopServicesAuxViewModel.Description">
+            <summary>
+            Descrição
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopAgendaAuxViewModel.Open">
+            <summary>
+            Aberto?
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopAgendaAuxViewModel.StartTime">
+            <summary>
+            Horário de início
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopAgendaAuxViewModel.ClosingTime">
+            <summary>
+            Horário de fechamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopAgendaAuxViewModel.StartOfBreak">
+            <summary>
+            Horário de início do intervalo
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopAgendaAuxViewModel.EndOfBreak">
+            <summary>
+            Horário de término do intervalo
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.BankSlipResponseViewModel.Id">
+            <summary>
+            Identificador
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.BankSlipResponseViewModel.BankSlipBarcode">
+            <summary>
+            Código de Barras
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.BankSlipResponseViewModel.BankSlipBarcodeUrl">
+            <summary>
+            Imagem código de barras
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.BankSlipResponseViewModel.BankSlipUrl">
+            <summary>
+            URL boleto
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.BankSlipResponseViewModel.BankSlipPdf">
+            <summary>
+            URL pdf
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.BankSlipResponseViewModel.BankSlipDueDate">
+            <summary>
+            Vencimento do boleto
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.BankSlipResponseViewModel.PixQrCode">
+            <summary>
+            Qr code (Imagem)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.BankSlipResponseViewModel.PixQrCodeTxt">
+            <summary>
+            Conteudo do qrcode
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.BankSlipResponseViewModel.UrlSetPaid">
+            <summary>
+            URL para definir como pago
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.BankSlipResponseViewModel.Value">
+            <summary>
+            Valor pago
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.BankViewModel.Code">
+            <summary>
+            Código do banco
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.BankViewModel.Name">
+            <summary>
+            Nome
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.BlockViewModel.Block">
+            <summary>
+            Bloquear
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.BlockViewModel.Reason">
+            <summary>
+            Motivo
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.BlockViewModel.TargetId">
+            <summary>
+            Identificador 
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.CalendarAvailableViewModel.Date">
+            <summary>
+            Data
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.CalendarAvailableViewModel.Available">
+            <summary>
+            Disponível?
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.CalendarAvailableViewModel.DayOfWeek">
+            <summary>
+            Dia da semana
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.CalendarAvailableViewModel.Hours">
+            <summary>
+            Horas disponíveis (Para o usuário)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.CalendarAvailableViewModel.WorkshopAgenda">
+            <summary>
+            Agenda da oficina
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ChangePasswordViewModel.CurrentPassword">
+            <summary>
+            Senha atual
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ChangePasswordViewModel.NewPassword">
+            <summary>
+            Nova senha
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ChangeSchedulingStatusViewModel.SchedulingId">
+            <summary>
+            ID do agendamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ChangeSchedulingStatusViewModel.Status">
+            <summary>
+            Status
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ConfirmBudgetViewModel.SchedulingId">
+            <summary>
+            ID do agendamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ConfirmBudgetViewModel.ConfirmBudgetStatus">
+            <summary>
+            Status (Aprovado/Reprovado)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ConfirmBudgetViewModel.BudgetServices">
+            <summary>
+            Lista de serviços
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ConfirmSchedulingViewModel.SchedulingId">
+            <summary>
+            ID do agendamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ConfirmSchedulingViewModel.ConfirmSchedulingStatus">
+            <summary>
+            Status (Aprovado/Reprovado)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ConfirmServiceViewModel.SchedulingId">
+            <summary>
+            ID do agendamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ConfirmServiceViewModel.ConfirmServiceStatus">
+            <summary>
+            Status (Aprovado/Reprovado)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ConfirmServiceViewModel.ReasonDisapproval">
+            <summary>
+            Motivo da reprovação
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ConfirmServiceViewModel.ImagesDisapproval">
+            <summary>
+            Imagens (da reprovação)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.CreditCardViewModel.Name">
+            <summary>
+            Nome no cartão
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.CreditCardViewModel.Number">
+            <summary>
+            Numero do cartão
+            </summary>
+            <example>4111 1111 1111 1111</example>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.CreditCardViewModel.ExpMonth">
+            <summary>
+            Mês de vencimento (1 a 12)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.CreditCardViewModel.Cvv">
+            <summary>
+            Código de segurança
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.CreditCardViewModel.ExpYear">
+            <summary>
+            Ano de vencimento (AAAA)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.CreditCardViewModel.Flag">
+            <summary>
+            Bandeira (Link imagem)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.CreditCardViewModel.Brand">
+            <summary>
+            Bandeira (nome)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.CustomBaseViewModel.DataBlocked">
+            <summary>
+            Ativo/Inativo (unix seconds = Inátivo | null = ativo)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.CustomBaseViewModel.Disabled">
+            <summary>
+            Removido logicamente
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.CustomBaseViewModel.Created">
+            <summary>
+            Data de cadastro
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.DashboardViewModel.TotalClients">
+            <summary>
+            Total de Clientes
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.DashboardViewModel.TotalWorkshops">
+            <summary>
+            Total de Oficinas
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.DashboardViewModel.TotalServices">
+            <summary>
+            Total de Serviços
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.DashboardViewModel.TotalServicesScheduled">
+            <summary>
+            Total de Serviços agendados
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.DashboardViewModel.TotalOpenServices">
+            <summary>
+            Total de Serviços Em aberto
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.DashboardViewModel.TotalServicesCompleted">
+            <summary>
+            Total de Serviços finalizados
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.DashboardViewModel.TotalRatings">
+            <summary>
+            Total de avaliações
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.DashboardViewModel.AverageRatings">
+            <summary>
+            Média de avaliações (por estrelas)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.DataBankViewModel.HasDataBank">
+            <summary>
+            Informou dados bancários
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.DataBankViewModel.AccountableName">
+            <summary>
+            Nome do Responsável
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.DataBankViewModel.AccountableCpf">
+            <summary>
+            Cpf do Responsável
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.DataBankViewModel.BankAccount">
+            <summary>
+            Conta
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.DataBankViewModel.BankAgency">
+            <summary>
+            Agência
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.DataBankViewModel.Bank">
+            <summary>
+            Código do banco
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.DataBankViewModel.BankName">
+            <summary>
+            Nome do banco
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.DataBankViewModel.TypeAccount">
+            <summary>
+            Tipo de conta
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.DataBankViewModel.PersonType">
+            <summary>
+            Tipo de pessoa
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.DataBankViewModel.BankCnpj">
+            <summary>
+            Cnpj
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.DataBankViewModel.DataBankStatus">
+            <summary>
+            Status da conta
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.DisputeDisapprovedServiceViewModel.SchedulingId">
+            <summary>
+            ID do agendamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.DisputeDisapprovedServiceViewModel.Dispute">
+            <summary>
+            Contestação
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.DisputeDisapprovedServiceViewModel.ImagesDispute">
+            <summary>
+            Imagens da contestação
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Export.FinancialHistoryExportViewModel.ProfileName">
+            <summary>
+            Nome do usuário
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Export.FinancialHistoryExportViewModel.VehiclePlate">
+            <summary>
+            Placa do carro
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Export.FinancialHistoryExportViewModel.Services">
+            <summary>
+            Serviços solicitados
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Export.FinancialHistoryExportViewModel.WorkshopName">
+            <summary>
+            Nome da empresa
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Export.FinancialHistoryExportViewModel.WorkshopCnpj">
+            <summary>
+            CNPJ
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Export.FinancialHistoryExportViewModel.WorkshopResponsibleName">
+            <summary>
+            Nome do responsável
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Export.FinancialHistoryExportViewModel.Status">
+            <summary>
+            Status
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Export.FinancialHistoryExportViewModel.LastUpdate">
+            <summary>
+            Data da última atualização
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Export.FinancialHistoryExportViewModel.Value">
+            <summary>
+            Valor pago
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Export.FinancialHistoryExportViewModel.PaymentDate">
+            <summary>
+            Data de pagamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Export.FinancialHistoryExportViewModel.PaymentMethod">
+            <summary>
+            Forma de pagamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Export.FinancialHistoryExportViewModel.RefundDate">
+            <summary>
+            Data do estorno
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Export.FinancialHistoryExportViewModel.ReversedValue">
+            <summary>
+            Valor estornado
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Export.FinancialHistoryExportViewModel.AmountPaidForTheWorkshop">
+            <summary>
+            Valor pago para a oficina
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Export.FinancialHistoryExportViewModel.AmountPaidToMecca">
+            <summary>
+            Valor pago para a Meca
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Export.FinancialHistoryExportViewModel.ProcessingValue">
+            <summary>
+            Taxa aplicada
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.FaqViewModel.Question">
+            <summary>
+            Pergunta
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.FaqViewModel.Response">
+            <summary>
+            Resposta
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.FeesViewModel.PlatformFee">
+            <summary>
+            Taxa da plataforma
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.AccessLevelFilterViewModel.Name">
+            <summary>
+            Nome do perfil de acesso
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.AccessLevelFilterViewModel.IsDefault">
+            <summary>
+            É um master
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.BaseFilterViewModel.Page">
+            <summary>
+            Página (obrigatório caso uso de filtro) de 1 a N
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.BaseFilterViewModel.Limit">
+            <summary>
+            Limite  (limit = 0 para listar todos | valor default 30)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.BaseFilterViewModel.DataBlocked">
+            <summary>
+            Filtro de situação (Ativo / Inativo)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.FaqFilterViewModel.Question">
+            <summary>
+            Pergunta
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.FinancialHistoryFilterViewModel.ProfileId">
+            <summary>
+            Identificador do usuário
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.FinancialHistoryFilterViewModel.WorkshopId">
+            <summary>
+            Identificador da oficina
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.FinancialHistoryFilterViewModel.StartDate">
+            <summary>
+            Início do filtro
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.FinancialHistoryFilterViewModel.EndDate">
+            <summary>
+            Fim do filtro
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.FinancialHistoryFilterViewModel.PaymentStatus">
+            <summary>
+            Status de pagamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.FinancialHistoryFilterViewModel.Id">
+            <summary>
+            Identificadores das transações
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.NotificationFilterViewModel.TypeReference">
+            <summary>
+            Tipo de usuário
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.NotificationFilterViewModel.SetRead">
+            <summary>
+            Marcar como visualizado
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.NotificationFilterViewModel.UserId">
+            <summary>
+            ID do usuário
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.ProfileFilterViewModel.FullName">
+            <summary>
+            Nome completo
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.RatingFilterViewModel.WorkshopId">
+            <summary>
+            ID da oficina
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.SchedulingFilterViewModel.StartDate">
+            <summary>
+            Início do filtro
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.SchedulingFilterViewModel.EndDate">
+            <summary>
+            Fim do filtro
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.SchedulingFilterViewModel.WorkshopId">
+            <summary>
+            ID da oficina
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.SchedulingFilterViewModel.ProfileId">
+            <summary>
+            ID do usuário
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.SchedulingFilterViewModel.Status">
+            <summary>
+            Status do agendamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.SchedulingHistoryFilterViewModel.SchedulingId">
+            <summary>
+            ID do agendamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.ServicesDefaultFilterViewModel.Name">
+            <summary>
+            Nome do serviço
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.ServicesDefaultFilterViewModel.ServiceTypes">
+            <summary>
+            Tipos de serviço
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.ServicesDefaultFilterViewModel.Rating">
+            <summary>
+            Avaliação (estrelas)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.ServicesDefaultFilterViewModel.Distance">
+            <summary>
+            Distância (KM) 
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.ServicesDefaultFilterViewModel.LatUser">
+            <summary>
+            Latitude (usuário) 
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.ServicesDefaultFilterViewModel.LongUser">
+            <summary>
+            Longitude (usuário) 
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.UserAdministratorFilterViewModel.AccessLevelId">
+            <summary>
+            ID do perfil de acesso
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.VehicleFilterViewModel.Search">
+            <summary>
+            Pesquisa (por Placa, Fabricante ou Modelo)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.VehicleFilterViewModel.Plate">
+            <summary>
+            Placa do veículo
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.VehicleFilterViewModel.Manufacturer">
+            <summary>
+            Fabricante
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.VehicleFilterViewModel.Model">
+            <summary>
+            Modelo
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.VehicleFilterViewModel.ProfileId">
+            <summary>
+            ID do usuário
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.WorkshopFilterViewModel.Search">
+            <summary>
+            Palavra chave
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.WorkshopFilterViewModel.ServiceTypes">
+            <summary>
+            Tipos de serviço
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.WorkshopFilterViewModel.Rating">
+            <summary>
+            Avaliação (estrelas)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.WorkshopFilterViewModel.Distance">
+            <summary>
+            Distância (KM) 
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.WorkshopFilterViewModel.LatUser">
+            <summary>
+            Latitude (usuário) 
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.WorkshopFilterViewModel.LongUser">
+            <summary>
+            Longitude (usuário) 
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.WorkshopFilterViewModel.StartDate">
+            <summary>
+            Início do filtro
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.WorkshopFilterViewModel.EndDate">
+            <summary>
+            Fim do filtro
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.WorkshopFilterViewModel.WorkshopName">
+            <summary>
+            Nome da Oficina
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.WorkshopFilterViewModel.Status">
+            <summary>
+            Status
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.WorkshopFilterViewModel.WorkshopId">
+            <summary>
+            ID da Oficina
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.WorkshopServicesFilterViewModel.Search">
+            <summary>
+            Palavra chave
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.WorkshopServicesFilterViewModel.ServiceTypes">
+            <summary>
+            Tipos de serviço
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.WorkshopServicesFilterViewModel.Rating">
+            <summary>
+            Avaliação (estrelas)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.WorkshopServicesFilterViewModel.Distance">
+            <summary>
+            Distância (KM) 
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.WorkshopServicesFilterViewModel.LatUser">
+            <summary>
+            Latitude (usuário) 
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.WorkshopServicesFilterViewModel.LongUser">
+            <summary>
+            Longitude (usuário) 
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.WorkshopServicesFilterViewModel.WorkshopId">
+            <summary>
+            ID da oficina 
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.WorkshopServicesFilterViewModel.WorkshopName">
+            <summary>
+            Nome da Oficina
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingAvailableFilterViewModel.Date">
+            <summary>
+            Data
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingAvailableFilterViewModel.Services">
+            <summary>
+            Lista de serviços
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingAvailableFilterViewModel.WorkshopId">
+            <summary>
+            ID da Oficina
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.FinancialHistoryViewModel.Profile">
+            <summary>
+            Cliente
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.FinancialHistoryViewModel.Workshop">
+            <summary>
+            Oficina
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.FinancialHistoryViewModel.WorkshopServices">
+            <summary>
+            Serviços
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.FinancialHistoryViewModel.Vehicle">
+            <summary>
+            Veículo
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.FinancialHistoryViewModel.SchedulingId">
+            <summary>
+            ID do agendamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.FinancialHistoryViewModel.Value">
+            <summary>
+            Valor total (Bruto)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.FinancialHistoryViewModel.NetValue">
+            <summary>
+            Valor Liquido
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.FinancialHistoryViewModel.ProcessingValue">
+            <summary>
+            Taxas de processamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.FinancialHistoryViewModel.PaymentDate">
+            <summary>
+            Data do pagamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.FinancialHistoryViewModel.ReleasedDate">
+            <summary>
+            Data da liberação do valor
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.FinancialHistoryViewModel.ExpiredDate">
+            <summary>
+            Data de expiração da cobrança
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.FinancialHistoryViewModel.RefundDate">
+            <summary>
+            Data do estorno
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.FinancialHistoryViewModel.ReversedValue">
+            <summary>
+            Valor estornado
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.FinancialHistoryViewModel.PlatformFee">
+            <summary>
+            Taxa da plataforma (porcentagem) 
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.FinancialHistoryViewModel.MechanicalNetValue">
+            <summary>
+            Valor líquido mecânico
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.FinancialHistoryViewModel.PlatformValue">
+            <summary>
+            Valor da plataforma
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.FinancialHistoryViewModel.Installment">
+            <summary>
+            Quantidade de parcelas
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.FinancialHistoryViewModel.CreditCardId">
+            <summary>
+            Identificador do cartão de crédito
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.FinancialHistoryViewModel.PaymentStatus">
+            <summary>
+            Status do pagamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.FinancialHistoryViewModel.PaymentMethod">
+            <summary>
+            Forma de pagamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.FinancialHistoryViewModel.InvoiceId">
+            <summary>
+            ID da transação
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.FinancialHistoryViewModel.PixQrCode">
+            <summary>
+            Qr code (Imagem)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.FinancialHistoryViewModel.PixQrCodeTxt">
+            <summary>
+            Conteudo do qrcode
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.InfoAddressViewModel.ZipCode">
+            <summary>
+            Cep
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.InfoAddressViewModel.StreetAddress">
+            <summary>
+            Rua
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.InfoAddressViewModel.Number">
+            <summary>
+            Número
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.InfoAddressViewModel.CityName">
+            <summary>
+            Nome da Cidade
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.InfoAddressViewModel.CityId">
+            <summary>
+            Identificador da cidade
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.InfoAddressViewModel.StateName">
+            <summary>
+            Nome do Estado
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.InfoAddressViewModel.StateUf">
+            <summary>
+            Uf do Estado
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.InfoAddressViewModel.StateId">
+            <summary>
+            Identificador do estado
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.InfoAddressViewModel.Neighborhood">
+            <summary>
+            Bairro
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.InfoAddressViewModel.Complement">
+            <summary>
+            Complemento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.InfoAddressViewModel.Ibge">
+            <summary>
+            Código do Ibge
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ItemMenuRuleViewModel.MenuItem">
+            <summary>
+            Item do Menu
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ItemMenuRuleViewModel.SubMenu">
+            <summary>
+            Submenu
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ItemMenuRuleViewModel.Access">
+            <summary>
+            Pode visualizar
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ItemMenuRuleViewModel.Edit">
+            <summary>
+            Pode editar
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ItemMenuRuleViewModel.Write">
+            <summary>
+            Pode registrar
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ItemMenuRuleViewModel.Delete">
+            <summary>
+            Pode remover
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ItemMenuRuleViewModel.Export">
+            <summary>
+            Pode exportar
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ItemMenuRuleViewModel.EnableDisable">
+            <summary>
+            Ativar/Desativar
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.LoginViewModel.Login">
+            <summary>
+            Login
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.LoginViewModel.Email">
+            <summary>
+            Email
+            </summary>
+            <example>contato@mecabr.com</example>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.LoginViewModel.Password">
+            <summary>
+            Senha
+            </summary>
+            <example>123123</example>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.LoginViewModel.RefreshToken">
+            <summary>
+            Token de renovação
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.LoginViewModel.ProviderId">
+            <summary>
+            Token de rede social
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.LoginViewModel.TypeProvider">
+            <summary>
+            Tipo de token social
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.NotificationViewModel.Title">
+            <summary>
+            Título
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.NotificationViewModel.Content">
+            <summary>
+            Mensagem
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.NotificationViewModel.DateRead">
+            <summary>
+            Data da leitura
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.NotificationViewModel.Workshop">
+            <summary>
+            Oficina
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.NotificationViewModel.Profile">
+            <summary>
+            Usuário
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.NotificationViewModel.SchedulingId">
+            <summary>
+            ID do agendamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.PaymentViewModel.SchedulingId">
+            <summary>
+            ID do agendamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.PaymentViewModel.InvoiceId">
+            <summary>
+            Identificador do pagamento no gateway
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ProfileRegisterViewModel.Password">
+            <summary>
+            Senha
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ProfileRegisterViewModel.ProviderId">
+            <summary>
+            Token de rede social
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ProfileRegisterViewModel.TypeProvider">
+            <summary>
+            Tipo de token social
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ProfileViewModel.FullName">
+            <summary>
+            Nome completo
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ProfileViewModel.Login">
+            <summary>
+            Login
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ProfileViewModel.Email">
+            <summary>
+            E-mail
+            </summary>
+            <example>contato@mecabr.com</example>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:Meca.Domain.ViewModels.ProfileViewModel.Photo" -->
+        <member name="P:Meca.Domain.ViewModels.ProfileViewModel.Cpf">
+            <summary>
+            Cpf (999.999.999-99)
+            </summary>
+            <example>364.818.768-69</example>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ProfileViewModel.Phone">
+            <summary>
+            Telefone (99) 9999.9999 || (99) 99999-9999
+            </summary>
+            <example>(11) 2020-2020</example>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ProfileViewModel.ZipCode">
+            <summary>
+            Cep
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ProfileViewModel.StreetAddress">
+            <summary>
+            Rua
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ProfileViewModel.Number">
+            <summary>
+            Número
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ProfileViewModel.CityName">
+            <summary>
+            Nome da Cidade
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ProfileViewModel.CityId">
+            <summary>
+            Identificador da cidade
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ProfileViewModel.StateName">
+            <summary>
+            Nome do Estado
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ProfileViewModel.StateUf">
+            <summary>
+            Uf do Estado
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ProfileViewModel.StateId">
+            <summary>
+            Identificador do estado
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ProfileViewModel.Neighborhood">
+            <summary>
+            Bairro
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ProfileViewModel.Complement">
+            <summary>
+            Complemento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ProfileViewModel.Blocked">
+            <summary>
+            Bloqueado
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ProfileViewModel.TotalNotificationNoRead">
+            <summary>
+            Total de notifações não lidas
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ProfileViewModel.ExternalId">
+            <summary>
+            Identificador externo
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.PushViewModel.DeviceId">
+            <summary>
+            Identificador do Device Onesignal
+            </summary>
+            <example></example>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.PushViewModel.IsRegister">
+            <summary>
+            Registrar (true para registrar | false para remover)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.RatingViewModel.AttendanceQuality">
+            <summary>
+            Qualidade do atendimento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.RatingViewModel.ServiceQuality">
+            <summary>
+            Qualidade do serviço
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.RatingViewModel.CostBenefit">
+            <summary>
+            Custo benefício
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.RatingViewModel.Observations">
+            <summary>
+            Descrição
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.RatingViewModel.SchedulingId">
+            <summary>
+            ID do agendamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.RatingViewModel.Profile">
+            <summary>
+            Usuário
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.RatingViewModel.BudgetServices">
+            <summary>
+            Lista de serviços
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.RatingViewModel.Workshop">
+            <summary>
+            Oficina
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.RatingViewModel.Vehicle">
+            <summary>
+            Veículo
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.RatingViewModel.RatingAverage">
+            <summary>
+            Média de avaliação
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingHistoryViewModel.StatusTitle">
+            <summary>
+            Titulo do status
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingHistoryViewModel.Status">
+            <summary>
+            Status do agendamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingHistoryViewModel.Description">
+            <summary>
+            Descrição do status
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingHistoryViewModel.SchedulingId">
+            <summary>
+            ID do agendamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.WorkshopServices">
+            <summary>
+            Lista de serviços
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.Vehicle">
+            <summary>
+            Veículo
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.Observations">
+            <summary>
+            Observações
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.Date">
+            <summary>
+            Data do agendamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.SuggestedDate">
+            <summary>
+            Data sugerida pela oficina para o agendamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.Status">
+            <summary>
+            Status
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.Profile">
+            <summary>
+            Usuário
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.Workshop">
+            <summary>
+            Oficina
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.BudgetApprovalDate">
+            <summary>
+            Data da aprovação do orçamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.EstimatedTimeForCompletion">
+            <summary>
+            Prazo estimado para conclusão
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.DiagnosticValue">
+            <summary>
+            Valor do diagnóstico
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.BudgetImages">
+            <summary>
+            Imagens enviadas pelo estabelecimento referentes ao orçamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.TotalValue">
+            <summary>
+            Valor total
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.BudgetServices">
+            <summary>
+            Serviços do orçamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.MaintainedBudgetServices">
+            <summary>
+            Serviços do orçamento mantidos
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.ExcludedBudgetServices">
+            <summary>
+            Serviços do orçamento excluidos
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.PaymentDate">
+            <summary>
+            Data do pagamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.PaymentStatus">
+            <summary>
+            Status do pagamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.ServiceStartDate">
+            <summary>
+            Data de ínicio do serviço
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.ServiceEndDate">
+            <summary>
+            Data de conclusão do serviço
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.ReasonDisapproval">
+            <summary>
+            Motivo da reprovação
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.ImagesDisapproval">
+            <summary>
+            Imagens (da reprovação)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.Dispute">
+            <summary>
+            Contestação
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.ImagesDispute">
+            <summary>
+            Imagens (da contestação)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.FreeRepair">
+            <summary>
+            Reparo gratuito?
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.AwaitFreeRepairScheduling">
+            <summary>
+            Aguardando agendamento de reparo gratuito?
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.HasEvaluated">
+            <summary>
+            Agendamento já avaliado?
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.ServiceFinishedByAdmin">
+            <summary>
+            Status alterado pelo administrador?
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.UserAdministrator">
+            <summary>
+            Administrador
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.BudgetServicesApprovedByAdmin">
+            <summary>
+            Serviços aprovados pelo administrador
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.LastUpdate">
+            <summary>
+            Data da última atualização
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SchedulingViewModel.DataTransfer">
+            <summary>
+            Regra de split
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SelectItemEnumViewModel.Name">
+            <summary>
+            Nome
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SelectItemEnumViewModel.Value">
+            <summary>
+            Valor
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SendBudgetViewModel.SchedulingId">
+            <summary>
+            ID do agendamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SendBudgetViewModel.BudgetServices">
+            <summary>
+            Serviços
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SendBudgetViewModel.DiagnosticValue">
+            <summary>
+            Valor do diagnóstico 
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SendBudgetViewModel.BudgetImages">
+            <summary>
+            Imagens 
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SendBudgetViewModel.EstimatedTimeForCompletion">
+            <summary>
+            Data estimada para conclusão 
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SendPushViewModel.Title">
+            <summary>
+            Título
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SendPushViewModel.Content">
+            <summary>
+            Mensagem
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SendPushViewModel.TargetId">
+            <summary>
+            Destinatários (caso length 0 envia para todos)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SendPushViewModel.TypeProfile">
+            <summary>
+            Tipo de Destinatário
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SendPushViewModel.Route">
+            <summary>
+            Roteamento do push
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ServicesDefaultViewModel.Name">
+            <summary>
+            Nome do serviço
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ServicesDefaultViewModel.QuickService">
+            <summary>
+            Serviço rápido?
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ServicesDefaultViewModel.MinTimeScheduling">
+            <summary>
+            Antecedência mínima para agendamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ServicesDefaultViewModel.Description">
+            <summary>
+            Descrição
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:Meca.Domain.ViewModels.ServicesDefaultViewModel.Photo" -->
+        <member name="P:Meca.Domain.ViewModels.SiteMecaFormViewModel.FullName">
+            <summary>
+            Nome completo
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SiteMecaFormViewModel.Phone">
+            <summary>
+            Telefone (99) 9999.9999 || (99) 99999-9999
+            </summary>
+            <example>(11) 2020-2020</example>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SiteMecaFormViewModel.Email">
+            <summary>
+            E-mail
+            </summary>
+            <example>contato@mecabr.com</example>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SiteMecaFormViewModel.Description">
+            <summary>
+            Descrição
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SuggestNewTimeViewModel.SchedulingId">
+            <summary>
+            ID do agendamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.SuggestNewTimeViewModel.Date">
+            <summary>
+            Horário sugerido
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ValidationViewModel.Email">
+            <summary>
+            E-mail
+            </summary>
+            <example>contato@mecabr.com</example>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ValidationViewModel.Cpf">
+            <summary>
+            Cpf (999.999.999-99)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ValidationViewModel.Cnpj">
+            <summary>
+            Cnpj (99.999.999/9999-99)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.ValidationViewModel.Login">
+            <summary>
+            Login
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.VehicleInfoViewModel.Plate">
+            <summary>
+            Placa do veículo
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.VehicleInfoViewModel.Manufacturer">
+            <summary>
+            Fabricante
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.VehicleInfoViewModel.Model">
+            <summary>
+            Modelo
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.VehicleInfoViewModel.Color">
+            <summary>
+            Cor
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.VehicleInfoViewModel.Year">
+            <summary>
+            Ano de fabricação
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.VehicleViewModel.Plate">
+            <summary>
+            Placa do veículo
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.VehicleViewModel.Manufacturer">
+            <summary>
+            Fabricante
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.VehicleViewModel.Model">
+            <summary>
+            Modelo
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.VehicleViewModel.Km">
+            <summary>
+            Quilometragem
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.VehicleViewModel.Color">
+            <summary>
+            Cor
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.VehicleViewModel.Year">
+            <summary>
+            Ano
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.VehicleViewModel.LastRevisionDate">
+            <summary>
+            Data da última revisão
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.VehicleViewModel.Profile">
+            <summary>
+            Usuário
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopAgendaHoursViewModel.Available">
+            <summary>
+            Disponível?
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopAgendaHoursViewModel.Hour">
+            <summary>
+            Hora
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopAgendaHoursViewModel.Profile">
+            <summary>
+            Usuário
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopAgendaHoursViewModel.Vehicle">
+            <summary>
+            Veículo
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopAgendaViewModel.Sunday">
+            <summary>
+            Domingo
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopAgendaViewModel.Monday">
+            <summary>
+            Segunda-feira
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopAgendaViewModel.Tuesday">
+            <summary>
+            Terça-feira
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopAgendaViewModel.Wednesday">
+            <summary>
+            Quarta-feira
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopAgendaViewModel.Thursday">
+            <summary>
+            Quinta-feira
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopAgendaViewModel.Friday">
+            <summary>
+            Sexta-feira
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopAgendaViewModel.Saturday">
+            <summary>
+            Sábado
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopAgendaViewModel.Workshop">
+            <summary>
+            Oficina
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopRegisterViewModel.Password">
+            <summary>
+            Senha
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopRegisterViewModel.ProviderId">
+            <summary>
+            Token de rede social
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopRegisterViewModel.TypeProvider">
+            <summary>
+            Tipo de token social
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopServicesViewModel.Service">
+            <summary>
+            Serviço
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopServicesViewModel.QuickService">
+            <summary>
+            Serviço rápido?
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopServicesViewModel.MinTimeScheduling">
+            <summary>
+            Antecedência mínima para agendamento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopServicesViewModel.Description">
+            <summary>
+            Descrição
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:Meca.Domain.ViewModels.WorkshopServicesViewModel.Photo" -->
+        <member name="P:Meca.Domain.ViewModels.WorkshopServicesViewModel.EstimatedTime">
+            <summary>
+            Tempo estimado
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopServicesViewModel.Workshop">
+            <summary>
+            Oficina
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.FullName">
+            <summary>
+            Nome do responsável
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.BirthDate">
+            <summary>
+            Data de nascimento do Responsável (DD/MM/AAAA)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.CompanyName">
+            <summary>
+            Nome da Empresa
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.FileDocument">
+            <summary>
+            Documento com foto
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.Cpf">
+            <summary>
+            Cpf do Responsável
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.Login">
+            <summary>
+            Login
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.Email">
+            <summary>
+            E-mail
+            </summary>
+            <example>contato@mecabr.com</example>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:Meca.Domain.ViewModels.WorkshopViewModel.Photo" -->
+        <!-- Badly formed XML comment ignored for member "P:Meca.Domain.ViewModels.WorkshopViewModel.MeiCard" -->
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.Cnpj">
+            <summary>
+            Cnpj (99.999.999/9999-99)
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.Phone">
+            <summary>
+            Telefone do responsável (99) 9999.9999 || (99) 99999-9999
+            </summary>
+            <example>(11) 2020-2020</example>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.Reason">
+            <summary>
+            Motivo de bloqueio
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.Rating">
+            <summary>
+            Média de avaliações
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.Distance">
+            <summary>
+            Distância em KM
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.ZipCode">
+            <summary>
+            Cep
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.StreetAddress">
+            <summary>
+            Rua
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.Number">
+            <summary>
+            Número
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.CityName">
+            <summary>
+            Nome da Cidade
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.CityId">
+            <summary>
+            Identificador da cidade
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.StateName">
+            <summary>
+            Nome do Estado
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.StateUf">
+            <summary>
+            Uf do Estado
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.StateId">
+            <summary>
+            Identificador do estado
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.Neighborhood">
+            <summary>
+            Bairro
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.Complement">
+            <summary>
+            Complemento
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.Latitude">
+            <summary>
+            Latitude
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.Longitude">
+            <summary>
+            Longitude
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.Blocked">
+            <summary>
+            Bloqueado
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.TotalNotificationNoRead">
+            <summary>
+            Total de notifações não lidas
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.Status">
+            <summary>
+            Status
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.DataBankValid">
+            <summary>
+            Dados bancários válido?
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.WorkshopAgendaValid">
+            <summary>
+            Agenda configurada?
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.WorkshopServicesValid">
+            <summary>
+            Serviços configurados?
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.Requirements">
+            <summary>
+            Pendências   GATEWAY
+            </summary>
+        </member>
+        <member name="T:Arteris.Domain.ViewModels.HereApi.LatLngZ">
+            <summary>
+            Coordinate triple
+            </summary>
+        </member>
+    </members>
+</doc>

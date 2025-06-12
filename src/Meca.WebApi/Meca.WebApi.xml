@@ -1,0 +1,1962 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Meca.WebApi</name>
+    </assembly>
+    <members>
+        <member name="M:Meca.WebApi.Controllers.AccessLevelController.Get(Meca.Domain.ViewModels.Filters.AccessLevelFilterViewModel)">
+            <summary>
+            NÍVEL DE ACESSO - METODO PARA LISTAR TODOS PAGINADO OU C/S FILTRO
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.AccessLevelController.Detail(System.String)">
+            <summary>
+            NÍVEL DE ACESSO - METODO DE DETALHES
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.AccessLevelController.Register(Meca.Domain.ViewModels.AccessLevelViewModel)">
+             <summary>
+             NÍVEL DE ACESSO - METODO PARA CADASTRO
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                           "name": "string",
+                           "rules": [
+                             {
+                               "menuItem": 0,         //ENUM
+                               "subMenu": 0,          //ENUM || NULL
+                               "access": true,        //Tem acesso
+                               "edit": true,          // pode editar
+                               "write": true,         // pode cadastrar
+                               "delete": true,        // pode remover
+                               "export": true,        // pode exportar
+                               "enableDisable": true, // ativa/desativar
+                             }
+                           ]
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.AccessLevelController.PatchValues(System.String,Meca.Domain.ViewModels.AccessLevelViewModel)">
+             <summary>
+             NÍVEL DE ACESSO - ATUALIZAR CAMPOS
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                           "name": "string",
+                           "rules": [
+                             {
+                               "menuItem": 0,         //ENUM
+                               "subMenu": 0,          //ENUM || NULL
+                               "access": true,        //Tem acesso
+                               "edit": true,          // pode editar
+                               "write": true,         // pode cadastrar
+                               "delete": true,        // pode remover
+                               "export": true,        // pode exportar
+                               "enableDisable": true, // ativa/desativar
+                             }
+                           ]
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.AccessLevelController.Delete(System.String)">
+            <summary>
+            NÍVEL DE ACESSO - METODO DE REMOVER
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.AccessLevelController.LoadData(UtilityFramework.Application.Core3.ViewModels.DtParameters)">
+            <summary>
+            METODO DE LISTAGEM COM DATATABLE
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.AgoraIoController.GenerateToken(UtilityFramework.Services.Core3.Models.AgoraIO.AuthenticateRequest)">
+             <summary>
+             AGORAIO - METODO PARA GERAR TOKEN CHANNEL
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                           "channel": "string",
+                           "uid": 0
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.AgoraIoController.AcquireResourceId(UtilityFramework.Services.Core3.Models.AgoraIO.AcquireRequestViewModel)">
+             <summary>
+             AGORAIO - METODO PARA OBTER O RESOURCE ID
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                           "cname": "string",
+                           "uid": "string"
+                           "clientRequest": {
+                             "resourceExpiredHour": 0 // Exemplo 24 horas
+                           }
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.AgoraIoController.StartRecording(System.String,UtilityFramework.Services.Core3.Models.AgoraIO.AcquireRequestViewModel)">
+             <summary>
+             AGORAIO - METODO PARA INICIAR A GRAVAÇÃO
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                            "cname": "string",
+                            "uid": "string"  // mesmo utilizado no método acquire.
+                            "clientRequest": {
+                                 "token":""
+                             }
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.AgoraIoController.StopRecording(System.String,System.String,UtilityFramework.Services.Core3.Models.AgoraIO.StopRequestViewModel)">
+             <summary>
+             AGORAIO - METODO PARA SALVAR A GRAVAÇÃO
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                            "cname": "string",
+                            "uid": "string", // mesmo utilizado no método acquire.
+                            "clientRequest": {
+                                "async_stop": true
+                            }
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.AgoraIoController.Query(System.String,System.String)">
+            <summary>
+            AGORAIO - METODO PARA CONSULTAR O STATUS DA GRAVAÇÃO (SOMENTE GRAVAÇÃO EM ANDAMENTO)
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.BankController.Get">
+            <summary>
+            LISTA DE BANCOS DISPONIVEIS PARA CADASTRO
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.CityController.Get(System.String)">
+            <summary>
+            LISTAR CIDADES POR ESTADOS
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.CityController.ListState">
+            <summary>
+            LISTAR ESTADOS
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.CityController.GetInfoFromZipCode(System.String)">
+            <summary>
+            BUSCAR INFORMAÇÕES DE DETERMINADO CEP
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.CreditCardController.Get">
+            <summary>
+                LISTAR CARTÕES DE CRÉDITO
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.CreditCardController.Details(System.String)">
+            <summary>
+            DETALHES DO CARTÃO
+            </summary>
+            <remarks>
+            </remarks>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.CreditCardController.Register(Meca.Domain.ViewModels.CreditCardViewModel)">
+             <summary>
+             REGISTRAR CARTÃO DE CREDITO
+             </summary>
+             <remarks>
+                 OBJ DE ENVIO
+            
+                 POST api/v1/CreditCard
+                 {
+                     "name": "string",
+                     "number": "string", // #### #### #### ####
+                     "expMonth": 0, // FORMAT MM
+                     "expYear": 0, // FORMAT AAAA
+                     "cvv": "string" // MINLENGTH 3 / MAX 4
+                 }
+            
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.CreditCardController.Delete(System.String)">
+            <summary>
+            REMOVER CARTÃO DE CRÉDITO
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.FaqController.Get(Meca.Domain.ViewModels.Filters.FaqFilterViewModel)">
+            <summary>
+            FAQ - METODO PARA LISTAR TODOS PAGINADO OU C/S FILTRO
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.FaqController.Detail(System.String)">
+            <summary>
+            FAQ - METODO DE DETALHES
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.FaqController.Register(Meca.Domain.ViewModels.FaqViewModel)">
+             <summary>
+             FAQ - METODO PARA CADASTRO
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                           "question": "string",
+                           "response": "string"
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.FaqController.PatchValues(System.String,Meca.Domain.ViewModels.FaqViewModel)">
+             <summary>
+             FAQ - ATUALIZAR CAMPOS
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                           "question": "string",
+                           "response": "string"
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.FaqController.Delete(System.String)">
+            <summary>
+            FAQ - METODO DE REMOVER
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.FaqController.LoadData(UtilityFramework.Application.Core3.ViewModels.DtParameters)">
+            <summary>
+            FAQ - METODO DE LISTAGEM COM DATATABLE
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.FeesController.Get">
+            <summary>
+            TAXAS DA PLATAFORMA - METODO PARA OBTER AS TAXAS
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.FeesController.PatchValues(Meca.Domain.ViewModels.FeesViewModel)">
+             <summary>
+             TAXAS DA PLATAFORMA - REGISTRAR | ATUALIZAR CAMPOS
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                          "platformFee": 0.99
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.FileController.Upload(Microsoft.AspNetCore.Http.IFormFile,System.Nullable{System.Boolean},System.String,System.Boolean)">
+             <summary>
+             Upload one file
+             </summary>
+             <remarks>
+            
+                 POST api/v1/profile/Upload
+            
+                     content-type: multipart/form-data
+                     file = archive
+            
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.FileController.Uploads(System.Collections.Generic.List{Microsoft.AspNetCore.Http.IFormFile},System.Nullable{System.Boolean},System.String,System.Boolean)">
+             <summary>
+             UPLOAD FILES
+             </summary>
+             <remarks>
+            
+                 POST api/v1/profile/aploads
+            
+                     content-type: multipart/form-data
+                     files = archive
+                     files = archive
+                     path = foldername
+            
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.FinancialHistoryController.Get(Meca.Domain.ViewModels.Filters.FinancialHistoryFilterViewModel)">
+            <summary>
+            HISTÓRICO FINANCEIRO - METODO PARA LISTAR TODOS PAGINADO OU C/S FILTRO
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.FinancialHistoryController.Detail(System.String)">
+            <summary>
+            HISTÓRICO FINANCEIRO - METODO DE DETALHES
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.FinancialHistoryController.Payment(Meca.Domain.ViewModels.PaymentViewModel)">
+             <summary>
+             HISTÓRICO FINANCEIRO - REGISTRAR PAGAMENTO DO SERVIÇO
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+            
+                     POST
+                         {
+                           "paymentMethod": 0,
+                           "creditCardId": "string"
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.FinancialHistoryController.Delete(System.String)">
+            <summary>
+            HISTÓRICO FINANCEIRO - METODO DE REMOVER
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.FinancialHistoryController.LoadData(UtilityFramework.Application.Core3.ViewModels.DtParameters,Meca.Domain.ViewModels.Filters.FinancialHistoryFilterViewModel)">
+            <summary>
+            HISTÓRICO FINANCEIRO - METODO DE LISTAGEM COM DATATABLE
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.FinancialHistoryController.Export(UtilityFramework.Application.Core3.ViewModels.DtParameters,Meca.Domain.ViewModels.Filters.FinancialHistoryFilterViewModel)">
+            <summary>
+            HISTÓRICO FINANCEIRO - METODO DE EXPORTAÇÃO
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.NotificationController.Get(Meca.Domain.ViewModels.Filters.NotificationFilterViewModel)">
+            <summary>
+            METODO PARA LISTAR TODOS PAGINADO OU C/S FILTRO
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.NotificationController.Detail(System.String)">
+            <summary>
+            METODO DE DETALHES
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.NotificationController.Send(Meca.Domain.ViewModels.SendPushViewModel)">
+             <summary>
+             METODO PARA ENVIAR NOTIFICAÇÕES
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                          "targetId": ["string"], //Identificador dos usuários - caso  [] será enviado para todos ativos da base
+                          "title": "string",
+                          "content": "string",
+                          "typeProfile": 0, //tipo de usuário
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.NotificationController.Delete(System.String)">
+            <summary>
+            METODO DE REMOVER
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.ProfileController.Get(Meca.Domain.ViewModels.Filters.ProfileFilterViewModel)">
+            <summary>
+            USUÁRIO - METODO PARA LISTAR TODOS PAGINADO OU C/S FILTRO
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.ProfileController.Detail(System.String)">
+            <summary>
+            USUÁRIO - OBTER DETALHES
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.ProfileController.GetInfo">
+            <summary>
+            USUÁRIO - INFORMAÇÕES DO USUÁRIOS LOGADO
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.ProfileController.Delete(System.String)">
+            <summary>
+            USUÁRIO - REMOVER
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.ProfileController.DeleteByEmail(System.String)">
+            <summary>
+            USUÁRIO - REMOVER POR E-MAIL
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.ProfileController.SendEmailRequestingAppHelp(Meca.Domain.ViewModels.SiteMecaFormViewModel)">
+            <summary>
+            USUÁRIO DO SITE - ENVIAR E-MAIL SOLICITANDO AJUDA SOBRE O APP
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.ProfileController.Register(Meca.Domain.ViewModels.ProfileRegisterViewModel)">
+             <summary>
+             USUÁRIO - REGISTRAR
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                     {
+                       "password": "string",
+                       "providerId": "string", //opcional
+                       "typeProvider": 0, //opcional
+                       "fullName": "string",
+                       "login": "string",
+                       "email": "contato@mecabr.com",
+                       "photo": "string", /*nome do arquivo ex: 302183239.png*/
+                       "cpf": "364.818.768-69",
+                       "phone": "(11) 2020-2020",
+                     }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.ProfileController.Token(Meca.Domain.ViewModels.LoginViewModel)">
+             <summary>
+             USUÁRIO - LOGIN
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                          "email":"string", //optional
+                          "password":"string", //optional
+                          "providerId":"string", //optional
+                          "typeProvider":0 //Enum (optional)
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.ProfileController.BlockUnBlock(Meca.Domain.ViewModels.BlockViewModel)">
+             <summary>
+             USUÁRIO - BLOQUEAR / DESBLOQUEAR - ADMIN
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                          "id": "string", // required
+                          "block": true,
+                          "reason": "" //motivo de bloquear o usuário
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.ProfileController.ChangePassword(Meca.Domain.ViewModels.ChangePasswordViewModel)">
+             <summary>
+             USUÁRIO - ALTERAR SENHA
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                          "currentPassword":"string",
+                          "newPassword":"string",
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.ProfileController.LoadData(UtilityFramework.Application.Core3.ViewModels.DtParameters)">
+            <summary>
+            USUÁRIO - METODO DE LISTAGEM COM DATATABLE
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.ProfileController.RegisterUnRegisterDeviceId(Meca.Domain.ViewModels.PushViewModel)">
+             <summary>
+             USUÁRIO - REGISTRAR E REMOVER DEVICE ID ONESIGNAL OU FCM | CHAMAR APOS LOGIN E LOGOUT
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                          "deviceId":"string",
+                          "isRegister":true  // true => registrar  | false => remover
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.ProfileController.UpdatePatch(System.String,Meca.Domain.ViewModels.ProfileRegisterViewModel)">
+             <summary>
+             USUÁRIO - ATUALIZAR DADOS
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                     {
+                       "fullName": "string",
+                       "login": "string",
+                       "email": "contato@mecabr.com",
+                       "photo": "string", /*nome do arquivo ex: 302183239.png*/
+                       "cpf": "364.818.768-69",
+                       "phone": "(11) 2020-2020",
+                     }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.ProfileController.ForgotPassword(Meca.Domain.ViewModels.LoginViewModel)">
+             <summary>
+             USUÁRIO - ESQUECI A SENHA
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                          "email":"string"
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.ProfileController.CheckEmail(Meca.Domain.ViewModels.ValidationViewModel)">
+             <summary>
+             USUÁRIO - VERIFICAR SE E-MAIL ESTÁ EM USO
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                         POST
+                         {
+                             "email":"string"
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.ProfileController.CheckLogin(Meca.Domain.ViewModels.ValidationViewModel)">
+             <summary>
+             USUÁRIO - VERIFICAR SE LOGIN ESTÁ EM USO
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                         POST
+                         {
+                             "login":"string"
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.ProfileController.CheckCpf(Meca.Domain.ViewModels.ValidationViewModel)">
+             <summary>
+             USUÁRIO - VERIFICAR SE CPF ESTÁ EM USO
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                         POST
+                         {
+                             "cpf":"string"
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.ProfileController.CheckAll(Meca.Domain.ViewModels.ValidationViewModel)">
+             <summary>
+             USUÁRIO - VERIFICAR SE CAMPOS ESTÁ EM USO
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                         POST
+                         {
+                             "cpf":"string",
+                             "login":"string",
+                             "email":"string"
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.RatingController.Get(Meca.Domain.ViewModels.Filters.RatingFilterViewModel)">
+            <summary>
+            AVALIAÇÃO - METODO PARA LISTAR TODOS PAGINADO OU C/S FILTRO
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.RatingController.Detail(System.String)">
+            <summary>
+            AVALIAÇÃO - METODO DE DETALHES
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.RatingController.Register(Meca.Domain.ViewModels.RatingViewModel)">
+             <summary>
+             AVALIAÇÃO - METODO PARA CADASTRO
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                           "attendanceQuality": 5,
+                           "serviceQuality": 5,
+                           "costBenefit": 5,
+                           "observations": "string",
+                           "schedulingId": "string"
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.RatingController.Delete(System.String)">
+            <summary>
+            AVALIAÇÃO - METODO DE REMOVER
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.RatingController.LoadData(UtilityFramework.Application.Core3.ViewModels.DtParameters)">
+            <summary>
+            AVALIAÇÃO - METODO DE LISTAGEM COM DATATABLE
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.SchedulingController.Get(Meca.Domain.ViewModels.Filters.SchedulingFilterViewModel)">
+            <summary>
+            AGENDAMENTO - METODO PARA LISTAR TODOS PAGINADO OU C/S FILTRO
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.SchedulingController.Detail(System.String)">
+            <summary>
+            AGENDAMENTO - METODO DE DETALHES
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.SchedulingController.Register(Meca.Domain.ViewModels.SchedulingViewModel)">
+             <summary>
+             AGENDAMENTO - METODO PARA CADASTRO
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                           "WorkshopServices": [
+                             {
+                                 "id": "string",
+                                 "name": "string"
+                             }
+                           ],
+                           "vehicle": {
+                                 "id": "string",
+                                 "plate": "string"
+                            },
+                           "observations": "string",
+                           "date": 9559995,
+                           "status": 0,
+                           "Workshop": {
+                                 "id": "string",
+                                 "fullName": "string"
+                            }
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.SchedulingController.Delete(System.String)">
+            <summary>
+            AGENDAMENTO - METODO DE REMOVER
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.SchedulingController.LoadData(UtilityFramework.Application.Core3.ViewModels.DtParameters,Meca.Domain.ViewModels.Filters.SchedulingFilterViewModel)">
+            <summary>
+            AGENDAMENTO - METODO DE LISTAGEM COM DATATABLE
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.SchedulingController.GetAvailableScheduling(Meca.Domain.ViewModels.SchedulingAvailableFilterViewModel)">
+            <summary>
+            AGENDAMENTO - METODO PARA OBTER AGENDA (USUÁRIO/OFICINA)
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.SchedulingController.SuggestNewTime(Meca.Domain.ViewModels.SuggestNewTimeViewModel)">
+            <summary>
+            AGENDAMENTO - METODO PARA SUGERIR NOVO HORÁRIO DE AGENDAMENTO (OFICINA)
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.SchedulingController.ConfirmScheduling(Meca.Domain.ViewModels.ConfirmSchedulingViewModel)">
+            <summary>
+            AGENDAMENTO - METODO PARA CONFIRMAR AGENDAMENTO (OFICINA/USUÁRIO)
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.SchedulingController.ChangeSchedulingStatus(Meca.Domain.ViewModels.ChangeSchedulingStatusViewModel)">
+            <summary>
+            AGENDAMENTO - METODO PARA ALTERAR STATUS DO AGENDAMENTO (OFICINA)
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.SchedulingController.SendBudget(Meca.Domain.ViewModels.SendBudgetViewModel)">
+            <summary>
+            AGENDAMENTO - METODO PARA ENVIAR ORÇAMENTO (OFICINA)
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.SchedulingController.ConfirmBudget(Meca.Domain.ViewModels.ConfirmBudgetViewModel)">
+            <summary>
+            AGENDAMENTO - METODO PARA APROVAR/REPROVAR ORÇAMENTO (USUÁRIO)
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.SchedulingController.ConfirmService(Meca.Domain.ViewModels.ConfirmServiceViewModel)">
+            <summary>
+            AGENDAMENTO - METODO PARA APROVAR/REPROVAR SERVIÇO (USUÁRIO)
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.SchedulingController.SuggestFreeRepair(System.String)">
+            <summary>
+            AGENDAMENTO - METODO PARA SUGERIR REPARO GRATUITO (OFICINA)
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.SchedulingController.RegisterRepairAppointment(Meca.Domain.ViewModels.SchedulingViewModel)">
+            <summary>
+            AGENDAMENTO - METODO PARA REALIZAR AGENDAMENTO DE REPARO GRATUITO (USUÁRIO)
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.SchedulingController.DisputeDisapprovedService(Meca.Domain.ViewModels.DisputeDisapprovedServiceViewModel)">
+            <summary>
+            AGENDAMENTO - METODO PARA CONTESTAR REPROVAÇÃO DO USUÁRIO
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.SchedulingController.ApproveOrReproveService(Meca.Domain.ViewModels.ApproveOrReproveServiceViewModel)">
+            <summary>
+            AGENDAMENTO - METODO PARA APROVAR/APROVAR PARCIALMENTE/REPROVAR SERVIÇO (ADMIN)
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.SchedulingHistoryController.Get(Meca.Domain.ViewModels.Filters.SchedulingHistoryFilterViewModel)">
+            <summary>
+            HISTÓRICO DE AGENDAMENTO - METODO PARA LISTAR TODOS PAGINADO OU C/S FILTRO
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.SchedulingHistoryController.Detail(System.String)">
+            <summary>
+            HISTÓRICO DE AGENDAMENTO - METODO DE DETALHES
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.SchedulingHistoryController.Register(Meca.Domain.ViewModels.SchedulingHistoryViewModel)">
+             <summary>
+             HISTÓRICO DE AGENDAMENTO - METODO PARA CADASTRO
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                           "schedulingId": "string",
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.SchedulingHistoryController.LoadData(UtilityFramework.Application.Core3.ViewModels.DtParameters)">
+            <summary>
+            HISTÓRICO DE AGENDAMENTO - METODO DE LISTAGEM COM DATATABLE
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.ServicesDefaultController.Get(Meca.Domain.ViewModels.Filters.ServicesDefaultFilterViewModel)">
+            <summary>
+            SERVIÇOS PADRÃO - METODO PARA LISTAR TODOS PAGINADO OU C/S FILTRO
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.ServicesDefaultController.Detail(System.String)">
+            <summary>
+            SERVIÇOS PADRÃO - METODO DE DETALHES
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.ServicesDefaultController.Register(Meca.Domain.ViewModels.ServicesDefaultViewModel)">
+             <summary>
+             SERVIÇOS PADRÃO - METODO PARA CADASTRO
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                           "name": "string",
+                           "quickService": true,
+                           "minTimeWorkshopAgenda": "01:00",
+                           "description": "string",
+                           "photo": "string"
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.ServicesDefaultController.PatchValues(System.String,Meca.Domain.ViewModels.ServicesDefaultViewModel)">
+             <summary>
+             SERVIÇOS PADRÃO - ATUALIZAR CAMPOS
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                           "name": "string",
+                           "quickService": true,
+                           "minTimeWorkshopAgenda": "01:00",
+                           "description": "string"
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.ServicesDefaultController.Delete(System.String)">
+            <summary>
+            SERVIÇOS PADRÃO - METODO DE REMOVER
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.ServicesDefaultController.LoadData(UtilityFramework.Application.Core3.ViewModels.DtParameters)">
+            <summary>
+            SERVIÇOS PADRÃO - METODO DE LISTAGEM COM DATATABLE
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.TriggerController.ChangeStatusGateway(UtilityFramework.Services.Iugu.Core3.Models.IuguTriggerModel,System.String)">
+            <summary>
+            GATILHOS DA IUGU
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.UserAdministratorController.GetInfo">
+            <summary>
+            GET INFO
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.UserAdministratorController.Detail(System.String)">
+            <summary>
+            GET INFO
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.UserAdministratorController.GetDashboard">
+            <summary>
+            DASHBOARD
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.UserAdministratorController.Register(Meca.Domain.ViewModels.Admin.UserAdministratorViewModel)">
+             <summary>
+             CADASTRO | UPDATE
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                          "name":"string",
+                          "email":"string",
+                          "password":"string"
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.UserAdministratorController.UpdatePath(System.String,Meca.Domain.ViewModels.Admin.UserAdministratorViewModel)">
+             <summary>
+             UPDATE COM ID NA URL OU TOKEN
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                          "name":"string",
+                          "email":"string",
+                          "password":"string"
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.UserAdministratorController.Token(Meca.Domain.ViewModels.Admin.LoginAdminViewModel)">
+             <summary>
+             METODO DE LOGIN
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                          "email":"string",
+                          "password":"string",
+                          "refreshToken":"string" /*para renovar token*/
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.UserAdministratorController.ForgotPassword(Meca.Domain.ViewModels.Admin.LoginAdminViewModel)">
+             <summary>
+             ESQUECI A SENHA
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                         POST
+                             {
+                              "email":"string"
+                             }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.UserAdministratorController.ChangePassword(Meca.Domain.ViewModels.ChangePasswordViewModel)">
+             <summary>
+             ALTERAR PASSWORD
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                          "currentPassword":"string",
+                          "newPassword":"string",
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.UserAdministratorController.Delete(System.String,Meca.Domain.ViewModels.Admin.UserAdministratorViewModel)">
+             <summary>
+             REMOVER UM PERFIL DE ACESSO
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                          "id":"string"
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.UserAdministratorController.BlockUnblock(Meca.Domain.ViewModels.BlockViewModel)">
+             <summary>
+             Bloquear / Desbloquear
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                             "targetId":"string"
+                             "block":true
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.UserAdministratorController.LoadData(UtilityFramework.Application.Core3.ViewModels.DtParameters,Meca.Domain.ViewModels.Filters.UserAdministratorFilterViewModel)">
+            <summary>
+            METODO DE LISTAGEM COM DATATABLE
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.VehicleController.Get(Meca.Domain.ViewModels.Filters.VehicleFilterViewModel)">
+            <summary>
+            VEÍCULOS - METODO PARA LISTAR TODOS PAGINADO OU C/S FILTRO
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.VehicleController.Detail(System.String)">
+            <summary>
+            VEÍCULOS - METODO DE DETALHES
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.VehicleController.Register(Meca.Domain.ViewModels.VehicleViewModel)">
+             <summary>
+             VEÍCULOS - METODO PARA CADASTRO
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                           "plate": "string",
+                           "manufacturer": string,
+                           "model": "string",
+                           "km": 10,
+                           "color": "string",
+                           "year": "string",
+                           "lastRevisionDate": 1736262349
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.VehicleController.PatchValues(System.String,Meca.Domain.ViewModels.VehicleViewModel)">
+             <summary>
+             VEÍCULOS - ATUALIZAR CAMPOS
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                           "plate": "string",
+                           "manufacturer": string,
+                           "model": "string",
+                           "km": 10,
+                           "color": "string",
+                           "year": "string",
+                           "lastRevisionDate": 1736262349
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.VehicleController.Delete(System.String)">
+            <summary>
+            VEÍCULOS - METODO DE REMOVER
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.VehicleController.LoadData(UtilityFramework.Application.Core3.ViewModels.DtParameters)">
+            <summary>
+            VEÍCULOS - METODO DE LISTAGEM COM DATATABLE
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.VehicleController.GetInfoVehicleByPlate(System.String)">
+            <summary>
+            VEÍCULOS - METODO PARA BUSCAR DADOS DO VEÍCULO API PLACAS
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.WorkshopAgendaController.Get(System.String)">
+            <summary>
+            AGENDA DA OFICINA - METODO PARA OBTER AGENDA
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.WorkshopAgendaController.PatchValues(Meca.Domain.ViewModels.WorkshopAgendaViewModel)">
+             <summary>
+             AGENDA DA OFICINA - REGISTRAR | ATUALIZAR CAMPOS
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                           {
+                             "Sunday": {
+                                "Open": false,
+                                "StartTime": "",
+                                "ClosingTime": "",
+                                "StartOfBreak": "",
+                                "EndOfBreak": ""
+                             },
+                             "Monday": {
+                                "Open": true,
+                                "StartTime": "08:00",
+                                "ClosingTime": "18:00",
+                                "StartOfBreak": "12:00",
+                                "EndOfBreak": "13:00"
+                             }
+                           }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.WorkshopAgendaController.Delete(System.String)">
+            <summary>
+            AGENDA DA OFICINA - REMOVER HORÁRIOS
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.WorkshopController.Get(Meca.Domain.ViewModels.Filters.WorkshopFilterViewModel)">
+            <summary>
+            OFICINA - METODO PARA LISTAR TODOS PAGINADO OU C/S FILTRO
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.WorkshopController.Detail(System.String,System.String,System.String)">
+            <summary>
+            OFICINA - OBTER DETALHES
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.WorkshopController.GetInfo">
+            <summary>
+            OFICINA - OBTER INFORMAÇÕES
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.WorkshopController.Delete(System.String)">
+            <summary>
+            OFICINA - REMOVER
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.WorkshopController.DeleteStripe(System.String)">
+            <summary>
+            OFICINA - REMOVER
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.WorkshopController.DeleteByEmail(System.String)">
+            <summary>
+            OFICINA - REMOVER POR E-MAIL
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.WorkshopController.Register(Meca.Domain.ViewModels.WorkshopRegisterViewModel)">
+             <summary>
+             OFICINA - REGISTRAR
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                     {
+                       "password": "string",
+                       "providerId": "string", //opcional
+                       "typeProvider": 0, //opcional
+                       "fullName": "string",
+                       "companyName": "string",
+                       "login": "string",
+                       "email": "contato@mecabr.com",
+                       "photo": "string", /*nome do arquivo ex: 302183239.png*/
+                       "cnpj": "18.771.876/0001-05",
+                       "phone": "(11) 2020-2020",
+                       "meiCard": "string", /*nome do arquivo ex: 302183239.png*/
+                     }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.WorkshopController.Token(Meca.Domain.ViewModels.LoginViewModel)">
+             <summary>
+             OFICINA - LOGIN
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                          "email":"string", //optional
+                          "password":"string", //optional
+                          "providerId":"string", //optional
+                          "typeProvider":0 //Enum (optional)
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.WorkshopController.BlockUnBlock(Meca.Domain.ViewModels.BlockViewModel)">
+             <summary>
+             OFICINA - BLOQUEAR / DESBLOQUEAR - ADMIN
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                          "id": "string", // required
+                          "block": true,
+                          "reason": "" //motivo de bloquear a Oficina
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.WorkshopController.ChangePassword(Meca.Domain.ViewModels.ChangePasswordViewModel)">
+             <summary>
+             OFICINA - ALTERAR SENHA
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                          "currentPassword":"string",
+                          "newPassword":"string",
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.WorkshopController.LoadData(UtilityFramework.Application.Core3.ViewModels.DtParameters,Meca.Domain.ViewModels.Filters.WorkshopFilterViewModel)">
+            <summary>
+            OFICINA - METODO DE LISTAGEM COM DATATABLE
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.WorkshopController.RegisterUnRegisterDeviceIdAsync(Meca.Domain.ViewModels.PushViewModel)">
+             <summary>
+             OFICINA - REGISTRAR E REMOVER DEVICE ID ONESIGNAL OU FCM | CHAMAR APOS LOGIN E LOGOUT
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                          "deviceId":"string",
+                          "isRegister":true  // true => registrar  | false => remover
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.WorkshopController.UpdatePatch(System.String,Meca.Domain.ViewModels.WorkshopRegisterViewModel)">
+             <summary>
+             OFICINA - ATUALIZAR DADOS
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                     {
+                       "password": "string",
+                       "providerId": "string", //opcional
+                       "typeProvider": 0, //opcional
+                       "fullName": "string",
+                       "companyName": "string",
+                       "login": "string",
+                       "email": "contato@mecabr.com",
+                       "photo": "string", /*nome do arquivo ex: 302183239.png*/
+                       "cnpj": "18.771.876/0001-05",
+                       "phone": "(11) 2020-2020",
+                       "meiCard": "string", /*nome do arquivo ex: 302183239.png*/
+                     }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.WorkshopController.ForgotPassword(Meca.Domain.ViewModels.LoginViewModel)">
+             <summary>
+             OFICINA - ESQUECI A SENHA
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                          "email":"string"
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.WorkshopController.CheckEmail(Meca.Domain.ViewModels.ValidationViewModel)">
+             <summary>
+             OFICINA - VERIFICAR SE E-MAIL ESTÁ EM USO
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                         POST
+                         {
+                             "email":"string"
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.WorkshopController.CheckCnpj(Meca.Domain.ViewModels.ValidationViewModel)">
+             <summary>
+             OFICINA - VERIFICAR SE CNPJ ESTÁ EM USO
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                         POST
+                         {
+                             "cnpj":"string"
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.WorkshopController.CheckAll(Meca.Domain.ViewModels.ValidationViewModel)">
+             <summary>
+             OFICINA - VERIFICAR SE CAMPOS ESTÁ EM USO
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                         POST
+                         {
+                             "cnpj":"string",
+                             "email":"string"
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.WorkshopController.UpdateDataBank(System.String,Meca.Domain.ViewModels.DataBankViewModel)">
+            <summary>
+            OFICINA - ATUALIZAR DADOS BANCÁRIOS |  Bank = enviar CODIGO DO BANCO | EX = 341
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.WorkshopController.GetDataBank(System.String)">
+            <summary>
+            OFICINA - OBTER DADOS BANCÁRIOS DA OFICINA LOGADO OU VIA ID
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.WorkshopServicesController.Get(Meca.Domain.ViewModels.Filters.WorkshopServicesFilterViewModel)">
+            <summary>
+            SERVIÇOS DA OFICINA - METODO PARA LISTAR TODOS PAGINADO OU C/S FILTRO
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.WorkshopServicesController.Detail(System.String,System.String,System.String)">
+            <summary>
+            SERVIÇOS DA OFICINA - METODO DE DETALHES
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.WorkshopServicesController.Register(Meca.Domain.ViewModels.WorkshopServicesViewModel)">
+             <summary>
+             SERVIÇOS DA OFICINA - METODO PARA CADASTRO
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                           "name": "string",
+                           "quickService": true,
+                           "minTimeWorkshopAgenda": 1,
+                           "description": "string",
+                           "value": 0,
+                           "estimatedTime": 1,
+                           "photo": "string"
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.WorkshopServicesController.PatchValues(System.String,Meca.Domain.ViewModels.WorkshopServicesViewModel)">
+             <summary>
+             SERVIÇOS DA OFICINA - ATUALIZAR CAMPOS
+             </summary>
+             <remarks>
+             OBJ DE ENVIO
+            
+                     POST
+                         {
+                           "name": "string",
+                           "quickService": true,
+                           "minTimeWorkshopAgenda": 1,
+                           "description": "string",
+                           "value": 0,
+                           "estimatedTime": 1
+                         }
+             </remarks>
+             <response code="200">Returns success</response>
+             <response code="400">Custom Error</response>
+             <response code="401">Unauthorize Error</response>
+             <response code="500">Exception Error</response>
+             <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.WorkshopServicesController.Delete(System.String)">
+            <summary>
+            SERVIÇOS DA OFICINA - METODO DE REMOVER
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Controllers.WorkshopServicesController.LoadData(UtilityFramework.Application.Core3.ViewModels.DtParameters)">
+            <summary>
+            SERVIÇOS DA OFICINA - METODO DE LISTAGEM COM DATATABLE
+            </summary>
+            <response code="200">Returns success</response>
+            <response code="400">Custom Error</response>
+            <response code="401">Unauthorize Error</response>
+            <response code="500">Exception Error</response>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Services.IocContainer.AddAplicationServicesInjection(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            INJEÇÃO DE DEPENDENCIAS DE APLICATION SERVICES
+            /// </summary>
+            <param name="services"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Meca.WebApi.Services.IocContainer.AddServicesInjection(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            INJEÇÃO DE DEPENDENCIAS DE SERVIÇOS DE API
+            </summary>
+            <param name="services"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

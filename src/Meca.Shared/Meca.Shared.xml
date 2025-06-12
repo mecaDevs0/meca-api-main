@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Meca.Shared</name>
+    </assembly>
+    <members>
+        <member name="M:Meca.Shared.ObjectValues.Acesso.SetUsuarioId(System.String,System.Nullable{System.Int32})">
+            <summary>
+            MÉTODO SOMENTE UTILIZADO PELO TEST UNITÁRIO PARA SETA O ID DO ADMINISTRADOR
+            </summary>
+            <param name="id"></param>
+        </member>
+        <member name="M:Meca.Shared.ObjectValues.Acesso.SetAdministrador">
+            <summary>
+            DEFINIR ACESSO COMO ADMINISTRADOR
+            </summary>
+        </member>
+    </members>
+</doc>

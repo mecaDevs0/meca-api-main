@@ -9,8 +9,8 @@ namespace Meca.Data.Entities
     {
         public Workshop()
         {
-            CreditCards = [];
-            DeviceId = [];
+            CreditCards = new List<string>();
+            DeviceId = new List<string>();
         }
 
         public string Photo { get; set; }
@@ -80,3 +80,4 @@ namespace Meca.Data.Entities
         public string ExternalId { get; set; }
     }
 }
+

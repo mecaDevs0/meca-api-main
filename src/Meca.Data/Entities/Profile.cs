@@ -9,8 +9,8 @@ namespace Meca.Data.Entities
     {
         public Profile()
         {
-            CreditCards = [];
-            DeviceId = [];
+            CreditCards = new List<string>();
+            DeviceId = new List<string>();
         }
 
         public string FullName { get; set; }
@@ -70,3 +70,4 @@ namespace Meca.Data.Entities
 
     }
 }
+

@@ -8,7 +8,8 @@ namespace Meca.Data.Entities
     public class AccessLevel : TEntity<AccessLevel>
     {
         public string Name { get; set; }
-        public List<ItemMenuRule> Rules { get; set; } = [];
+        public List<ItemMenuRule> Rules { get; set; } = new List<ItemMenuRule>();
         public bool IsDefault { get; set; }
     }
 }
+
