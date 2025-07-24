@@ -12,12 +12,6 @@
         <DocumentationFile>XmlDocument.xml</DocumentationFile>
     </PropertyGroup>
 
-    <Target Name="CleanBinObj" AfterTargets="AfterPublish">
-        <RemoveDir Directories="$(BaseIntermediateOutputPath)/$(Configuration)/" />
-        <RemoveDir Directories="$(BaseOutputPath)/$(Configuration)/" />
-        <MSBuild Projects="@(ProjectReference)" Targets="CleanReferencedBinObj" />
-    </Target>
-
     <ItemGroup>
         <Folder Include="Content\" />
         <Folder Include="Template\" />
