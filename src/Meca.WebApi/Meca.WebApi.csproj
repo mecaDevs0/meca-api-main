@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
+        <EnableDefaultContentItems>false</EnableDefaultContentItems>
         <CheckEolTargetFramework>false</CheckEolTargetFramework>
         <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
         <LangVersion>latest</LangVersion>
