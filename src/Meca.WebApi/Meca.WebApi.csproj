@@ -62,4 +62,9 @@
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
     </ItemGroup>
+    <ItemGroup>
+  <!-- Força a versão mais nova para resolver o conflito de downgrade -->
+  <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.1" />
+  <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.0" /> 
+</ItemGroup>
 </Project>
