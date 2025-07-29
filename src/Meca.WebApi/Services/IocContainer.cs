@@ -65,32 +65,33 @@ namespace Meca.WebApi.Services
             // Sempre que alguém pedir um IBusinessBaseAsync<>, entregue um BusinessBaseAsync<>
             services.AddScoped(typeof(IBusinessBaseAsync<>), typeof(BusinessBaseAsync<>));
 
+
             /*IUGU*/
-            services.AddSingleton(typeof(IIuguChargeServices), typeof(IuguService));
-            services.AddSingleton(typeof(IIuguMarketPlaceServices), typeof(IuguService));
-            services.AddSingleton(typeof(IIuguPaymentMethodService), typeof(IuguService));
-            services.AddSingleton(typeof(IIuguCustomerServices), typeof(IuguService));
-            services.AddSingleton(typeof(IIuguService), typeof(IuguService));
+            services.AddScoped(typeof(IIuguChargeServices), typeof(IuguService));
+            services.AddScoped(typeof(IIuguMarketPlaceServices), typeof(IuguService));
+            services.AddScoped(typeof(IIuguPaymentMethodService), typeof(IuguService));
+            services.AddScoped(typeof(IIuguCustomerServices), typeof(IuguService));
+            services.AddScoped(typeof(IIuguService), typeof(IuguService));
 
             /*STRIPE*/
-            services.AddSingleton(typeof(IStripeCustomerService), typeof(StripeCustomerService));
-            services.AddSingleton(typeof(IStripeMarketPlaceService), typeof(StripeMarketPlaceService));
-            services.AddSingleton(typeof(IStripePaymentMethodService), typeof(StripePaymentMethodService));
-            services.AddSingleton(typeof(IStripePaymentIntentService), typeof(StripePaymentIntentService));
-            services.AddSingleton(typeof(IStripeTransferService), typeof(StripeTransferService));
+            services.AddScoped(typeof(IStripeCustomerService), typeof(StripeCustomerService));
+            services.AddScoped(typeof(IStripeMarketPlaceService), typeof(StripeMarketPlaceService));
+            services.AddScoped(typeof(IStripePaymentMethodService), typeof(StripePaymentMethodService));
+            services.AddScoped(typeof(IStripePaymentIntentService), typeof(StripePaymentIntentService));
+            services.AddScoped(typeof(IStripeTransferService), typeof(StripeTransferService));
 
 
             /* NOTIFICAÇÕES & EMAIL*/
-            services.AddSingleton(typeof(ISenderMailService), typeof(SendService));
-            services.AddSingleton(typeof(ISenderNotificationService), typeof(SendService));
+            services.AddScoped(typeof(ISenderMailService), typeof(SendService));
+            services.AddScoped(typeof(ISenderNotificationService), typeof(SendService));
 
             /*FIREBASE*/
-            services.AddSingleton(typeof(IFirebaseServices), typeof(FirebaseServices));
+            services.AddScoped(typeof(IFirebaseServices), typeof(FirebaseServices));
 
             /*UTILIDADES */
-            services.AddSingleton(typeof(IUtilService), typeof(UtilService));
-            services.AddSingleton(typeof(IHangfireService), typeof(HangfireService));
-            services.AddSingleton(typeof(IAgoraIOService), typeof(AgoraIOService));
+            services.AddScoped(typeof(IUtilService), typeof(UtilService));
+            services.AddScoped(typeof(IHangfireService), typeof(HangfireService));
+            services.AddScoped(typeof(IAgoraIOService), typeof(AgoraIOService));
 
             return services;
         }

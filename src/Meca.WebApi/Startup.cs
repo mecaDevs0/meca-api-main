@@ -108,10 +108,10 @@ namespace Meca.WebApi
 
             services.AddHttpContextAccessor();
 
-            services.AddSingleton<IConfiguration>(Configuration);
+            // services.AddScoped<IConfiguration>(Configuration);
 
             /*INJEÇÃO DE DEPENDENCIAS DE BANCO*/
-            services.AddSingleton(typeof(IBusinessBaseAsync<>), typeof(BusinessBaseAsync<>));
+            services.AddScoped(typeof(IBusinessBaseAsync<>), typeof(BusinessBaseAsync<>));
 
             /*INJEÇÃO DE DEPENDENCIAS APPLICATION SERVICES*/
             services.AddAplicationServicesInjection();
