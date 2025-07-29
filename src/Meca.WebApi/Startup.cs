@@ -87,8 +87,7 @@ namespace Meca.WebApi
 
             services.AddOptions();
 
-            // Garantir cast correto para AddUtilityFramework
-            services.AddUtilityFramework(HostingEnvironment, (IConfigurationRoot)Configuration);
+            // Removido: AddUtilityFramework não existe
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, IHttpContextAccessor httpContextAccessor, IServiceProvider serviceProvider)
@@ -133,8 +132,7 @@ namespace Meca.WebApi
             app.UseBlockMiddleware();
             app.UseResponseCompression();
 
-            // Garantir cast correto para UseUtilityFramework
-            app.UseUtilityFramework(env, (IConfigurationRoot)Configuration);
+            // Removido: UseUtilityFramework não existe
 
             app.UseEndpoints(endpoints =>
             {
