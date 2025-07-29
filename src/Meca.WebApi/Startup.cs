@@ -24,9 +24,11 @@ namespace Meca.WebApi
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+
         public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
-            Configuration = (IConfigurationRoot)configuration;
+            Configuration = configuration; // Garante atribuição explícita
 
             BaseConfig.ApplicationName = ApplicationName =
             configuration.GetSection("ApplicationName").Get<string>() ?? Assembly.GetEntryAssembly().GetName().Name?.Split('.')[0];
@@ -37,8 +39,6 @@ namespace Meca.WebApi
             //var cultures = Utilities.GetConfigurationRoot().GetSection("TranslateLanguages").Get<List<string>>();
             //SupportedCultures = cultures.Select(x => new CultureInfo(x)).ToList();
         }
-
-        public IConfigurationRoot Configuration { get; }
         public static string ApplicationName { get; set; }
         public static bool EnableSwagger { get; set; }
         public static bool EnableService { get; set; }
@@ -113,11 +113,10 @@ namespace Meca.WebApi
             /*INJEÇÃO DE DEPENDENCIAS DE BANCO*/
             services.AddScoped(typeof(IBusinessBaseAsync<>), typeof(BusinessBaseAsync<>));
 
-            /*INJEÇÃO DE DEPENDENCIAS APPLICATION SERVICES*/
-            services.AddAplicationServicesInjection();
 
-            /*INJEÇÃO DE DEPENDENCIAS DE SERVIÇOS*/
+            // Injeção explícita dos serviços
             services.AddServicesInjection();
+            services.AddAplicationServicesInjection();
 
             services.AddOptions();
         }
