@@ -100,6 +100,9 @@ namespace Meca.WebApi
                 c.AddProfile<ViewModelToDomainMappingProfile>();
             }, typeof(Startup));
 
+            // Adiciona UtilityFramework com cast explícito
+            services.AddUtilityFramework(env, (IConfigurationRoot)Configuration);
+
             /*CROP IMAGE*/
             services.AddImageResizer();
 
@@ -155,6 +158,9 @@ namespace Meca.WebApi
                 FileProvider = new PhysicalFileProvider(path),
                 RequestPath = new PathString("/content")
             });
+
+            // Usa UtilityFramework com cast explícito
+            app.UseUtilityFramework(env, (IConfigurationRoot)Configuration);
 
             app.UseCors("AllowAllOrigin");
             app.UseAuthorization();
