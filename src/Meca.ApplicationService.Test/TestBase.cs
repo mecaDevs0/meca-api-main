@@ -45,8 +45,6 @@ namespace Meca.ApplicationService.Test
 
             _mockMapper = conf.CreateMapper(); //MockaModel<TSource, TDestination>(model);
 
-            var path = Directory.GetCurrentDirectory();
-
             _mockConfiguration = new ConfigurationBuilder()
                    .AddJsonFile($"appsettings.{environment}.json", optional: true)
                    .AddEnvironmentVariables()

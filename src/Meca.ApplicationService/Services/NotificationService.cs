@@ -30,6 +30,8 @@ namespace Meca.ApplicationService.Services
         private IConfiguration _configuration;
         private readonly IBusinessBaseAsync<Notification> _notificationRepository;
         private readonly IBusinessBaseAsync<Data.Entities.Profile> _profileRepository;
+        private readonly IBusinessBaseAsync<UserAdministrator> _userAdministratorRepository;
+        private readonly IBusinessBaseAsync<Workshop> _workshopRepository;
         private readonly ISenderNotificationService _senderNotificationService;
         private readonly IHostingEnvironment _env;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -40,12 +42,18 @@ namespace Meca.ApplicationService.Services
             IMapper mapper,
             IConfiguration configuration,
             Acesso acesso,
+            IBusinessBaseAsync<Notification> notificationRepository,
+            IBusinessBaseAsync<Data.Entities.Profile> profileRepository,
+            IBusinessBaseAsync<UserAdministrator> userAdministratorRepository,
+            IBusinessBaseAsync<Workshop> workshopRepository,
             string testUnit
             )
         {
             _env = env;
-            _notificationRepository = new BusinessBaseAsync<Notification>(env);
-            _profileRepository = new BusinessBaseAsync<Data.Entities.Profile>(env);
+            _notificationRepository = notificationRepository;
+            _profileRepository = profileRepository;
+            _userAdministratorRepository = userAdministratorRepository;
+            _workshopRepository = workshopRepository;
             _mapper = mapper;
             _configuration = configuration;
             _senderNotificationService = new SendService();
@@ -57,6 +65,8 @@ namespace Meca.ApplicationService.Services
             IMapper mapper,
             IBusinessBaseAsync<Notification> notificationRepository,
             IBusinessBaseAsync<Data.Entities.Profile> profileRepository,
+            IBusinessBaseAsync<UserAdministrator> userAdministratorRepository,
+            IBusinessBaseAsync<Workshop> workshopRepository,
             IHttpContextAccessor httpContextAccessor,
             IHostingEnvironment env,
             IConfiguration configuration,
@@ -65,6 +75,8 @@ namespace Meca.ApplicationService.Services
             _mapper = mapper;
             _notificationRepository = notificationRepository;
             _profileRepository = profileRepository;
+            _userAdministratorRepository = userAdministratorRepository;
+            _workshopRepository = workshopRepository;
             _httpContextAccessor = httpContextAccessor;
             _env = env;
             _configuration = configuration;
@@ -294,11 +306,18 @@ namespace Meca.ApplicationService.Services
 
         private async Task<List<T>> GetEntitiesForNotification<T>(List<string> targets) where T : ModelBase
         {
-
             var response = new List<T>();
             try
             {
-                IBusinessBaseAsync<T> _genericRepository = new BusinessBaseAsync<T>(_env);
+                IBusinessBaseAsync<T> repository = null;
+                if (typeof(T) == typeof(UserAdministrator))
+                    repository = _userAdministratorRepository as IBusinessBaseAsync<T>;
+                else if (typeof(T) == typeof(Data.Entities.Profile))
+                    repository = _profileRepository as IBusinessBaseAsync<T>;
+                else if (typeof(T) == typeof(Workshop))
+                    repository = _workshopRepository as IBusinessBaseAsync<T>;
+                else
+                    throw new InvalidOperationException($"Repositório não injetado para o tipo {typeof(T).Name}");
 
                 var builder = Builders<T>.Filter;
                 var conditions = new List<FilterDefinition<T>>();
@@ -309,7 +328,7 @@ namespace Meca.ApplicationService.Services
                 if (targets.Count != 0)
                     conditions.Add(builder.In(x => x._id, targets.Select(ObjectId.Parse).ToList()));
 
-                response = await _genericRepository.GetCollectionAsync().Find(builder.And(conditions)).ToListAsync();
+                response = await repository.GetCollectionAsync().Find(builder.And(conditions)).ToListAsync();
 
                 return response;
 

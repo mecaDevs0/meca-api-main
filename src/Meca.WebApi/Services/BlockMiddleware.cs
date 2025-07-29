@@ -13,6 +13,8 @@ using UtilityFramework.Application.Core3;
 using UtilityFramework.Application.Core3.JwtMiddleware;
 using UtilityFramework.Infra.Core3.MongoDb.Business;
 using UtilityFramework.Infra.Core3.MongoDb.Data.Modelos;
+using Microsoft.Extensions.DependencyInjection;
+
 
 namespace Meca.WebApi.Services
 {
@@ -116,9 +118,13 @@ namespace Meca.WebApi.Services
         {
             try
             {
-                IBusinessBaseAsync<TEntity> _genericRepository = new BusinessBaseAsync<TEntity>(_env);
+                // Obtém o repositório via DI do contexto da requisição
+                var httpContext = _env as IHttpContextAccessor != null ? ((IHttpContextAccessor)_env).HttpContext : null;
+                if (httpContext == null)
+                    throw new InvalidOperationException("HttpContext não disponível para resolver dependências.");
 
-                return await _genericRepository.FindByIdAsync(id);
+                var repository = httpContext.RequestServices.GetRequiredService<IBusinessBaseAsync<TEntity>>();
+                return await repository.FindByIdAsync(id);
             }
             catch (Exception)
             {

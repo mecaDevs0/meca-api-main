@@ -40,9 +40,9 @@ namespace Meca.ApplicationService.Services
         private readonly IMapper _mapper;
 
         /*Construtor utilizado por testes de unidade*/
-        public ProfileService(IHostingEnvironment env, IMapper mapper, IConfiguration configuration, Acesso acesso, string testUnit)
+        public ProfileService(IHostingEnvironment env, IMapper mapper, IConfiguration configuration, Acesso acesso, IBusinessBaseAsync<Data.Entities.Profile> profileRepository, string testUnit)
         {
-            _profileRepository = new BusinessBaseAsync<Data.Entities.Profile>(env);
+            _profileRepository = profileRepository;
             _mapper = mapper;
             _configuration = configuration;
             SetAccessTest(acesso);

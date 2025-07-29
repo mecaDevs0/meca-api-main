@@ -87,9 +87,10 @@ namespace Meca.ApplicationService.Services
             IConfiguration configuration,
             Acesso acesso,
             string testUnit,
+            IBusinessBaseAsync<Scheduling> schedulingRepository,
             IBusinessBaseAsync<Fees> feesRepository)
         {
-            _schedulingRepository = new BusinessBaseAsync<Scheduling>(env);
+            _schedulingRepository = schedulingRepository;
             _mapper = mapper;
             _configuration = configuration;
 

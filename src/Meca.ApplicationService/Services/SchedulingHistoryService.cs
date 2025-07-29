@@ -50,9 +50,10 @@ namespace Meca.ApplicationService.Services
             IMapper mapper,
             IConfiguration configuration,
             Acesso acesso,
+            IBusinessBaseAsync<SchedulingHistory> schedulingHistoryRepository,
             string testUnit)
         {
-            _schedulingHistoryRepository = new BusinessBaseAsync<SchedulingHistory>(env);
+            _schedulingHistoryRepository = schedulingHistoryRepository;
             _mapper = mapper;
             _configuration = configuration;
 

@@ -18,9 +18,9 @@ namespace Meca.ApplicationService.Services
 
 
         /*Construtor utilizado por testes de unidade*/
-        public UserAdministratorService(IHostingEnvironment env, IMapper mapper, IConfiguration configuration, Acesso acesso, string testUnit)
+        public UserAdministratorService(IHostingEnvironment env, IMapper mapper, IConfiguration configuration, Acesso acesso, IBusinessBaseAsync<UserAdministrator> userAdministratorRepository, string testUnit)
         {
-            _userAdministratorRepository = new BusinessBaseAsync<UserAdministrator>(env);
+            _userAdministratorRepository = userAdministratorRepository;
 
             _mapper = mapper;
             _configuration = configuration;

@@ -12,6 +12,8 @@ using UtilityFramework.Services.Iugu.Core3;
 using UtilityFramework.Services.Iugu.Core3.Interface;
 using UtilityFramework.Services.Stripe.Core3;
 using UtilityFramework.Services.Stripe.Core3.Interfaces;
+using UtilityFramework.Infra.Core3.MongoDb.Business;
+using UtilityFramework.Infra.Core3.MongoDb.Business;
 
 namespace Meca.WebApi.Services
 {
@@ -47,6 +49,9 @@ namespace Meca.WebApi.Services
                     services.AddScoped(interfacesTypes[i], classType);
             }
 
+            // Sempre que alguém pedir um IBusinessBaseAsync<>, entregue um BusinessBaseAsync<>
+            services.AddScoped(typeof(IBusinessBaseAsync<>), typeof(BusinessBaseAsync<>));
+
             return services;
         }
 
@@ -57,6 +62,8 @@ namespace Meca.WebApi.Services
         /// <returns></returns>
         public static IServiceCollection AddServicesInjection(this IServiceCollection services)
         {
+            // Sempre que alguém pedir um IBusinessBaseAsync<>, entregue um BusinessBaseAsync<>
+            services.AddScoped(typeof(IBusinessBaseAsync<>), typeof(BusinessBaseAsync<>));
 
             /*IUGU*/
             services.AddSingleton(typeof(IIuguChargeServices), typeof(IuguService));
@@ -71,7 +78,6 @@ namespace Meca.WebApi.Services
             services.AddSingleton(typeof(IStripePaymentMethodService), typeof(StripePaymentMethodService));
             services.AddSingleton(typeof(IStripePaymentIntentService), typeof(StripePaymentIntentService));
             services.AddSingleton(typeof(IStripeTransferService), typeof(StripeTransferService));
-
 
 
             /* NOTIFICAÇÕES & EMAIL*/

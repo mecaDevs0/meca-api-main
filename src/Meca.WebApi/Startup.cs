@@ -26,12 +26,6 @@ namespace Meca.WebApi
     {
         public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: false, reloadOnChange: true)
-                .AddEnvironmentVariables();
-
-            configuration = builder.Build();
             Configuration = (IConfigurationRoot)configuration;
 
             BaseConfig.ApplicationName = ApplicationName =

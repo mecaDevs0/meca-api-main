@@ -58,9 +58,10 @@ namespace Meca.ApplicationService.Services
             IMapper mapper,
             IConfiguration configuration,
             Acesso acesso,
+            IBusinessBaseAsync<WorkshopServices> workshopServicesRepository,
             string testUnit)
         {
-            _workshopServicesRepository = new BusinessBaseAsync<WorkshopServices>(env);
+            _workshopServicesRepository = workshopServicesRepository;
             _mapper = mapper;
             _configuration = configuration;
 

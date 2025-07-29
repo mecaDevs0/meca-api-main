@@ -45,9 +45,10 @@ namespace Meca.ApplicationService.Services
             IMapper mapper,
             IConfiguration configuration,
             Acesso acesso,
+            IBusinessBaseAsync<Faq> faqRepository,
             string testUnit)
         {
-            _faqRepository = new BusinessBaseAsync<Faq>(env);
+            _faqRepository = faqRepository;
             _mapper = mapper;
             _configuration = configuration;
 

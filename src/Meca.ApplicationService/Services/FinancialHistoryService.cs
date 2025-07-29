@@ -100,17 +100,19 @@ namespace Meca.ApplicationService.Services
             IMapper mapper,
             IConfiguration configuration,
             Acesso acesso,
+            IBusinessBaseAsync<FinancialHistory> financialHistoryRepository,
+            IUtilService utilService,
             string testUnit)
         {
 
-            _financialHistoryRepository = new BusinessBaseAsync<FinancialHistory>(env);
+            _financialHistoryRepository = financialHistoryRepository;
 
             var iuguService = new IuguService();
 
             _mapper = mapper;
             _configuration = configuration;
             _env = env;
-            _utilService = new UtilService(iuguService, iuguService, new BusinessBaseAsync<Data.Entities.Transfer>(env), env);
+            _utilService = utilService;
 
             SetAccessTest(acesso);
         }
