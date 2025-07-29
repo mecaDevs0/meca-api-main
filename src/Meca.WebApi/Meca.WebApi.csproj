@@ -35,6 +35,7 @@
         <ProjectReference Include="..\Meca.ApplicationService\Meca.ApplicationService.csproj" />
         <ProjectReference Include="..\Meca.Data\Meca.Data.csproj" />
         <ProjectReference Include="..\Meca.Domain\Meca.Domain.csproj" />
+        <ProjectReference Include="..\..\..\megaleios-utilityframework-5af25bfd220b\src\UtilityFramework.Application.Core3\UtilityFramework.Application.Core3.csproj" />
     </ItemGroup>
 
 <ItemGroup>
