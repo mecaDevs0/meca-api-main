@@ -7,6 +7,7 @@ using Hangfire.Storage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Http;
 using MongoDB.Driver;
 
 
@@ -69,7 +70,10 @@ namespace Meca.ApplicationService.Services.HangFire
             app.UseHangfireServer();
             app.UseHangfireDashboard("/jobs", new DashboardOptions
             {
-                Authorization = [new MyAuthorizationFilter()]
+                Authorization = new []
+                {
+                    new MyAuthorizationFilter(app.ApplicationServices.GetRequiredService<IHttpContextAccessor>())
+                }
             });
             return app;
         }
