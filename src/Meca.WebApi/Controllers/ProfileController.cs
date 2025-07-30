@@ -402,7 +402,27 @@ namespace Meca.WebApi.Controllers
                         .ConfigureAwait(false);
 
                     if (profileEntity == null || profileEntity.Disabled != null)
-                        return BadRequest(Utilities.ReturnErro(DefaultMessages.ProfileNotFound, new { IsRegister = true }));
+                    {
+                        if (string.IsNullOrEmpty(model.Email) == false)
+                        {
+                            profileEntity = await _profileRepository.FindOneByAsync(x => x.Email == model.Email).ConfigureAwait(false);
+
+                            if (profileEntity != null)
+                            {
+                                profileEntity.ProviderId = model.ProviderId;
+                                profileEntity.TypeProvider = model.TypeProvider;
+                                await _profileRepository.UpdateAsync(profileEntity).ConfigureAwait(false);
+                            }
+                            else
+                            {
+                                return BadRequest(Utilities.ReturnErro(DefaultMessages.ProfileNotFound, new { IsRegister = true }));
+                            }
+                        }
+                        else
+                        {
+                            return BadRequest(Utilities.ReturnErro(DefaultMessages.ProfileNotFound, new { IsRegister = true }));
+                        }
+                    }
                 }
                 else
                 {
