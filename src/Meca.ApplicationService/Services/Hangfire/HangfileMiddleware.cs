@@ -23,10 +23,10 @@ namespace Meca.ApplicationService.Services.HangFire
 
             if (useMongoDb)
             {
-                var remoteDatabase = configuration.GetSection("DATABASE:REMOTE").Get<string>();
-                var dataBaseName = configuration.GetSection("DATABASE:NAME").Get<string>();
+                var connectionString = configuration.GetConnectionString("DefaultConnection");
+                var dataBaseName = configuration.GetValue<string>("DatabaseName");
 
-                mongoUrlBuilder = new MongoUrlBuilder($"mongodb://{remoteDatabase}/{dataBaseName}");
+                mongoUrlBuilder = new MongoUrlBuilder(connectionString);
                 mongoClient = new MongoClient(mongoUrlBuilder.ToMongoUrl());
 
                 var migrationOptions = new MongoMigrationOptions
