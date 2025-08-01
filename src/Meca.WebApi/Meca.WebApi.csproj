@@ -13,12 +13,19 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Content Update="appsettings.*.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
         <Folder Include="Content\" />
         <Folder Include="Template\" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection"
+            Version="12.0.1" />
         <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0" />
         <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
@@ -28,21 +35,23 @@
     </ItemGroup>
 
     <ItemGroup>
-        <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="1.0.3" />
+        <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools"
+            Version="1.0.3" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\Meca.ApplicationService\Meca.ApplicationService.csproj" />
         <ProjectReference Include="..\Meca.Data\Meca.Data.csproj" />
         <ProjectReference Include="..\Meca.Domain\Meca.Domain.csproj" />
-        <ProjectReference Include="..\..\..\megaleios-utilityframework-5af25bfd220b\src\UtilityFramework.Application.Core3\UtilityFramework.Application.Core3.csproj" />
+        <ProjectReference
+            Include="..\..\..\megaleios-utilityframework-5af25bfd220b\src\UtilityFramework.Application.Core3\UtilityFramework.Application.Core3.csproj" />
     </ItemGroup>
 
-<ItemGroup>
-  <Content Include="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
-  <Content Include="appsettings.Production.json" CopyToOutputDirectory="PreserveNewest" />
-  <Content Include="Settings/Config.json" CopyToOutputDirectory="PreserveNewest" />
-</ItemGroup>
+    <ItemGroup>
+        <Content Include="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
+        <Content Include="appsettings.Production.json" CopyToOutputDirectory="PreserveNewest" />
+        <Content Include="Settings/Config.json" CopyToOutputDirectory="PreserveNewest" />
+    </ItemGroup>
     <ItemGroup>
         <None Update="Content\**">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -55,8 +64,8 @@
         </None>
     </ItemGroup>
     <ItemGroup>
-  <!-- Força a versão mais nova para resolver o conflito de downgrade -->
-  <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0" />
-  <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.0" /> 
-</ItemGroup>
+        <!-- Força a versão mais nova para resolver o conflito de downgrade -->
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.0" />
+    </ItemGroup>
 </Project>
