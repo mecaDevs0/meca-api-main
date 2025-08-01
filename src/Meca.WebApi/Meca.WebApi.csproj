@@ -66,6 +66,6 @@
     <ItemGroup>
         <!-- Força a versão mais nova para resolver o conflito de downgrade -->
         <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.0" />
     </ItemGroup>
 </Project>

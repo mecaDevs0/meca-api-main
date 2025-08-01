@@ -46,7 +46,7 @@ namespace Meca.WebApi
         {
 
             // DEBUG: Log the connection string to verify it's correct
-var connectionString = Configuration.GetConnectionString("DATABASE:CONNECTION_STRING");
+var connectionString = Configuration.GetConnectionString("DefaultConnection");
 Console.WriteLine($"[MECA_DEBUG] Connection String Sendo Usada: {connectionString}");
 
             services.AddControllers(opt =>
