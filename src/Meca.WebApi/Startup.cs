@@ -44,6 +44,11 @@ namespace Meca.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
+
+            // DEBUG: Log the connection string to verify it's correct
+var connectionString = Configuration.GetConnectionString("DATABASE:CONNECTION_STRING");
+Console.WriteLine($"[MECA_DEBUG] Connection String Sendo Usada: {connectionString}");
+
             services.AddControllers(opt =>
             {
                 opt.Filters.Add(typeof(CheckJson));
