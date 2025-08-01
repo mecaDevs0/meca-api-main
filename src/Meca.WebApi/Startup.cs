@@ -44,23 +44,31 @@ namespace Meca.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-
-            // DEBUG: Log the connection string to verify it's correct
+            try
+            {
+                // DEBUG: Log the connection string to verify it's correct
 var connectionString = Configuration.GetConnectionString("DefaultConnection");
 Console.WriteLine($"[MECA_DEBUG] Connection String Sendo Usada: {connectionString}");
 
-            // DEBUG: Test DATABASE section binding
+                // DEBUG: Test DATABASE section binding
 var databaseSection = Configuration.GetSection("DATABASE");
 Console.WriteLine($"[MECA_DEBUG] DATABASE Section exists: {databaseSection.Exists()}");
 Console.WriteLine($"[MECA_DEBUG] DATABASE:ConnectionString = {databaseSection["ConnectionString"]}");
 Console.WriteLine($"[MECA_DEBUG] DATABASE:Name = {databaseSection["Name"]}");
 
-            services.AddControllers(opt =>
+                services.AddControllers(opt =>
+                {
+                    opt.Filters.Add(typeof(CheckJson));
+                    opt.Filters.Add(typeof(PreventSpanFilter));
+                })
+                .AddNewtonsoftJson();
+            }
+            catch (Exception ex)
             {
-                opt.Filters.Add(typeof(CheckJson));
-                opt.Filters.Add(typeof(PreventSpanFilter));
-            })
-            .AddNewtonsoftJson();
+                Console.WriteLine($"[MECA_DEBUG] ERRO DURANTE ConfigureServices: {ex.Message}");
+                Console.WriteLine($"[MECA_DEBUG] STACK TRACE: {ex.StackTrace}");
+                throw;
+            }
 
             services.AddHealthChecks();
 
