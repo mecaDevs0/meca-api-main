@@ -59,7 +59,22 @@ Console.WriteLine($"[MECA_DEBUG] Connection String Sendo Usada: {connectionStrin
             services.AddHealthChecks();
 
             if (EnableService)
-                services.AddHangfireMongoDb(Configuration);
+            {
+                try
+                {
+                    services.AddHangfireMongoDb(Configuration);
+                    Console.WriteLine("[MECA_DEBUG] Hangfire configurado com sucesso");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[MECA_DEBUG] Erro ao configurar Hangfire: {ex.Message}");
+                    // Continue without Hangfire if it fails
+                }
+            }
+            else
+            {
+                Console.WriteLine("[MECA_DEBUG] Hangfire desabilitado");
+            }
 
             services.AddSignalR();
 
