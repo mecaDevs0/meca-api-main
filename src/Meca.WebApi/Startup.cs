@@ -49,6 +49,12 @@ namespace Meca.WebApi
 var connectionString = Configuration.GetConnectionString("DefaultConnection");
 Console.WriteLine($"[MECA_DEBUG] Connection String Sendo Usada: {connectionString}");
 
+            // DEBUG: Test DATABASE section binding
+var databaseSection = Configuration.GetSection("DATABASE");
+Console.WriteLine($"[MECA_DEBUG] DATABASE Section exists: {databaseSection.Exists()}");
+Console.WriteLine($"[MECA_DEBUG] DATABASE:ConnectionString = {databaseSection["ConnectionString"]}");
+Console.WriteLine($"[MECA_DEBUG] DATABASE:Name = {databaseSection["Name"]}");
+
             services.AddControllers(opt =>
             {
                 opt.Filters.Add(typeof(CheckJson));
