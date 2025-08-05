@@ -20,11 +20,12 @@ namespace Meca.ApplicationService.Services.HangFire
             MongoUrlBuilder mongoUrlBuilder = null;
             MongoClient mongoClient = null;
             MongoStorageOptions storageOptions = null;
+            string dataBaseName = null;
 
             if (useMongoDb)
             {
                 var connectionString = configuration.GetConnectionString("DefaultConnection");
-                var dataBaseName = configuration.GetValue<string>("DatabaseName");
+                dataBaseName = configuration.GetValue<string>("DatabaseName");
 
                 // Add null check and fallback to DATABASE section if needed
                 if (string.IsNullOrEmpty(connectionString))
@@ -84,7 +85,7 @@ namespace Meca.ApplicationService.Services.HangFire
 
                 configuration.UseConsole();
                 if (useMongoDb)
-                    configuration.UseMongoStorage(mongoClient, mongoUrlBuilder.DatabaseName, storageOptions);
+                    configuration.UseMongoStorage(mongoClient, dataBaseName, storageOptions);
                 else
                     configuration.UseMemoryStorage();
             });
