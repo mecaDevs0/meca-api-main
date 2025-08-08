@@ -50,6 +50,9 @@ namespace Meca.ApplicationService.Services
             _ratingRepository = ratingRepository;
             _httpContextAccessor = httpContextAccessor;
             _configuration = configuration;
+            
+            // Inicializar o acesso
+            SetAccess(httpContextAccessor);
         }
 
         /*CONSTRUTOR UTILIZADO POR TESTES DE UNIDADE*/
