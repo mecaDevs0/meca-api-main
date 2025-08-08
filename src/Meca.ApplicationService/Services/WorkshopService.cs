@@ -101,6 +101,9 @@ namespace Meca.ApplicationService.Services
                     _isSandbox = Util.IsSandBox(env);
                 }
                 
+                // Inicializar o acesso
+                SetAccess(httpContextAccessor);
+                
                 Console.WriteLine("[WORKSHOP_DEBUG] Construtor do WorkshopService concluído com sucesso");
             }
             catch (Exception ex)

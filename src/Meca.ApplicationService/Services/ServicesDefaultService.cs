@@ -45,6 +45,9 @@ namespace Meca.ApplicationService.Services
             _workshopRepository = workshopRepository;
             _httpContextAccessor = httpContextAccessor;
             _configuration = configuration;
+            
+            // Inicializar o acesso
+            SetAccess(httpContextAccessor);
         }
 
         public async Task<List<ServicesDefaultViewModel>> GetAll()
