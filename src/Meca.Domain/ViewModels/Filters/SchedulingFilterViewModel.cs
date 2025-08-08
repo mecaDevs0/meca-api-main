@@ -26,7 +26,7 @@ namespace Meca.Domain.ViewModels.Filters
         /// ID do usuário
         /// </summary>
         [Display(Name = "ID do usuário")]
-        public string ProfileId { get; set; }
+        public string? ProfileId { get; set; }
         /// <summary>
         /// Status do agendamento
         /// </summary>

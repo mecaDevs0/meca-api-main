@@ -75,5 +75,10 @@ namespace Meca.Domain.ViewModels.Filters
         /// </summary>
         [Display(Name = "ID da Oficina")]
         public string WorkshopId { get; set; }
+        /// <summary>
+        /// ID do usuário
+        /// </summary>
+        [Display(Name = "ID do usuário")]
+        public string? ProfileId { get; set; }
     }
 }

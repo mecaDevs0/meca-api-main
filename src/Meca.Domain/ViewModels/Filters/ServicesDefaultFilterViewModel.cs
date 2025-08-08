@@ -49,5 +49,10 @@ namespace Meca.Domain.ViewModels.Filters
         /// </summary>
         [Display(Name = "Longitude (usuário)")]
         public string LongUser { get; set; }
+        /// <summary>
+        /// ID do usuário
+        /// </summary>
+        [Display(Name = "ID do usuário")]
+        public string? ProfileId { get; set; }
     }
 }

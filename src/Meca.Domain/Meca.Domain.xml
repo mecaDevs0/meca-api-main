@@ -984,6 +984,11 @@
             Longitude (usuário) 
             </summary>
         </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.ServicesDefaultFilterViewModel.ProfileId">
+            <summary>
+            ID do usuário
+            </summary>
+        </member>
         <member name="P:Meca.Domain.ViewModels.Filters.UserAdministratorFilterViewModel.AccessLevelId">
             <summary>
             ID do perfil de acesso
@@ -1067,6 +1072,11 @@
         <member name="P:Meca.Domain.ViewModels.Filters.WorkshopFilterViewModel.WorkshopId">
             <summary>
             ID da Oficina
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.WorkshopFilterViewModel.ProfileId">
+            <summary>
+            ID do usuário
             </summary>
         </member>
         <member name="P:Meca.Domain.ViewModels.Filters.WorkshopServicesFilterViewModel.Search">

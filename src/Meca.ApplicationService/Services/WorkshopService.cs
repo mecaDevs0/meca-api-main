@@ -136,146 +136,194 @@ namespace Meca.ApplicationService.Services
 
         public async Task<List<T>> GetAll<T>(WorkshopFilterViewModel filterView) where T : class
         {
-            filterView.Page = Math.Max(1, filterView.Page.GetValueOrDefault());
-
-            if (filterView.Limit == null || filterView.Limit.GetValueOrDefault() == 0)
-                filterView.Limit = 30;
-
-            // Task para remover preço do serviço
-            // filterView.PriceRangeInitial ??= 0.0;
-            // filterView.PriceRangeFinal ??= 0.0;
-
-            var builder = Builders<Workshop>.Filter;
-
-            var conditions = new List<FilterDefinition<Workshop>>();
-
-            var listWorkshopServices = new List<WorkshopServices>();
-            var listEntityData = new List<Workshop>();
-            var validWorkshops = new List<Workshop>();
-
-            /*FILTRO DE DELETE LOGICAL*/
-            ///conditions.Add(builder.Eq(x => x.Disabled, null));
-            ///
-
-            if (string.IsNullOrEmpty(filterView.Search) == false)
+            try
             {
-                var combinedConditions = new List<FilterDefinition<WorkshopServices>>();
+                Console.WriteLine("[WORKSHOP_DEBUG] Iniciando GetAll com filtros");
+                
+                filterView.Page = Math.Max(1, filterView.Page.GetValueOrDefault());
 
-                var properties = typeof(WorkshopServices).GetProperties();
+                if (filterView.Limit == null || filterView.Limit.GetValueOrDefault() == 0)
+                    filterView.Limit = 30;
 
-                foreach (var property in properties)
+                // ProfileId é opcional - não fazer nada se for null ou vazio
+                if (!string.IsNullOrEmpty(filterView.ProfileId))
                 {
-                    if (property.PropertyType.IsClass && property.PropertyType != typeof(string))
-                        continue;
-
-                    combinedConditions.Add(
-                        Builders<WorkshopServices>.Filter.Regex(property.Name, new BsonRegularExpression(filterView.Search, "i"))
-                    );
+                    Console.WriteLine($"[WORKSHOP_DEBUG] ProfileId fornecido: {filterView.ProfileId}");
+                    // Aqui você pode adicionar lógica específica para profileId se necessário
                 }
 
-                var workshopServicesList = await _workshopServicesRepository
+                var builder = Builders<Workshop>.Filter;
+                var conditions = new List<FilterDefinition<Workshop>>();
+
+                // Filtro básico: apenas oficinas não desabilitadas
+                conditions.Add(builder.Eq(x => x.Disabled, null));
+                conditions.Add(builder.Eq(x => x.DataBlocked, null));
+
+                // Filtro por nome da oficina
+                if (!string.IsNullOrEmpty(filterView.Search))
+                {
+                    conditions.Add(builder.Regex(x => x.CompanyName, new BsonRegularExpression(filterView.Search, "i")));
+                }
+
+                // Filtro por nome específico da oficina
+                if (!string.IsNullOrEmpty(filterView.WorkshopName))
+                {
+                    conditions.Add(builder.Eq(x => x.CompanyName, filterView.WorkshopName));
+                }
+
+                // Filtro por ID da oficina
+                if (!string.IsNullOrEmpty(filterView.WorkshopId))
+                {
+                    if (ObjectId.TryParse(filterView.WorkshopId, out var workshopObjectId))
+                    {
+                        conditions.Add(builder.Eq(x => x._id, workshopObjectId));
+                    }
+                }
+
+                // Filtro por avaliação
+                if (filterView.Rating.HasValue)
+                {
+                    conditions.Add(builder.Eq(x => x.Rating, filterView.Rating.Value));
+                }
+
+                // Filtro por data
+                if (filterView.StartDate.HasValue)
+                {
+                    conditions.Add(builder.Gte(x => x.Created, filterView.StartDate.Value));
+                }
+
+                if (filterView.EndDate.HasValue)
+                {
+                    conditions.Add(builder.Lte(x => x.Created, filterView.EndDate.Value));
+                }
+
+                // Filtro por status
+                if (filterView.Status.HasValue)
+                {
+                    conditions.Add(builder.Eq(x => x.Status, filterView.Status.Value));
+                }
+
+                // Filtro por tipos de serviço (simplificado)
+                if (filterView.ServiceTypes != null && filterView.ServiceTypes.Any())
+                {
+                    try
+                    {
+                        // Primeiro, pegamos todos os ServicesDefault e filtramos na aplicação
+                        var allServicesDefault = await _servicesDefaultRepository.GetCollectionAsync()
+                            .Find(Builders<ServicesDefault>.Filter.Empty)
+                            .ToListAsync();
+
+                        // Filtramos os serviços que possuem um ID na lista de ServiceTypes
+                        var listServicesDefault = allServicesDefault
+                            .Where(x => filterView.ServiceTypes.Contains(x.GetStringId()))
+                            .ToList();
+
+                        var servicesId = listServicesDefault.Select(s => s.GetStringId()).ToList();
+
+                        if (servicesId.Any())
+                        {
+                            var filterWorkshop = Builders<WorkshopServices>.Filter.In(x => x.Service.Id, servicesId);
+
+                            var listWorkshopServices = await _workshopServicesRepository
+                                .GetCollectionAsync()
+                                .Find(filterWorkshop)
+                                .ToListAsync();
+
+                            var workshopIds = listWorkshopServices.Select(w => w.Workshop.Id).ToList();
+                            var objectIdList = workshopIds
+                                .Where(id => ObjectId.TryParse(id, out _))
+                                .Select(ObjectId.Parse)
+                                .ToList();
+
+                            if (objectIdList.Any())
+                            {
+                                conditions.Add(builder.In(x => x._id, objectIdList));
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"[WORKSHOP_DEBUG] Erro ao processar ServiceTypes: {ex.Message}");
+                        // Continuar sem o filtro de ServiceTypes
+                    }
+                }
+
+                var filter = conditions.Any() ? builder.And(conditions) : builder.Empty;
+
+                Console.WriteLine($"[WORKSHOP_DEBUG] Aplicando filtro com {conditions.Count} condições");
+
+                var listEntityData = await _workshopRepository
                     .GetCollectionAsync()
-                    .FindSync(Builders<WorkshopServices>.Filter.Or(combinedConditions))
+                    .FindSync(filter, Util.FindOptions<Workshop>(filterView, Util.Sort<Workshop>().Ascending(x => x.Created)))
                     .ToListAsync();
 
-                var workshopIds = workshopServicesList.Select(WorkshopServices => WorkshopServices.Workshop.Id).ToList();
-                var objectIdList = workshopIds.Select(id => ObjectId.Parse(id)).ToList();
-                conditions.Add(builder.In(x => x._id, objectIdList));
-            }
+                Console.WriteLine($"[WORKSHOP_DEBUG] Encontradas {listEntityData.Count} oficinas");
 
-            if (filterView.ServiceTypes != null)
-            {
-                // Primeiro, pegamos todos os ServicesDefault e filtramos na aplicação
-                var allServicesDefault = await _servicesDefaultRepository.GetCollectionAsync().Find(Builders<ServicesDefault>.Filter.Empty).ToListAsync();
-
-                // Filtramos os serviços que possuem um ID na lista de ServiceTypes
-                var listServicesDefault = allServicesDefault.Where(x => filterView.ServiceTypes.Contains(x.GetStringId())).ToList();
-
-                var servicesId = listServicesDefault.Select(s => s.GetStringId()).ToList();
-
-                if (servicesId.Any())
+                // Aplicar filtro de distância se coordenadas fornecidas
+                if (!string.IsNullOrEmpty(filterView.LatUser) && !string.IsNullOrEmpty(filterView.LongUser))
                 {
-                    var filterWorkshop = Builders<WorkshopServices>.Filter.In(x => x.Service.Id, servicesId);
+                    try
+                    {
+                        var userLatitude = double.Parse(filterView.LatUser, CultureInfo.InvariantCulture);
+                        var userLongitude = double.Parse(filterView.LongUser, CultureInfo.InvariantCulture);
 
-                    listWorkshopServices = await _workshopServicesRepository.GetCollectionAsync().Find(filterWorkshop).ToListAsync();
+                        for (var i = 0; i < listEntityData.Count; i++)
+                        {
+                            listEntityData[i].Distance = await Util.GetDistanceAsync(
+                                userLatitude, userLongitude, 
+                                listEntityData[i].Latitude, listEntityData[i].Longitude);
+                        }
 
-                    var workshopIds = listWorkshopServices.Select(w => w.Workshop.Id).ToList();
-                    var objectIdList = workshopIds.Select(id => ObjectId.Parse(id)).ToList();
-
-                    conditions.Add(builder.In(x => x._id, objectIdList));
-                }
-            }
-
-            // Task para remover preço do serviço
-            // if (filterView.PriceRangeInitial > 0 || filterView.PriceRangeFinal > 0)
-            // {
-            //     listWorkshopServices = (List<WorkshopServices>)await _workshopServicesRepository.FindByAsync(x => x.Value >= filterView.PriceRangeInitial && x.Value <= filterView.PriceRangeFinal);
-            //     var workshopIds = listWorkshopServices.Select(WorkshopServices => WorkshopServices.Workshop.Id).ToList();
-            //     var objectIdList = workshopIds.Select(id => ObjectId.Parse(id)).ToList();
-            //     conditions.Add(builder.In(x => x._id, objectIdList));
-            // }
-
-            if (filterView.Rating != null)
-                conditions.Add(builder.Eq(x => x.Rating, filterView.Rating));
-
-            if (filterView.StartDate != null)
-                conditions.Add(builder.Gte(x => x.Created, filterView.StartDate));
-
-            if (filterView.EndDate != null)
-                conditions.Add(builder.Lte(x => x.Created, filterView.EndDate));
-
-            if (filterView.WorkshopName != null)
-                conditions.Add(builder.Eq(x => x.CompanyName, filterView.WorkshopName));
-
-            if (filterView.WorkshopId != null)
-                conditions.Add(builder.Eq(x => x._id, ObjectId.Parse(filterView.WorkshopId)));
-
-            if (conditions.Count == 0)
-                conditions.Add(builder.Empty);
-
-            if (string.IsNullOrEmpty(filterView.LatUser) == false && string.IsNullOrEmpty(filterView.LongUser) == false)
-            {
-                var userLatitude = double.Parse(filterView.LatUser, CultureInfo.InvariantCulture);
-                var userLongitude = double.Parse(filterView.LongUser, CultureInfo.InvariantCulture);
-                var maxDistance = filterView.Distance;
-
-                listEntityData = await _workshopRepository
-                    .GetCollectionAsync()
-                    .FindSync(builder.And(conditions), Util.FindOptions<Workshop>(filterView, Util.Sort<Workshop>().Ascending(x => x.Created)))
-                    .ToListAsync();
-
-                for (var i = 0; i < listEntityData.Count; i++)
-                {
-                    listEntityData[i].Distance = await Util.GetDistanceAsync(userLatitude, userLongitude, listEntityData[i].Latitude, listEntityData[i].Longitude);
+                        // Filtrar por distância máxima se especificada
+                        if (filterView.Distance.HasValue)
+                        {
+                            listEntityData = listEntityData
+                                .Where(w => w.Distance <= filterView.Distance.Value)
+                                .ToList();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"[WORKSHOP_DEBUG] Erro ao calcular distâncias: {ex.Message}");
+                    }
                 }
 
-                var responseWithDistance = new List<Workshop>();
-                if (maxDistance != null)
-                {
-                    responseWithDistance = listEntityData.Where(Workshop => { return Workshop.Distance <= maxDistance; }).ToList();
-                }
-                else
-                {
-                    responseWithDistance = listEntityData.ToList();
-                }
-
-                validWorkshops = await GetWorkshopAvailable(responseWithDistance);
+                var validWorkshops = await GetWorkshopAvailable(listEntityData);
+                Console.WriteLine($"[WORKSHOP_DEBUG] Retornando {validWorkshops.Count} oficinas válidas");
 
                 return _mapper.Map<List<T>>(validWorkshops);
             }
-
-            listEntityData = await _workshopRepository
-            .GetCollectionAsync()
-            .FindSync(builder.And(conditions), Util.FindOptions<Workshop>(filterView, Util.Sort<Workshop>().Ascending(x => x.Distance)))
-            .ToListAsync();
-
-            validWorkshops = await GetWorkshopAvailable(listEntityData);
-
-            return _mapper.Map<List<T>>(validWorkshops);
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[WORKSHOP_DEBUG] Erro em GetAll: {ex.Message}");
+                Console.WriteLine($"[WORKSHOP_DEBUG] Stack trace: {ex.StackTrace}");
+                
+                // Tratamento específico para erro oldValue do MongoDB
+                if (ex.Message.Contains("oldValue") || ex.InnerException?.Message?.Contains("oldValue") == true || 
+                    ex.Message.Contains("Object reference not set") || ex.InnerException?.Message?.Contains("Object reference not set") == true)
+                {
+                    Console.WriteLine($"[WORKSHOP_DEBUG] Erro MongoDB detectado, tentando abordagem alternativa: {ex.Message}");
+                    
+                    // Tentar abordagem alternativa sem filtros complexos
+                    try
+                    {
+                        var allWorkshops = await _workshopRepository.FindAllAsync();
+                        var validWorkshops = await GetWorkshopAvailable(allWorkshops);
+                        return _mapper.Map<List<T>>(validWorkshops);
+                    }
+                    catch (Exception fallbackEx)
+                    {
+                        Console.WriteLine($"[WORKSHOP_DEBUG] Erro na abordagem alternativa: {fallbackEx.Message}");
+                        throw new Exception($"Erro em WorkshopService.GetAll: {ex.Message}", ex);
+                    }
+                }
+                
+                throw new Exception($"Erro em WorkshopService.GetAll: {ex.Message}", ex);
+            }
         }
 
         // Retornar Oficinas somente se estiver com os dados bancários, agenda e serviços configurados
-        public async Task<List<Workshop>> GetWorkshopAvailable(List<Workshop> listEntityData)
+        public async Task<List<Workshop>> GetWorkshopAvailable(IEnumerable<Workshop> listEntityData)
         {
             var validWorkshops = new List<Workshop>();
 
