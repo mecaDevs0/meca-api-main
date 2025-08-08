@@ -56,6 +56,12 @@ Console.WriteLine($"[MECA_DEBUG] DATABASE Section exists: {databaseSection.Exist
 Console.WriteLine($"[MECA_DEBUG] DATABASE:ConnectionString = {databaseSection["ConnectionString"]}");
 Console.WriteLine($"[MECA_DEBUG] DATABASE:Name = {databaseSection["Name"]}");
 
+                // DEBUG: Test MongoDB section
+var mongoSection = Configuration.GetSection("MongoDb");
+Console.WriteLine($"[MECA_DEBUG] MongoDb Section exists: {mongoSection.Exists()}");
+Console.WriteLine($"[MECA_DEBUG] MongoDb:ConnectionString = {mongoSection["ConnectionString"]}");
+Console.WriteLine($"[MECA_DEBUG] MongoDb:DatabaseName = {mongoSection["DatabaseName"]}");
+
                 services.AddControllers(opt =>
                 {
                     opt.Filters.Add(typeof(CheckJson));

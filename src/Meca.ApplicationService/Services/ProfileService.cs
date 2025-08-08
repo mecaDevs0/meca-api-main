@@ -315,6 +315,13 @@ namespace Meca.ApplicationService.Services
         {
             try
             {
+                // Debug: Verificar se model não é null
+                if (model == null)
+                {
+                    CreateNotification("Model is null");
+                    return null;
+                }
+
                 if (string.IsNullOrEmpty(model.RefreshToken) == false)
                     return TokenProviderMiddleware.RefreshToken(model.RefreshToken);
 
@@ -332,6 +339,13 @@ namespace Meca.ApplicationService.Services
                     ignoreFields.Add(nameof(model.Password));
                 }
 
+                // Debug: Verificar se _profileRepository não é null
+                if (_profileRepository == null)
+                {
+                    CreateNotification("_profileRepository is null");
+                    return null;
+                }
+
                 if (ModelIsValid(model, ignoredFields: [.. ignoreFields]) == false)
                     return null;
 
@@ -345,6 +359,19 @@ namespace Meca.ApplicationService.Services
                 }
                 else
                 {
+                    // Debug: Verificar se Email e Password não são null
+                    if (string.IsNullOrEmpty(model.Email))
+                    {
+                        CreateNotification("Email is null or empty");
+                        return null;
+                    }
+
+                    if (string.IsNullOrEmpty(model.Password))
+                    {
+                        CreateNotification("Password is null or empty");
+                        return null;
+                    }
+
                     profileEntity = await _profileRepository
                       .FindOneByAsync(x => x.Email == model.Email && x.Password == Utilities.GerarHashMd5(model.Password)).ConfigureAwait(false);
                 }
@@ -369,8 +396,10 @@ namespace Meca.ApplicationService.Services
 
                 return TokenProviderMiddleware.GenerateToken(profileEntity._id.ToString(), false, claims);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                // Debug: Log da exceção
+                CreateNotification($"Exception in Token: {ex.Message}");
                 throw;
             }
         }

@@ -39,7 +39,7 @@ namespace Meca.ApplicationService.Services
         public bool ModelIsValid(bool onlyValidFields = false, string[] customValidFields = null, string[] ignoredFields = null, string customStart = null)
         {
 
-            _jsonBodyFields = _contextAcessor.GetFieldsFromBody();
+            _jsonBodyFields = _contextAcessor?.GetFieldsFromBody() ?? new string[0];
             _validFields = onlyValidFields ? customValidFields ?? _jsonBodyFields : null;
 
             if (ignoredFields != null && ignoredFields.Length > 0)
@@ -64,7 +64,7 @@ namespace Meca.ApplicationService.Services
         public bool ModelIsValid(List<System.ComponentModel.DataAnnotations.ValidationResult> validationResults, bool onlyValidFields = false, string[] customValidFields = null, string[] ignoredFields = null, string startMessage = null)
         {
 
-            _jsonBodyFields = _contextAcessor.GetFieldsFromBody();
+            _jsonBodyFields = _contextAcessor?.GetFieldsFromBody() ?? new string[0];
             _validFields = onlyValidFields ? customValidFields ?? _jsonBodyFields : null;
 
             if (ignoredFields != null && ignoredFields.Length > 0)
@@ -180,6 +180,13 @@ namespace Meca.ApplicationService.Services
         public Acesso SetAccess(IHttpContextAccessor contextAcessor)
         {
             _contextAcessor = contextAcessor;
+
+            if (_contextAcessor?.HttpContext == null)
+            {
+                Console.WriteLine("[APPLICATION_BASE_DEBUG] WARNING: HttpContext é null");
+                _access = new Acesso(null, 0);
+                return _access;
+            }
 
             var context = _contextAcessor.HttpContext;
 

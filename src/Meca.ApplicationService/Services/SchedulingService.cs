@@ -106,10 +106,15 @@ namespace Meca.ApplicationService.Services
 
         public async Task<List<T>> GetAll<T>(SchedulingFilterViewModel filterView) where T : class
         {
-
             filterView.SetDefault();
             var builder = Builders<Scheduling>.Filter;
             var conditions = new List<FilterDefinition<Scheduling>>();
+
+            // Lógica para tratar quando profileId não é fornecido
+            if ((int)_access.TypeToken == (int)TypeProfile.Profile && string.IsNullOrEmpty(filterView.ProfileId) == true)
+            {
+                conditions.Add(builder.Eq(x => x.Profile.Id, _access.UserId));
+            }
 
             if (filterView.DataBlocked != null)
             {
