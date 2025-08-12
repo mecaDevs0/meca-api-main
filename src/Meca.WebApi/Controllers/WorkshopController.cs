@@ -67,6 +67,7 @@ namespace Meca.WebApi.Controllers
         /// <response code="401">Unauthorize Error</response>
         /// <response code="500">Exception Error</response>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet]
         [Produces("application/json")]
         [ProducesResponseType(typeof(ReturnGenericViewModel<List<WorkshopViewModel>>), 200)]
@@ -801,6 +802,21 @@ namespace Meca.WebApi.Controllers
             {
                 return BadRequest(ex.ReturnErro());
             }
+        }
+
+        /// <summary>
+        /// TESTE - ENDPOINT PÚBLICO PARA VERIFICAR SE A API ESTÁ FUNCIONANDO
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet("test")]
+        [Produces("application/json")]
+        public IActionResult Test()
+        {
+            return Ok(new { 
+                message = "API funcionando corretamente", 
+                timestamp = DateTime.UtcNow,
+                workshops = "Endpoint de teste criado com sucesso"
+            });
         }
     }
 }

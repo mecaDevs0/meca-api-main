@@ -150,6 +150,7 @@ Console.WriteLine($"[MECA_DEBUG] MongoDb:DatabaseName = {mongoSection["DatabaseN
             app.UseCors("AllowAllOrigin");
 
             app.UseJwtTokenApiAuth((IConfigurationRoot)Configuration);
+            app.UseAuthentication();
             app.UseAuthorization();
 
             if (EnableService)

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -72,9 +72,9 @@ namespace Meca.ApplicationService.Services
         {
             try
             {
-                Console.WriteLine("[WORKSHOP_DEBUG] Iniciando construtor do WorkshopService - versão simplificada");
+                Console.WriteLine("[WORKSHOP_DEBUG] Iniciando construtor do WorkshopService - versÃ£o simplificada");
                 
-                // Verificar se as dependências obrigatórias não são null
+                // Verificar se as dependÃªncias obrigatÃ³rias nÃ£o sÃ£o null
                 _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
                 _workshopRepository = workshopRepository ?? throw new ArgumentNullException(nameof(workshopRepository));
                 _workshopServicesRepository = workshopServicesRepository ?? throw new ArgumentNullException(nameof(workshopServicesRepository));
@@ -87,14 +87,14 @@ namespace Meca.ApplicationService.Services
                 _iuguMarketPlaceServices = iuguMarketPlaceServices ?? throw new ArgumentNullException(nameof(iuguMarketPlaceServices));
                 _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
                 
-                // Dependências opcionais
+                // DependÃªncias opcionais
                 _stripeMarketPlaceService = stripeMarketPlaceService;  // Pode ser null
                 
-                // Verificar se env não é null
+                // Verificar se env nÃ£o Ã© null
                 if (env == null)
                 {
-                    Console.WriteLine("[WORKSHOP_DEBUG] WARNING: IHostingEnvironment é null");
-                    _isSandbox = false; // Valor padrão
+                    Console.WriteLine("[WORKSHOP_DEBUG] WARNING: IHostingEnvironment Ã© null");
+                    _isSandbox = false; // Valor padrÃ£o
                 }
                 else
                 {
@@ -104,7 +104,7 @@ namespace Meca.ApplicationService.Services
                 // Inicializar o acesso
                 SetAccess(httpContextAccessor);
                 
-                Console.WriteLine("[WORKSHOP_DEBUG] Construtor do WorkshopService concluído com sucesso");
+                Console.WriteLine("[WORKSHOP_DEBUG] Construtor do WorkshopService concluÃ­do com sucesso");
             }
             catch (Exception ex)
             {
@@ -118,17 +118,58 @@ namespace Meca.ApplicationService.Services
         {
             try
             {
-                Console.WriteLine("[WORKSHOP_DEBUG] Iniciando GetAll - versão simplificada");
-                
-                // Por enquanto, retornar lista vazia para evitar problemas
-                return new List<WorkshopViewModel>();
+                Console.WriteLine("[WORKSHOP_DEBUG] Iniciando GetAll (sem filtro)");
+
+                // Verificar se o repositÃ³rio estÃ¡ inicializado
+                if (_workshopRepository == null)
+                {
+                    Console.WriteLine("[WORKSHOP_DEBUG] ERRO: _workshopRepository Ã© null");
+                    return new List<WorkshopViewModel>();
+                }
+
+                var builder = Builders<Workshop>.Filter;
+                var conditions = new List<FilterDefinition<Workshop>>
+                {
+                    builder.Eq(x => x.Disabled, null),
+                    builder.Eq(x => x.DataBlocked, null)
+                };
+
+                Console.WriteLine("[WORKSHOP_DEBUG] Aplicando filtros bÃ¡sicos");
+
+                try
+                {
+                    var listEntityData = await _workshopRepository
+                        .GetCollectionAsync()
+                        .Find(builder.And(conditions), Util.FindOptions<Workshop>(null, Util.Sort<Workshop>().Ascending(x => x.Created)))
+                        .ToListAsync();
+
+                    Console.WriteLine($"[WORKSHOP_DEBUG] Encontradas {listEntityData.Count} oficinas no banco");
+
+                    var validWorkshops = await GetWorkshopAvailable(listEntityData);
+                    Console.WriteLine($"[WORKSHOP_DEBUG] GetAll (sem filtro) retornando {validWorkshops.Count} oficinas vÃ¡lidas");
+
+                    // Validar workshops antes do mapeamento
+                    var validWorkshopsForMapping = validWorkshops.Where(w => w != null && w._id != null).ToList();
+                    Console.WriteLine($"[WORKSHOP_DEBUG] Workshops validos para mapeamento: {validWorkshopsForMapping.Count}");
+                    
+                    return _mapper.Map<List<WorkshopViewModel>>(validWorkshopsForMapping);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[WORKSHOP_DEBUG] Erro ao buscar oficinas: {ex.Message}");
+                    Console.WriteLine($"[WORKSHOP_DEBUG] Stack trace: {ex.StackTrace}");
+                    
+                    // Retornar lista vazia em caso de erro
+                    return new List<WorkshopViewModel>();
+                }
             }
             catch (Exception ex)
             {
-                // Log detalhado do erro
-                Console.WriteLine($"[WORKSHOP_DEBUG] Erro em GetAll: {ex.Message}");
+                Console.WriteLine($"[WORKSHOP_DEBUG] Erro geral em GetAll: {ex.Message}");
                 Console.WriteLine($"[WORKSHOP_DEBUG] Stack trace: {ex.StackTrace}");
-                throw new Exception($"Erro em WorkshopService.GetAll: {ex.Message}", ex);
+                
+                // Retornar lista vazia em caso de erro
+                return new List<WorkshopViewModel>();
             }
         }
 
@@ -145,17 +186,17 @@ namespace Meca.ApplicationService.Services
                 if (filterView.Limit == null || filterView.Limit.GetValueOrDefault() == 0)
                     filterView.Limit = 30;
 
-                // ProfileId é opcional - não fazer nada se for null ou vazio
+                // ProfileId Ã© opcional - nÃ£o fazer nada se for null ou vazio
                 if (!string.IsNullOrEmpty(filterView.ProfileId))
                 {
                     Console.WriteLine($"[WORKSHOP_DEBUG] ProfileId fornecido: {filterView.ProfileId}");
-                    // Aqui você pode adicionar lógica específica para profileId se necessário
+                    // Aqui vocÃª pode adicionar lÃ³gica especÃ­fica para profileId se necessÃ¡rio
                 }
 
                 var builder = Builders<Workshop>.Filter;
                 var conditions = new List<FilterDefinition<Workshop>>();
 
-                // Filtro básico: apenas oficinas não desabilitadas
+                // Filtro bÃ¡sico: apenas oficinas nÃ£o desabilitadas
                 conditions.Add(builder.Eq(x => x.Disabled, null));
                 conditions.Add(builder.Eq(x => x.DataBlocked, null));
 
@@ -165,7 +206,7 @@ namespace Meca.ApplicationService.Services
                     conditions.Add(builder.Regex(x => x.CompanyName, new BsonRegularExpression(filterView.Search, "i")));
                 }
 
-                // Filtro por nome específico da oficina
+                // Filtro por nome especÃ­fico da oficina
                 if (!string.IsNullOrEmpty(filterView.WorkshopName))
                 {
                     conditions.Add(builder.Eq(x => x.CompanyName, filterView.WorkshopName));
@@ -180,7 +221,7 @@ namespace Meca.ApplicationService.Services
                     }
                 }
 
-                // Filtro por avaliação
+                // Filtro por avaliaÃ§Ã£o
                 if (filterView.Rating.HasValue)
                 {
                     conditions.Add(builder.Eq(x => x.Rating, filterView.Rating.Value));
@@ -203,17 +244,17 @@ namespace Meca.ApplicationService.Services
                     conditions.Add(builder.Eq(x => x.Status, filterView.Status.Value));
                 }
 
-                // Filtro por tipos de serviço (simplificado)
+                // Filtro por tipos de serviÃ§o (simplificado)
                 if (filterView.ServiceTypes != null && filterView.ServiceTypes.Any())
                 {
                     try
                     {
-                        // Primeiro, pegamos todos os ServicesDefault e filtramos na aplicação
+                        // Primeiro, pegamos todos os ServicesDefault e filtramos na aplicaÃ§Ã£o
                         var allServicesDefault = await _servicesDefaultRepository.GetCollectionAsync()
                             .Find(Builders<ServicesDefault>.Filter.Empty)
                             .ToListAsync();
 
-                        // Filtramos os serviços que possuem um ID na lista de ServiceTypes
+                        // Filtramos os serviÃ§os que possuem um ID na lista de ServiceTypes
                         var listServicesDefault = allServicesDefault
                             .Where(x => filterView.ServiceTypes.Contains(x.GetStringId()))
                             .ToList();
@@ -250,16 +291,16 @@ namespace Meca.ApplicationService.Services
 
                 var filter = conditions.Any() ? builder.And(conditions) : builder.Empty;
 
-                Console.WriteLine($"[WORKSHOP_DEBUG] Aplicando filtro com {conditions.Count} condições");
+                Console.WriteLine($"[WORKSHOP_DEBUG] Aplicando filtro com {conditions.Count} condiÃ§Ãµes");
 
                 var listEntityData = await _workshopRepository
                     .GetCollectionAsync()
-                    .FindSync(filter, Util.FindOptions<Workshop>(filterView, Util.Sort<Workshop>().Ascending(x => x.Created)))
+                    .Find(filter, Util.FindOptions<Workshop>(filterView, Util.Sort<Workshop>().Ascending(x => x.Created)))
                     .ToListAsync();
 
                 Console.WriteLine($"[WORKSHOP_DEBUG] Encontradas {listEntityData.Count} oficinas");
 
-                // Aplicar filtro de distância se coordenadas fornecidas
+                // Aplicar filtro de distÃ¢ncia se coordenadas fornecidas
                 if (!string.IsNullOrEmpty(filterView.LatUser) && !string.IsNullOrEmpty(filterView.LongUser))
                 {
                     try
@@ -274,7 +315,7 @@ namespace Meca.ApplicationService.Services
                                 listEntityData[i].Latitude, listEntityData[i].Longitude);
                         }
 
-                        // Filtrar por distância máxima se especificada
+                        // Filtrar por distÃ¢ncia mÃ¡xima se especificada
                         if (filterView.Distance.HasValue)
                         {
                             listEntityData = listEntityData
@@ -284,12 +325,12 @@ namespace Meca.ApplicationService.Services
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"[WORKSHOP_DEBUG] Erro ao calcular distâncias: {ex.Message}");
+                        Console.WriteLine($"[WORKSHOP_DEBUG] Erro ao calcular distÃ¢ncias: {ex.Message}");
                     }
                 }
 
                 var validWorkshops = await GetWorkshopAvailable(listEntityData);
-                Console.WriteLine($"[WORKSHOP_DEBUG] Retornando {validWorkshops.Count} oficinas válidas");
+                Console.WriteLine($"[WORKSHOP_DEBUG] Retornando {validWorkshops.Count} oficinas vÃ¡lidas");
 
                 return _mapper.Map<List<T>>(validWorkshops);
             }
@@ -298,7 +339,7 @@ namespace Meca.ApplicationService.Services
                 Console.WriteLine($"[WORKSHOP_DEBUG] Erro em GetAll: {ex.Message}");
                 Console.WriteLine($"[WORKSHOP_DEBUG] Stack trace: {ex.StackTrace}");
                 
-                // Tratamento específico para erro oldValue do MongoDB
+                // Tratamento especÃ­fico para erro oldValue do MongoDB
                 if (ex.Message.Contains("oldValue") || ex.InnerException?.Message?.Contains("oldValue") == true || 
                     ex.Message.Contains("Object reference not set") || ex.InnerException?.Message?.Contains("Object reference not set") == true)
                 {
@@ -322,7 +363,7 @@ namespace Meca.ApplicationService.Services
             }
         }
 
-        // Retornar Oficinas somente se estiver com os dados bancários, agenda e serviços configurados
+        // Retornar Oficinas somente se estiver com os dados bancÃ¡rios, agenda e serviÃ§os configurados
         public async Task<List<Workshop>> GetWorkshopAvailable(IEnumerable<Workshop> listEntityData)
         {
             var validWorkshops = new List<Workshop>();
@@ -330,7 +371,7 @@ namespace Meca.ApplicationService.Services
             foreach (var workshop in listEntityData)
             {
                 // TEMPORARIAMENTE: Permitir todas as oficinas para debug
-                // Comentar a validação rigorosa até resolver o problema de dados
+                // Comentar a validaÃ§Ã£o rigorosa atÃ© resolver o problema de dados
                 
                 // var dataBankValid = workshop.DataBankStatus == DataBankStatus.Valid;
                 // var workshopAgendaValid = await _workshopAgendaRepository.CheckByAsync(x => x.Workshop.Id == workshop.GetStringId());
@@ -341,7 +382,7 @@ namespace Meca.ApplicationService.Services
                 //     validWorkshops.Add(workshop);
                 // }
                 
-                // Por enquanto, aceitar todas as oficinas que não estão desabilitadas
+                // Por enquanto, aceitar todas as oficinas que nÃ£o estÃ£o desabilitadas
                 if (workshop.Disabled == null && workshop.DataBlocked == null)
                 {
                     validWorkshops.Add(workshop);
@@ -591,7 +632,7 @@ namespace Meca.ApplicationService.Services
                 var sendPushViewModel = new SendPushViewModel()
                 {
                     Title = "Nova Oficina cadastrada",
-                    Content = $"Nova Oficina cadastrada, Nome da Oficina: {workshopEntity.CompanyName}, CNPJ: {workshopEntity.Cnpj}, Responsável: {workshopEntity.FullName}.",
+                    Content = $"Nova Oficina cadastrada, Nome da Oficina: {workshopEntity.CompanyName}, CNPJ: {workshopEntity.Cnpj}, ResponsÃ¡vel: {workshopEntity.FullName}.",
                     TypeProfile = TypeProfile.UserAdministrator,
                     TargetId = [],
 
@@ -864,7 +905,7 @@ namespace Meca.ApplicationService.Services
 
                 var workshopEntity = await _workshopRepository.FindByIdAsync(userId).ConfigureAwait(false);
 
-                // Alteração de status
+                // AlteraÃ§Ã£o de status
                 if (_access.IsAdmin == false)
                 {
                     model.Status = workshopEntity.Status;
@@ -1197,6 +1238,38 @@ namespace Meca.ApplicationService.Services
         public async Task DeleteStripe(string id)
         {
             await _stripeMarketPlaceService.DeleteAsync(id);
+        }
+
+        public async Task<DtResult<WorkshopViewModel>> LoadDataGrid(DtParameters model, WorkshopFilterViewModel filterView)
+        {
+            try
+            {
+                Console.WriteLine("[WORKSHOP_DEBUG] Iniciando LoadDataGrid");
+
+                var allWorkshops = await GetAll<WorkshopViewModel>(filterView);
+
+                var result = new DtResult<WorkshopViewModel>
+                {
+                    Data = allWorkshops,
+                    Draw = model.Draw,
+                    RecordsTotal = allWorkshops.Count,
+                    RecordsFiltered = allWorkshops.Count
+                };
+
+                Console.WriteLine($"[WORKSHOP_DEBUG] LoadDataGrid retornando {allWorkshops.Count} workshops");
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[WORKSHOP_DEBUG] Erro em LoadDataGrid: {ex.Message}");
+                return new DtResult<WorkshopViewModel>
+                {
+                    Data = new List<WorkshopViewModel>(),
+                    Draw = model.Draw,
+                    RecordsTotal = 0,
+                    RecordsFiltered = 0
+                };
+            }
         }
     }
 }
