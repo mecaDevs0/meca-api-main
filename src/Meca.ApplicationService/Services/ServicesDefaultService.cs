@@ -112,7 +112,7 @@ namespace Meca.ApplicationService.Services
 
                 var filter = conditions.Any() ? builder.And(conditions) : builder.Empty;
 
-                var listServices = await _servicesDefaultRepository.GetCollectionAsync().FindSync(filter).ToListAsync();
+                var listServices = await _servicesDefaultRepository.GetCollectionAsync().Find(filter).ToListAsync();
 
                 return _mapper.Map<List<T>>(listServices);
             }

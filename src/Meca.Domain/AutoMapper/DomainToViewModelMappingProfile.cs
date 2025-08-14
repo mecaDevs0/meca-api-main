@@ -72,7 +72,7 @@ namespace Meca.Domain.AutoMapper
             CreateMap<Fees, FeesViewModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src._id.ToString()));
             CreateMap<Workshop, WorkshopViewModel>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src._id.ToString()));
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src._id != null ? src._id.ToString() : null));
             CreateMap<Object, TokenResponseViewModel>();
             CreateMap<WorkshopAux, WorkshopAuxViewModel>().ReverseMap();
             CreateMap<WorkshopAux, WorkshopViewModel>().ReverseMap();

@@ -300,7 +300,7 @@ namespace Meca.ApplicationService.Services
 
                 Console.WriteLine($"[WORKSHOP_DEBUG] Encontradas {listEntityData.Count} oficinas");
 
-                // Aplicar filtro de distÃ¢ncia se coordenadas fornecidas
+                // Aplicar filtro de distância se coordenadas fornecidas
                 if (!string.IsNullOrEmpty(filterView.LatUser) && !string.IsNullOrEmpty(filterView.LongUser))
                 {
                     try
@@ -308,14 +308,24 @@ namespace Meca.ApplicationService.Services
                         var userLatitude = double.Parse(filterView.LatUser, CultureInfo.InvariantCulture);
                         var userLongitude = double.Parse(filterView.LongUser, CultureInfo.InvariantCulture);
 
+                        // Usar cálculo de distância simples em vez da API do Google
                         for (var i = 0; i < listEntityData.Count; i++)
                         {
-                            listEntityData[i].Distance = await Util.GetDistanceAsync(
-                                userLatitude, userLongitude, 
-                                listEntityData[i].Latitude, listEntityData[i].Longitude);
+                            var workshop = listEntityData[i];
+                            if (workshop.Latitude.HasValue && workshop.Longitude.HasValue)
+                            {
+                                // Cálculo de distância usando fórmula de Haversine (simplificado)
+                                listEntityData[i].Distance = CalculateDistance(
+                                    userLatitude, userLongitude, 
+                                    workshop.Latitude.Value, workshop.Longitude.Value);
+                            }
+                            else
+                            {
+                                listEntityData[i].Distance = 0; // Distância zero se não tiver coordenadas
+                            }
                         }
 
-                        // Filtrar por distÃ¢ncia mÃ¡xima se especificada
+                        // Filtrar por distância máxima se especificada
                         if (filterView.Distance.HasValue)
                         {
                             listEntityData = listEntityData
@@ -325,7 +335,8 @@ namespace Meca.ApplicationService.Services
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"[WORKSHOP_DEBUG] Erro ao calcular distÃ¢ncias: {ex.Message}");
+                        Console.WriteLine($"[WORKSHOP_DEBUG] Erro ao calcular distâncias: {ex.Message}");
+                        // Continuar sem cálculo de distância
                     }
                 }
 
@@ -414,7 +425,14 @@ namespace Meca.ApplicationService.Services
                     var userLatitude = double.Parse(latUser, CultureInfo.InvariantCulture);
                     var userLongitude = double.Parse(longUser, CultureInfo.InvariantCulture);
 
-                    workshopEntity.Distance = await Util.GetDistanceAsync(userLatitude, userLongitude, workshopEntity.Latitude, workshopEntity.Longitude);
+                    if (workshopEntity.Latitude.HasValue && workshopEntity.Longitude.HasValue)
+                    {
+                        workshopEntity.Distance = CalculateDistance(userLatitude, userLongitude, workshopEntity.Latitude.Value, workshopEntity.Longitude.Value);
+                    }
+                    else
+                    {
+                        workshopEntity.Distance = 0;
+                    }
                 }
 
                 return _mapper.Map<WorkshopViewModel>(workshopEntity);
@@ -1270,6 +1288,37 @@ namespace Meca.ApplicationService.Services
                     RecordsFiltered = 0
                 };
             }
+        }
+
+        /// <summary>
+        /// Calcula a distância entre dois pontos usando a fórmula de Haversine
+        /// </summary>
+        private double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
+        {
+            try
+            {
+                const double R = 6371; // Raio da Terra em quilômetros
+                var dLat = ToRadians(lat2 - lat1);
+                var dLon = ToRadians(lon2 - lon1);
+                var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+                        Math.Cos(ToRadians(lat1)) * Math.Cos(ToRadians(lat2)) *
+                        Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+                var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+                return R * c;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[WORKSHOP_DEBUG] Erro ao calcular distância: {ex.Message}");
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// Converte graus para radianos
+        /// </summary>
+        private double ToRadians(double degrees)
+        {
+            return degrees * Math.PI / 180;
         }
     }
 }

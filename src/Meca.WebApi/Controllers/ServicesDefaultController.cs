@@ -50,6 +50,7 @@ namespace Meca.WebApi.Controllers
         /// <response code="401">Unauthorize Error</response>
         /// <response code="500">Exception Error</response>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet]
         [Produces("application/json")]
         [ProducesResponseType(typeof(ReturnGenericViewModel<List<ServicesDefaultViewModel>>), 200)]
@@ -79,6 +80,7 @@ namespace Meca.WebApi.Controllers
         /// <response code="401">Unauthorize Error</response>
         /// <response code="500">Exception Error</response>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet("{id}")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(ReturnGenericViewModel<ServicesDefaultViewModel>), 200)]
