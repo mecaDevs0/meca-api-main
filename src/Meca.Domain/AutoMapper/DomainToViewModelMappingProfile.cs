@@ -74,10 +74,49 @@ namespace Meca.Domain.AutoMapper
             CreateMap<Workshop, WorkshopViewModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src._id != null ? src._id.ToString() : null));
             CreateMap<Object, TokenResponseViewModel>();
-            CreateMap<WorkshopAux, WorkshopAuxViewModel>().ReverseMap();
+            CreateMap<WorkshopAux, WorkshopAuxViewModel>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Photo, opt => opt.MapFrom(src => src.Photo))
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName))
+                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.CompanyName))
+                .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Phone))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.Cnpj, opt => opt.MapFrom(src => src.Cnpj))
+                .ForMember(dest => dest.ZipCode, opt => opt.MapFrom(src => src.ZipCode))
+                .ForMember(dest => dest.StreetAddress, opt => opt.MapFrom(src => src.StreetAddress))
+                .ForMember(dest => dest.Number, opt => opt.MapFrom(src => src.Number))
+                .ForMember(dest => dest.CityName, opt => opt.MapFrom(src => src.CityName))
+                .ForMember(dest => dest.CityId, opt => opt.MapFrom(src => src.CityId))
+                .ForMember(dest => dest.StateName, opt => opt.MapFrom(src => src.StateName))
+                .ForMember(dest => dest.StateUf, opt => opt.MapFrom(src => src.StateUf))
+                .ForMember(dest => dest.StateId, opt => opt.MapFrom(src => src.StateId))
+                .ForMember(dest => dest.Neighborhood, opt => opt.MapFrom(src => src.Neighborhood))
+                .ForMember(dest => dest.Complement, opt => opt.MapFrom(src => src.Complement))
+                .ForMember(dest => dest.Latitude, opt => opt.MapFrom(src => src.Latitude))
+                .ForMember(dest => dest.Longitude, opt => opt.MapFrom(src => src.Longitude))
+                .ForMember(dest => dest.Reason, opt => opt.MapFrom(src => src.Reason));
             CreateMap<WorkshopAux, WorkshopViewModel>().ReverseMap();
             CreateMap<WorkshopAux, Workshop>().ReverseMap()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src._id.ToString()));
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src._id.ToString()))
+                .ForMember(dest => dest.Photo, opt => opt.MapFrom(src => src.Photo))
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName))
+                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.CompanyName))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Phone))
+                .ForMember(dest => dest.Cnpj, opt => opt.MapFrom(src => src.Cnpj))
+                .ForMember(dest => dest.ZipCode, opt => opt.MapFrom(src => src.ZipCode))
+                .ForMember(dest => dest.StreetAddress, opt => opt.MapFrom(src => src.StreetAddress))
+                .ForMember(dest => dest.Number, opt => opt.MapFrom(src => src.Number))
+                .ForMember(dest => dest.CityName, opt => opt.MapFrom(src => src.CityName))
+                .ForMember(dest => dest.CityId, opt => opt.MapFrom(src => src.CityId))
+                .ForMember(dest => dest.StateName, opt => opt.MapFrom(src => src.StateName))
+                .ForMember(dest => dest.StateUf, opt => opt.MapFrom(src => src.StateUf))
+                .ForMember(dest => dest.StateId, opt => opt.MapFrom(src => src.StateId))
+                .ForMember(dest => dest.Neighborhood, opt => opt.MapFrom(src => src.Neighborhood))
+                .ForMember(dest => dest.Complement, opt => opt.MapFrom(src => src.Complement))
+                .ForMember(dest => dest.Latitude, opt => opt.MapFrom(src => src.Latitude))
+                .ForMember(dest => dest.Longitude, opt => opt.MapFrom(src => src.Longitude))
+                .ForMember(dest => dest.Reason, opt => opt.MapFrom(src => src.Reason));
             CreateMap<WorkshopAgendaAux, WorkshopAgendaAuxViewModel>().ReverseMap();
             CreateMap<WorkshopAgenda, WorkshopAgendaViewModel>()
               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => ObjectId.Parse(src._id.ToString())));
@@ -90,7 +129,11 @@ namespace Meca.Domain.AutoMapper
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src._id.ToString()));
             CreateMap<ProfileAuxViewModel, ProfileAux>().ReverseMap();
             CreateMap<Scheduling, SchedulingViewModel>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src._id.ToString()));
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src._id.ToString()))
+                .ForMember(dest => dest.Workshop, opt => opt.MapFrom(src => src.Workshop))
+                .ForMember(dest => dest.Profile, opt => opt.MapFrom(src => src.Profile))
+                .ForMember(dest => dest.Vehicle, opt => opt.MapFrom(src => src.Vehicle))
+                .ForMember(dest => dest.WorkshopServices, opt => opt.MapFrom(src => src.WorkshopServices));
             CreateMap<WorkshopServicesAux, WorkshopServicesAuxViewModel>().ReverseMap();
             CreateMap<WorkshopServicesAux, WorkshopServicesViewModel>().ReverseMap();
             CreateMap<VehicleAux, VehicleAuxViewModel>().ReverseMap();

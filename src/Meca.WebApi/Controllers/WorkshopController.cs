@@ -805,6 +805,41 @@ namespace Meca.WebApi.Controllers
         }
 
         /// <summary>
+        /// OFICINA - ATUALIZAR WORKSHOPS SEM FOTO E DESCRIÇÃO
+        /// </summary>
+        /// <response code="200">Returns success</response>
+        /// <response code="400">Custom Error</response>
+        /// <response code="401">Unauthorize Error</response>
+        /// <response code="500">Exception Error</response>
+        /// <returns></returns>
+        [HttpPost("UpdateWorkshopsWithoutPhotoAndReason")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ReturnViewModel), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> UpdateWorkshopsWithoutPhotoAndReason()
+        {
+            try
+            {
+                var result = await _workshopService.UpdateWorkshopsWithoutPhotoAndReason();
+
+                if (result)
+                {
+                    return Ok(Utilities.ReturnSuccess("Workshops atualizados com sucesso"));
+                }
+                else
+                {
+                    return BadRequest(Utilities.ReturnError("Erro ao atualizar workshops"));
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ReturnErro());
+            }
+        }
+
+        /// <summary>
         /// TESTE - ENDPOINT PÚBLICO PARA VERIFICAR SE A API ESTÁ FUNCIONANDO
         /// </summary>
         [AllowAnonymous]

@@ -9,6 +9,13 @@ namespace Meca.Domain.ViewModels.Auxiliaries
         /// </summary>
         [Display(Name = "Identificador")]
         public string Id { get; set; }
+
+        /// <summary>
+        /// Foto do estabelecimento
+        /// </summary>
+        [Display(Name = "Foto do estabelecimento")]
+        public string Photo { get; set; }
+
         /// <summary>
         /// Nome completo
         /// </summary>

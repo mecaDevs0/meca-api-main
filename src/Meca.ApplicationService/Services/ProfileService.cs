@@ -507,13 +507,22 @@ namespace Meca.ApplicationService.Services
         {
             try
             {
+                Console.WriteLine($"[DEVICE_REGISTRATION_DEBUG] Iniciando registro/remoção de dispositivo");
+                Console.WriteLine($"[DEVICE_REGISTRATION_DEBUG] DeviceId: {model.DeviceId}");
+                Console.WriteLine($"[DEVICE_REGISTRATION_DEBUG] IsRegister: {model.IsRegister}");
+                
                 if (ModelIsValid(model, true) == false)
+                {
+                    Console.WriteLine($"[DEVICE_REGISTRATION_DEBUG] Modelo inválido");
                     return false;
+                }
 
                 var userId = _access.UserId;
+                Console.WriteLine($"[DEVICE_REGISTRATION_DEBUG] UserId: {userId}");
 
                 if (string.IsNullOrEmpty(userId))
                 {
+                    Console.WriteLine($"[DEVICE_REGISTRATION_DEBUG] UserId está vazio");
                     CreateNotification(DefaultMessages.ProfileNotFound);
                     return false;
                 }
@@ -522,23 +531,34 @@ namespace Meca.ApplicationService.Services
                {
                    if (string.IsNullOrEmpty(model.DeviceId) == false)
                    {
+                       Console.WriteLine($"[DEVICE_REGISTRATION_DEBUG] Executando operação no banco de dados");
                        if (model.IsRegister)
                        {
+                           Console.WriteLine($"[DEVICE_REGISTRATION_DEBUG] Registrando dispositivo {model.DeviceId} para usuário {userId}");
                            _profileRepository.UpdateMultiple(Query<Data.Entities.Profile>.Where(x => x._id == ObjectId.Parse(userId)),
                            new UpdateBuilder<Data.Entities.Profile>().AddToSet(x => x.DeviceId, model.DeviceId), UpdateFlags.None);
                        }
                        else
                        {
+                           Console.WriteLine($"[DEVICE_REGISTRATION_DEBUG] Removendo dispositivo {model.DeviceId} do usuário {userId}");
                            _profileRepository.UpdateMultiple(Query<Data.Entities.Profile>.Where(x => x._id == ObjectId.Parse(userId)),
                            new UpdateBuilder<Data.Entities.Profile>().Pull(x => x.DeviceId, model.DeviceId), UpdateFlags.None);
                        }
+                       Console.WriteLine($"[DEVICE_REGISTRATION_DEBUG] Operação concluída com sucesso");
+                   }
+                   else
+                   {
+                       Console.WriteLine($"[DEVICE_REGISTRATION_DEBUG] DeviceId está vazio, operação ignorada");
                    }
                });
 
+                Console.WriteLine($"[DEVICE_REGISTRATION_DEBUG] Método concluído com sucesso");
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine($"[DEVICE_REGISTRATION_DEBUG] Erro: {ex.Message}");
+                Console.WriteLine($"[DEVICE_REGISTRATION_DEBUG] Stack trace: {ex.StackTrace}");
                 throw;
             }
         }
