@@ -97,5 +97,10 @@ namespace Meca.Domain.ViewModels.Auxiliaries
         /// </summary>
         [Display(Name = "Longitude")]
         public double Longitude { get; set; }
+        /// <summary>
+        /// Descrição/Motivo
+        /// </summary>
+        [Display(Name = "Descrição/Motivo")]
+        public string Reason { get; set; }
     }
 }

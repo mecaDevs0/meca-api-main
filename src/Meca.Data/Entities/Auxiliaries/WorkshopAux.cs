@@ -26,5 +26,6 @@ namespace Meca.Data.Entities.Auxiliaries
         public string Complement { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
+        public string Reason { get; set; }
     }
 }
