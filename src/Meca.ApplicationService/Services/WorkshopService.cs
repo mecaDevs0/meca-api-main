@@ -622,6 +622,9 @@ namespace Meca.ApplicationService.Services
         {
             try
             {
+                Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Iniciando registro de oficina");
+                Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Model recebido: {System.Text.Json.JsonSerializer.Serialize(model)}");
+                
                 var ignoredFields = new List<string>();
 
                 if (model.TypeProvider != TypeProvider.Password)
@@ -630,8 +633,15 @@ namespace Meca.ApplicationService.Services
                     ignoredFields.Add(nameof(model.Password));
                 }
 
+                Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Campos ignorados: {string.Join(", ", ignoredFields)}");
+                
                 if (ModelIsValid(model, ignoredFields: [.. ignoredFields]) == false)
+                {
+                    Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Validação falhou. Erros: {ReturnValidationsToString()}");
                     return null;
+                }
+                
+                Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Validação passou com sucesso");
 
                 var claimRole = Util.SetRole(TypeProfile.Workshop);
 
@@ -672,6 +682,7 @@ namespace Meca.ApplicationService.Services
                     return null;
                 }
 
+                Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Mapeando modelo para entidade");
                 var workshopEntity = _mapper.Map<Workshop>(model);
 
                 if (string.IsNullOrEmpty(model.Password) == false)
@@ -679,7 +690,9 @@ namespace Meca.ApplicationService.Services
 
                 workshopEntity.Status = WorkshopStatus.AwaitingApproval;
 
+                Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Salvando oficina no banco de dados");
                 workshopEntity = await _workshopRepository.CreateReturnAsync(workshopEntity).ConfigureAwait(false);
+                Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Oficina salva com sucesso. ID: {workshopEntity._id}");
 
 
 
@@ -699,10 +712,14 @@ namespace Meca.ApplicationService.Services
 
                 await _notificationService.SendAndRegisterNotification(sendPushViewModel, _mapper.Map<WorkshopAux>(workshopEntity));
 
-                return _mapper.Map<WorkshopViewModel>(workshopEntity);
+                var result = _mapper.Map<WorkshopViewModel>(workshopEntity);
+                Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Retornando resultado: {System.Text.Json.JsonSerializer.Serialize(result)}");
+                return result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] ERRO no registro: {ex.Message}");
+                Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Stack trace: {ex.StackTrace}");
                 throw;
             }
         }

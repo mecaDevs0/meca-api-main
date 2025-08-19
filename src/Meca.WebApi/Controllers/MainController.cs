@@ -40,7 +40,7 @@ namespace Meca.WebApi.Controllers
             else if (erros.Count != 0)
                 return BadRequest(Utilities.ReturnErro(erros[0], result));
 
-            else if (result != null || string.IsNullOrEmpty(message) == false)
+            else if (result != null)
                 return Ok(Utilities.ReturnSuccess(data: result, message: message));
 
             else
