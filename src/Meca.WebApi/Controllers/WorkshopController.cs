@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Meca.ApplicationService.Interface;
@@ -23,6 +24,7 @@ using Meca.Domain.ViewModels.Filters;
 using Meca.Data.Enum;
 using UtilityFramework.Application.Core3.JwtMiddleware;
 using System.Security.Claims;
+using System.IO;
 
 namespace Meca.WebApi.Controllers
 {
@@ -270,6 +272,12 @@ namespace Meca.WebApi.Controllers
             {
                 Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Iniciando registro no controller");
                 Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Model recebido: {System.Text.Json.JsonSerializer.Serialize(model)}");
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] MeiCard no model: {model.MeiCard}");
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Photo no model: {model.Photo}");
+                
+                // Teste de deserialização manual
+                var requestBody = await new StreamReader(Request.Body).ReadToEndAsync();
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Request body raw: {requestBody}");
                 
                 model.TrimStringProperties();
                 _service.SetModelState(ModelState);

@@ -67,7 +67,11 @@ Console.WriteLine($"[MECA_DEBUG] MongoDb:DatabaseName = {mongoSection["DatabaseN
                     opt.Filters.Add(typeof(CheckJson));
                     opt.Filters.Add(typeof(PreventSpanFilter));
                 })
-                .AddNewtonsoftJson();
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
+                    options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+                });
             }
             catch (Exception ex)
             {
