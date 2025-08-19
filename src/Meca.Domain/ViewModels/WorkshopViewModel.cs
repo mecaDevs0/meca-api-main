@@ -63,6 +63,7 @@ namespace Meca.Domain.ViewModels
         /// <exemple>323141235125.png</example>
         [Display(Name = "Logo")]
         [JsonConverter(typeof(PathImage))]
+        [JsonProperty("photo")]
         public string Photo { get; set; }
         /// <summary>
         /// Cartão MEI (Nome retornado pela api de upload ex (3142315321.png))
@@ -70,6 +71,7 @@ namespace Meca.Domain.ViewModels
         /// <exemple>323141235125.png</example>
         [Display(Name = "Cartão MEI")]
         [JsonConverter(typeof(PathImage))]
+        [JsonProperty("meiCard")]
         [RequiredIf(nameof(Cnpj), null, false, ErrorMessage = DefaultMessages.FieldRequired)]
         public string MeiCard { get; set; }
         /// <summary>

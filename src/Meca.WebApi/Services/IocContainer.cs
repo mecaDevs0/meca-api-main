@@ -13,6 +13,7 @@ using UtilityFramework.Services.Iugu.Core3.Interface;
 using UtilityFramework.Services.Stripe.Core3;
 using UtilityFramework.Services.Stripe.Core3.Interfaces;
 using UtilityFramework.Infra.Core3.MongoDb.Business;
+using System;
 
 namespace Meca.WebApi.Services
 {
@@ -34,18 +35,39 @@ namespace Meca.WebApi.Services
             .FirstOrDefault(x => x.Name.ContainsIgnoreCase($"{soluctionName}.ApplicationService"));
 
             if (assemblyName == null)
+            {
+                Console.WriteLine($"[IOC_DEBUG] ERRO: Não encontrou assembly {soluctionName}.ApplicationService");
                 return services;
+            }
+
+            Console.WriteLine($"[IOC_DEBUG] Carregando assembly: {assemblyName.FullName}");
 
             var assembly = Assembly.Load(assemblyName);
             var types = assembly.GetTypes().ToList();
             var interfacesTypes = assembly.GetTypes().Where(x => x.GetTypeInfo().IsInterface).ToList();
+
+            Console.WriteLine($"[IOC_DEBUG] Encontradas {interfacesTypes.Count} interfaces para registrar");
+            Console.WriteLine($"[IOC_DEBUG] Encontrados {types.Count} tipos para registrar");
 
             for (var i = 0; i < interfacesTypes.Count; i++)
             {
                 var className = interfacesTypes[i].Name.StartsWith("II") ? interfacesTypes[i].Name.Substring(1) : interfacesTypes[i].Name.TrimStart('I');
                 var classType = types.Find(x => x.Name == className);
                 if (classType != null)
+                {
                     services.AddScoped(interfacesTypes[i], classType);
+                    Console.WriteLine($"[IOC_DEBUG] Registrado: {interfacesTypes[i].Name} -> {classType.Name}");
+                    
+                    // Verificar especificamente o WorkshopService
+                    if (interfacesTypes[i].Name == "IWorkshopService")
+                    {
+                        Console.WriteLine($"[IOC_DEBUG] WORKSHOP SERVICE REGISTRADO: {classType.Name}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"[IOC_DEBUG] WARNING: Não encontrou implementação para {interfacesTypes[i].Name} (procurou por {className})");
+                }
             }
             
             return services;

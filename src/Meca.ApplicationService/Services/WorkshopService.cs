@@ -625,6 +625,13 @@ namespace Meca.ApplicationService.Services
                 Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Iniciando registro de oficina");
                 Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Model recebido: {System.Text.Json.JsonSerializer.Serialize(model)}");
                 
+                // Verificar se o repositório está inicializado
+                if (_workshopRepository == null)
+                {
+                    Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] ERRO: _workshopRepository é null");
+                    throw new InvalidOperationException("Repositório não inicializado");
+                }
+                
                 var ignoredFields = new List<string>();
 
                 if (model.TypeProvider != TypeProvider.Password)
@@ -684,6 +691,10 @@ namespace Meca.ApplicationService.Services
 
                 Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Mapeando modelo para entidade");
                 var workshopEntity = _mapper.Map<Workshop>(model);
+                
+                Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Entidade mapeada: {System.Text.Json.JsonSerializer.Serialize(workshopEntity)}");
+                Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] MeiCard na entidade: {workshopEntity.MeiCard}");
+                Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Photo na entidade: {workshopEntity.Photo}");
 
                 if (string.IsNullOrEmpty(model.Password) == false)
                     workshopEntity.Password = Utilities.GerarHashMd5(model.Password);
@@ -691,10 +702,40 @@ namespace Meca.ApplicationService.Services
                 workshopEntity.Status = WorkshopStatus.AwaitingApproval;
 
                 Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Salvando oficina no banco de dados");
+                Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Collection name: {workshopEntity.CollectionName}");
+                
+                // Testar conexão com o banco
+                try
+                {
+                    Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Testando GetCollectionAsync...");
+                    var collection = _workshopRepository.GetCollectionAsync();
+                    Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Collection obtida com sucesso: {collection.CollectionNamespace}");
+                    
+                    // Contar documentos na collection
+                    var count = await collection.CountDocumentsAsync(Builders<Workshop>.Filter.Empty);
+                    Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Total de documentos na collection Workshop: {count}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] ERRO ao testar conexão com banco: {ex.Message}");
+                    Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Stack trace: {ex.StackTrace}");
+                    throw;
+                }
+                
+                Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Chamando CreateReturnAsync...");
                 workshopEntity = await _workshopRepository.CreateReturnAsync(workshopEntity).ConfigureAwait(false);
                 Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Oficina salva com sucesso. ID: {workshopEntity._id}");
+                Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Oficina salva - MeiCard: {workshopEntity.MeiCard}");
+                Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Oficina salva - Photo: {workshopEntity.Photo}");
 
-
+                // Verificar se realmente foi salvo no banco
+                var savedWorkshop = await _workshopRepository.FindByIdAsync(workshopEntity._id.ToString());
+                Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Verificação no banco - encontrado: {savedWorkshop != null}");
+                if (savedWorkshop != null)
+                {
+                    Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Verificação no banco - MeiCard: {savedWorkshop.MeiCard}");
+                    Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Verificação no banco - Photo: {savedWorkshop.Photo}");
+                }
 
                 var claims = new Claim[]
                 {
@@ -704,7 +745,7 @@ namespace Meca.ApplicationService.Services
                 var sendPushViewModel = new SendPushViewModel()
                 {
                     Title = "Nova Oficina cadastrada",
-                    Content = $"Nova Oficina cadastrada, Nome da Oficina: {workshopEntity.CompanyName}, CNPJ: {workshopEntity.Cnpj}, ResponsÃ¡vel: {workshopEntity.FullName}.",
+                    Content = $"Nova Oficina cadastrada, Nome da Oficina: {workshopEntity.CompanyName}, CNPJ: {workshopEntity.Cnpj}, Responsável: {workshopEntity.FullName}.",
                     TypeProfile = TypeProfile.UserAdministrator,
                     TargetId = [],
 
