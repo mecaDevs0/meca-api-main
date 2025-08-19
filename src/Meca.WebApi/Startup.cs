@@ -33,6 +33,22 @@ namespace Meca.WebApi
             Configuration = configuration;
             HostingEnvironment = env;
 
+            Console.WriteLine($"[MECA_DEBUG] Startup iniciado");
+            Console.WriteLine($"[MECA_DEBUG] Environment: {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
+            Console.WriteLine($"[MECA_DEBUG] Configuration providers:");
+            
+            if (Configuration is IConfigurationRoot configRoot)
+            {
+                foreach (var provider in configRoot.Providers)
+                {
+                    Console.WriteLine($"[MECA_DEBUG] Provider: {provider.GetType().Name}");
+                }
+            }
+            
+            Console.WriteLine($"[MECA_DEBUG] DATABASE:ConnectionString = {Configuration["DATABASE:CONNECTIONSTRING"]}");
+            Console.WriteLine($"[MECA_DEBUG] DATABASE:NAME = {Configuration["DATABASE:NAME"]}");
+            Console.WriteLine($"[MECA_DEBUG] ConnectionStrings:DefaultConnection = {Configuration["ConnectionStrings:DefaultConnection"]}");
+
             BaseConfig.ApplicationName = ApplicationName =
             configuration.GetSection("ApplicationName").Get<string>() ?? Assembly.GetEntryAssembly().GetName().Name?.Split('.')[0];
             EnableSwagger = configuration.GetSection("EnableSwagger").Get<bool>();
