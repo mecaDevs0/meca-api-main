@@ -60,8 +60,12 @@ namespace Meca.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
+            Console.WriteLine("[MECA_DEBUG] === INICIANDO ConfigureServices ===");
+            
             try
             {
+                Console.WriteLine("[MECA_DEBUG] 1. Verificando configuração...");
+                
                 // DEBUG: Log the connection string to verify it's correct
 var connectionString = Configuration.GetConnectionString("DefaultConnection");
 Console.WriteLine($"[MECA_DEBUG] Connection String Sendo Usada: {connectionString}");
@@ -78,6 +82,8 @@ Console.WriteLine($"[MECA_DEBUG] MongoDb Section exists: {mongoSection.Exists()}
 Console.WriteLine($"[MECA_DEBUG] MongoDb:ConnectionString = {mongoSection["ConnectionString"]}");
 Console.WriteLine($"[MECA_DEBUG] MongoDb:DatabaseName = {mongoSection["DatabaseName"]}");
 
+                Console.WriteLine("[MECA_DEBUG] 2. Configurando Controllers...");
+                
                 services.AddControllers(opt =>
                 {
                     opt.Filters.Add(typeof(CheckJson));
@@ -88,6 +94,8 @@ Console.WriteLine($"[MECA_DEBUG] MongoDb:DatabaseName = {mongoSection["DatabaseN
                     options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
                     options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
                 });
+                
+                Console.WriteLine("[MECA_DEBUG] 3. Controllers configurados com sucesso");
             }
             catch (Exception ex)
             {
@@ -96,12 +104,14 @@ Console.WriteLine($"[MECA_DEBUG] MongoDb:DatabaseName = {mongoSection["DatabaseN
                 throw;
             }
 
+            Console.WriteLine("[MECA_DEBUG] 4. Adicionando HealthChecks...");
             services.AddHealthChecks();
 
             if (EnableService)
             {
                 try
                 {
+                    Console.WriteLine("[MECA_DEBUG] 5. Configurando Hangfire...");
                     services.AddHangfireMongoDb(Configuration);
                     Console.WriteLine("[MECA_DEBUG] Hangfire configurado com sucesso");
                 }
@@ -116,8 +126,10 @@ Console.WriteLine($"[MECA_DEBUG] MongoDb:DatabaseName = {mongoSection["DatabaseN
                 Console.WriteLine("[MECA_DEBUG] Hangfire desabilitado");
             }
 
+            Console.WriteLine("[MECA_DEBUG] 6. Adicionando SignalR...");
             services.AddSignalR();
 
+            Console.WriteLine("[MECA_DEBUG] 7. Configurando CORS...");
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowAllOrigin",
@@ -128,31 +140,37 @@ Console.WriteLine($"[MECA_DEBUG] MongoDb:DatabaseName = {mongoSection["DatabaseN
                     .Build());
             });
 
+            Console.WriteLine("[MECA_DEBUG] 8. Configurando AutoMapper...");
             services.AddAutoMapper(c =>
             {
                 c.AddProfile<DomainToViewModelMappingProfile>();
                 c.AddProfile<ViewModelToDomainMappingProfile>();
             }, typeof(Startup));
 
+            Console.WriteLine("[MECA_DEBUG] 9. Adicionando ImageResizer...");
             services.AddImageResizer();
 
+            Console.WriteLine("[MECA_DEBUG] 10. Configurando JWT Swagger...");
             services.AddJwtSwagger(ApplicationName, enableSwaggerAuth: true);
 
+            Console.WriteLine("[MECA_DEBUG] 11. Adicionando HttpContextAccessor...");
             services.AddHttpContextAccessor();
 
+            Console.WriteLine("[MECA_DEBUG] 12. Registrando BusinessBaseAsync...");
             services.AddScoped(typeof(IBusinessBaseAsync<>), typeof(BusinessBaseAsync<>));
 
-            Console.WriteLine("[MECA_DEBUG] Registrando serviços...");
+            Console.WriteLine("[MECA_DEBUG] 13. Registrando serviços...");
             services.AddServicesInjection();
             Console.WriteLine("[MECA_DEBUG] Serviços registrados com sucesso");
             
-            Console.WriteLine("[MECA_DEBUG] Registrando serviços de aplicação...");
+            Console.WriteLine("[MECA_DEBUG] 14. Registrando serviços de aplicação...");
             services.AddAplicationServicesInjection();
             Console.WriteLine("[MECA_DEBUG] Serviços de aplicação registrados com sucesso");
 
+            Console.WriteLine("[MECA_DEBUG] 15. Adicionando Options...");
             services.AddOptions();
 
-            // Removido: AddUtilityFramework não existe
+            Console.WriteLine("[MECA_DEBUG] === ConfigureServices CONCLUÍDO COM SUCESSO ===");
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, IHttpContextAccessor httpContextAccessor, IServiceProvider serviceProvider)
