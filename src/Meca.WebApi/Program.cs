@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 
 namespace Meca.WebApi
 {
@@ -32,9 +34,33 @@ namespace Meca.WebApi
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     Console.WriteLine("[MECA_DEBUG] Configurando WebHostDefaults...");
-                    webBuilder.UseStartup<Startup>();
                     webBuilder.UseSetting(WebHostDefaults.DetailedErrorsKey, "true");
                     Console.WriteLine("[MECA_DEBUG] WebHostDefaults configurado");
+                })
+                .ConfigureServices((hostContext, services) =>
+                {
+                    Console.WriteLine("[MECA_DEBUG] Configurando serviços no Program.cs...");
+                    
+                    // Configurar Startup
+                    var startup = new Startup(hostContext.Configuration);
+                    startup.ConfigureServices(services);
+                    
+                    Console.WriteLine("[MECA_DEBUG] Serviços configurados no Program.cs");
+                })
+                .Configure((hostContext, app) =>
+                {
+                    Console.WriteLine("[MECA_DEBUG] Configurando aplicação no Program.cs...");
+                    
+                    // Configurar Startup
+                    var startup = new Startup(hostContext.Configuration);
+                    var env = hostContext.HostingEnvironment;
+                    var loggerFactory = hostContext.Services.GetRequiredService<ILoggerFactory>();
+                    var httpContextAccessor = hostContext.Services.GetRequiredService<IHttpContextAccessor>();
+                    var serviceProvider = hostContext.Services;
+                    
+                    startup.Configure(app, env, loggerFactory, httpContextAccessor, serviceProvider);
+                    
+                    Console.WriteLine("[MECA_DEBUG] Aplicação configurada no Program.cs");
                 });
     }
 }
