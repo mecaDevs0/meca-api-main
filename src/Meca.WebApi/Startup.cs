@@ -20,6 +20,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using UtilityFramework.Application.Core3;
 using UtilityFramework.Infra.Core3.MongoDb.Business;
+using System.Linq;
 
 namespace Meca.WebApi
 {
@@ -28,31 +29,59 @@ namespace Meca.WebApi
         public IConfiguration Configuration { get; }
         public IWebHostEnvironment HostingEnvironment { get; }
 
-        public Startup(IConfiguration configuration, IWebHostEnvironment env)
+        public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
-            HostingEnvironment = env;
-
-            Console.WriteLine($"[MECA_DEBUG] Startup iniciado");
-            Console.WriteLine($"[MECA_DEBUG] Environment: {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
-            Console.WriteLine($"[MECA_DEBUG] Configuration providers:");
+            Console.WriteLine("[MECA_DEBUG] === INICIANDO CONSTRUTOR DO STARTUP ===");
             
-            if (Configuration is IConfigurationRoot configRoot)
+            try
             {
-                foreach (var provider in configRoot.Providers)
-                {
-                    Console.WriteLine($"[MECA_DEBUG] Provider: {provider.GetType().Name}");
-                }
-            }
-            
-            Console.WriteLine($"[MECA_DEBUG] DATABASE:ConnectionString = {Configuration["DATABASE:CONNECTIONSTRING"]}");
-            Console.WriteLine($"[MECA_DEBUG] DATABASE:NAME = {Configuration["DATABASE:NAME"]}");
-            Console.WriteLine($"[MECA_DEBUG] ConnectionStrings:DefaultConnection = {Configuration["ConnectionStrings:DefaultConnection"]}");
+                Console.WriteLine("[MECA_DEBUG] 1. Configuração recebida...");
+                Configuration = configuration;
+                Console.WriteLine("[MECA_DEBUG] 2. Configuration atribuído com sucesso");
 
-            BaseConfig.ApplicationName = ApplicationName =
-            configuration.GetSection("ApplicationName").Get<string>() ?? Assembly.GetEntryAssembly().GetName().Name?.Split('.')[0];
-            EnableSwagger = configuration.GetSection("EnableSwagger").Get<bool>();
-            EnableService = configuration.GetSection("EnableService").Get<bool>();
+                Console.WriteLine("[MECA_DEBUG] 3. Verificando providers de configuração...");
+                var configRoot = configuration as IConfigurationRoot;
+                if (configRoot != null)
+                {
+                    Console.WriteLine($"[MECA_DEBUG] Providers encontrados: {configRoot.Providers.Count()}");
+                    foreach (var provider in configRoot.Providers)
+                    {
+                        Console.WriteLine($"[MECA_DEBUG] Provider: {provider.GetType().Name}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("[MECA_DEBUG] Configuration não é IConfigurationRoot");
+                }
+
+                Console.WriteLine("[MECA_DEBUG] 4. Verificando variáveis de ambiente...");
+                Console.WriteLine($"[MECA_DEBUG] ASPNETCORE_ENVIRONMENT = {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
+                Console.WriteLine($"[MECA_DEBUG] DOTNET_ENVIRONMENT = {Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT")}");
+
+                Console.WriteLine("[MECA_DEBUG] 5. Verificando configurações...");
+                Console.WriteLine($"[MECA_DEBUG] ConnectionStrings:DefaultConnection = {Configuration["ConnectionStrings:DefaultConnection"]}");
+
+                Console.WriteLine("[MECA_DEBUG] 6. Configurando BaseConfig...");
+                BaseConfig.ApplicationName = ApplicationName =
+                configuration.GetSection("ApplicationName").Get<string>() ?? Assembly.GetEntryAssembly().GetName().Name?.Split('.')[0];
+                Console.WriteLine($"[MECA_DEBUG] ApplicationName = {ApplicationName}");
+
+                Console.WriteLine("[MECA_DEBUG] 7. Configurando EnableSwagger...");
+                EnableSwagger = configuration.GetSection("EnableSwagger").Get<bool>();
+                Console.WriteLine($"[MECA_DEBUG] EnableSwagger = {EnableSwagger}");
+
+                Console.WriteLine("[MECA_DEBUG] 8. Configurando EnableService...");
+                EnableService = configuration.GetSection("EnableService").Get<bool>();
+                Console.WriteLine($"[MECA_DEBUG] EnableService = {EnableService}");
+
+                Console.WriteLine("[MECA_DEBUG] === CONSTRUTOR DO STARTUP CONCLUÍDO COM SUCESSO ===");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[MECA_DEBUG] ERRO NO CONSTRUTOR DO STARTUP: {ex.Message}");
+                Console.WriteLine($"[MECA_DEBUG] STACK TRACE: {ex.StackTrace}");
+                throw;
+            }
         }
         public static string ApplicationName { get; set; }
         public static bool EnableSwagger { get; set; }
