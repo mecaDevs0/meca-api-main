@@ -625,6 +625,13 @@ namespace Meca.ApplicationService.Services
                 Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Iniciando registro de oficina");
                 Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Model recebido: {System.Text.Json.JsonSerializer.Serialize(model)}");
                 
+                // Verificar se o repositório está inicializado
+                if (_workshopRepository == null)
+                {
+                    Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] ERRO: _workshopRepository é null");
+                    throw new InvalidOperationException("Repositório não inicializado");
+                }
+                
                 var ignoredFields = new List<string>();
 
                 if (model.TypeProvider != TypeProvider.Password)
@@ -700,6 +707,7 @@ namespace Meca.ApplicationService.Services
                 // Testar conexão com o banco
                 try
                 {
+                    Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Testando GetCollectionAsync...");
                     var collection = _workshopRepository.GetCollectionAsync();
                     Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Collection obtida com sucesso: {collection.CollectionNamespace}");
                     
@@ -710,9 +718,11 @@ namespace Meca.ApplicationService.Services
                 catch (Exception ex)
                 {
                     Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] ERRO ao testar conexão com banco: {ex.Message}");
+                    Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Stack trace: {ex.StackTrace}");
                     throw;
                 }
                 
+                Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Chamando CreateReturnAsync...");
                 workshopEntity = await _workshopRepository.CreateReturnAsync(workshopEntity).ConfigureAwait(false);
                 Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Oficina salva com sucesso. ID: {workshopEntity._id}");
                 Console.WriteLine($"[WORKSHOP_REGISTER_DEBUG] Oficina salva - MeiCard: {workshopEntity.MeiCard}");
@@ -735,7 +745,7 @@ namespace Meca.ApplicationService.Services
                 var sendPushViewModel = new SendPushViewModel()
                 {
                     Title = "Nova Oficina cadastrada",
-                    Content = $"Nova Oficina cadastrada, Nome da Oficina: {workshopEntity.CompanyName}, CNPJ: {workshopEntity.Cnpj}, ResponsÃ¡vel: {workshopEntity.FullName}.",
+                    Content = $"Nova Oficina cadastrada, Nome da Oficina: {workshopEntity.CompanyName}, CNPJ: {workshopEntity.Cnpj}, Responsável: {workshopEntity.FullName}.",
                     TypeProfile = TypeProfile.UserAdministrator,
                     TargetId = [],
 
