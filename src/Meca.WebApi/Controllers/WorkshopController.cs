@@ -274,15 +274,27 @@ namespace Meca.WebApi.Controllers
                 model.TrimStringProperties();
                 _service.SetModelState(ModelState);
 
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] ModelState.IsValid: {ModelState.IsValid}");
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] ModelState errors: {string.Join(", ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage))}");
+
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Chamando _workshopService.Register...");
                 var response = await _workshopService.Register(model);
                 
-                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Resposta do service: {System.Text.Json.JsonSerializer.Serialize(response)}");
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Response do Register: {(response == null ? "NULL" : "NOT NULL")}");
+                if (response != null)
+                {
+                    Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Response data: {System.Text.Json.JsonSerializer.Serialize(response)}");
+                }
 
-                return ReturnResponse(response, "Agradecemos pelas informações, nossa equipe efetuará uma análise e em breve você receberá um e-mail com a liberação de acesso à plataforma.");
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Chamando ReturnResponse...");
+                var result = ReturnResponse(response, "Agradecemos pelas informações, nossa equipe efetuará uma análise e em breve você receberá um e-mail com a liberação de acesso à plataforma.");
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] ReturnResponse retornou: {result.GetType().Name}");
+                return result;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] ERRO no controller: {ex.Message}");
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Stack trace: {ex.StackTrace}");
                 return BadRequest(ex.ReturnErro());
             }
         }
