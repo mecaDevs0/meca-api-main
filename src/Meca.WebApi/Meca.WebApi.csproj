@@ -46,9 +46,15 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Content Include="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
-        <Content Include="appsettings.Production.json" CopyToOutputDirectory="PreserveNewest" />
-        <Content Include="Settings/Config.json" CopyToOutputDirectory="PreserveNewest" />
+        <Content Include="appsettings.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="appsettings.Production.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Settings/Config.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
     <ItemGroup>
         <None Update="Content\**">
