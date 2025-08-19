@@ -35,13 +35,19 @@ namespace Meca.WebApi.Services
             .FirstOrDefault(x => x.Name.ContainsIgnoreCase($"{soluctionName}.ApplicationService"));
 
             if (assemblyName == null)
+            {
+                Console.WriteLine($"[IOC_DEBUG] ERRO: Não encontrou assembly {soluctionName}.ApplicationService");
                 return services;
+            }
+
+            Console.WriteLine($"[IOC_DEBUG] Carregando assembly: {assemblyName.FullName}");
 
             var assembly = Assembly.Load(assemblyName);
             var types = assembly.GetTypes().ToList();
             var interfacesTypes = assembly.GetTypes().Where(x => x.GetTypeInfo().IsInterface).ToList();
 
             Console.WriteLine($"[IOC_DEBUG] Encontradas {interfacesTypes.Count} interfaces para registrar");
+            Console.WriteLine($"[IOC_DEBUG] Encontrados {types.Count} tipos para registrar");
 
             for (var i = 0; i < interfacesTypes.Count; i++)
             {
@@ -51,6 +57,12 @@ namespace Meca.WebApi.Services
                 {
                     services.AddScoped(interfacesTypes[i], classType);
                     Console.WriteLine($"[IOC_DEBUG] Registrado: {interfacesTypes[i].Name} -> {classType.Name}");
+                    
+                    // Verificar especificamente o WorkshopService
+                    if (interfacesTypes[i].Name == "IWorkshopService")
+                    {
+                        Console.WriteLine($"[IOC_DEBUG] WORKSHOP SERVICE REGISTRADO: {classType.Name}");
+                    }
                 }
                 else
                 {
