@@ -207,6 +207,11 @@ namespace Meca.Domain.ViewModels
         [Display(Name = "Serviços configurados?")]
         public bool WorkshopServicesValid { get; set; }
         /// <summary>
+        /// Horário de funcionamento
+        /// </summary>
+        [Display(Name = "Horário de funcionamento")]
+        public string OpeningHours { get; set; }
+        /// <summary>
         /// Pendências   GATEWAY
         /// </summary>
         [Display(Name = "Pendências")]

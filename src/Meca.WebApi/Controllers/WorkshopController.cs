@@ -268,15 +268,21 @@ namespace Meca.WebApi.Controllers
         {
             try
             {
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Iniciando registro no controller");
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Model recebido: {System.Text.Json.JsonSerializer.Serialize(model)}");
+                
                 model.TrimStringProperties();
                 _service.SetModelState(ModelState);
 
                 var response = await _workshopService.Register(model);
+                
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Resposta do service: {System.Text.Json.JsonSerializer.Serialize(response)}");
 
                 return ReturnResponse(response, "Agradecemos pelas informações, nossa equipe efetuará uma análise e em breve você receberá um e-mail com a liberação de acesso à plataforma.");
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] ERRO no controller: {ex.Message}");
                 return BadRequest(ex.ReturnErro());
             }
         }

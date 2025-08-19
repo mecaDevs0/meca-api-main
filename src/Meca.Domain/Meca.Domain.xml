@@ -2236,6 +2236,11 @@
             Serviços configurados?
             </summary>
         </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.OpeningHours">
+            <summary>
+            Horário de funcionamento
+            </summary>
+        </member>
         <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.Requirements">
             <summary>
             Pendências   GATEWAY
