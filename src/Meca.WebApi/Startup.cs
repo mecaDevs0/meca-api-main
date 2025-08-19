@@ -126,8 +126,13 @@ Console.WriteLine($"[MECA_DEBUG] MongoDb:DatabaseName = {mongoSection["DatabaseN
 
             services.AddScoped(typeof(IBusinessBaseAsync<>), typeof(BusinessBaseAsync<>));
 
+            Console.WriteLine("[MECA_DEBUG] Registrando serviços...");
             services.AddServicesInjection();
+            Console.WriteLine("[MECA_DEBUG] Serviços registrados com sucesso");
+            
+            Console.WriteLine("[MECA_DEBUG] Registrando serviços de aplicação...");
             services.AddAplicationServicesInjection();
+            Console.WriteLine("[MECA_DEBUG] Serviços de aplicação registrados com sucesso");
 
             services.AddOptions();
 
