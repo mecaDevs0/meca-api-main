@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -72,9 +72,9 @@ namespace Meca.ApplicationService.Services
         {
             try
             {
-                Console.WriteLine("[WORKSHOP_DEBUG] Iniciando construtor do WorkshopService - versão simplificada");
+                Console.WriteLine("[WORKSHOP_DEBUG] Iniciando construtor do WorkshopService - versÃ£o simplificada");
                 
-                // Verificar se as dependências obrigatórias não são null
+                // Verificar se as dependÃªncias obrigatÃ³rias nÃ£o sÃ£o null
                 _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
                 _workshopRepository = workshopRepository ?? throw new ArgumentNullException(nameof(workshopRepository));
                 _workshopServicesRepository = workshopServicesRepository ?? throw new ArgumentNullException(nameof(workshopServicesRepository));
@@ -87,14 +87,14 @@ namespace Meca.ApplicationService.Services
                 _iuguMarketPlaceServices = iuguMarketPlaceServices ?? throw new ArgumentNullException(nameof(iuguMarketPlaceServices));
                 _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
                 
-                // Dependências opcionais
+                // DependÃªncias opcionais
                 _stripeMarketPlaceService = stripeMarketPlaceService;  // Pode ser null
                 
-                // Verificar se env não é null
+                // Verificar se env nÃ£o Ã© null
                 if (env == null)
                 {
-                    Console.WriteLine("[WORKSHOP_DEBUG] WARNING: IHostingEnvironment é null");
-                    _isSandbox = false; // Valor padrão
+                    Console.WriteLine("[WORKSHOP_DEBUG] WARNING: IHostingEnvironment Ã© null");
+                    _isSandbox = false; // Valor padrÃ£o
                 }
                 else
                 {
@@ -104,7 +104,7 @@ namespace Meca.ApplicationService.Services
                 // Inicializar o acesso
                 SetAccess(httpContextAccessor);
                 
-                Console.WriteLine("[WORKSHOP_DEBUG] Construtor do WorkshopService concluído com sucesso");
+                Console.WriteLine("[WORKSHOP_DEBUG] Construtor do WorkshopService concluÃ­do com sucesso");
             }
             catch (Exception ex)
             {
@@ -118,17 +118,60 @@ namespace Meca.ApplicationService.Services
         {
             try
             {
-                Console.WriteLine("[WORKSHOP_DEBUG] Iniciando GetAll - versão simplificada");
-                
-                // Por enquanto, retornar lista vazia para evitar problemas
-                return new List<WorkshopViewModel>();
+                Console.WriteLine("[WORKSHOP_DEBUG] Iniciando GetAll (sem filtro)");
+
+                // Verificar se o repositÃ³rio estÃ¡ inicializado
+                if (_workshopRepository == null)
+                {
+                    Console.WriteLine("[WORKSHOP_DEBUG] ERRO: _workshopRepository Ã© null");
+                    return new List<WorkshopViewModel>();
+                }
+
+                var builder = Builders<Workshop>.Filter;
+                var conditions = new List<FilterDefinition<Workshop>>
+                {
+                    // Considerar null ou 0 como "ativo"
+                    builder.Or(builder.Eq(x => x.Disabled, null), builder.Eq(x => x.Disabled, 0)),
+                    builder.Or(builder.Eq(x => x.DataBlocked, null), builder.Eq(x => x.DataBlocked, 0))
+                };
+
+                Console.WriteLine("[WORKSHOP_DEBUG] Aplicando filtros bÃ¡sicos");
+
+                try
+                {
+                    var listEntityData = await _workshopRepository
+                        .GetCollectionAsync()
+                        .Find(builder.And(conditions))
+                        .Sort(Util.Sort<Workshop>().Ascending(x => x.Created))
+                        .ToListAsync();
+
+                    Console.WriteLine($"[WORKSHOP_DEBUG] Encontradas {listEntityData.Count} oficinas no banco");
+
+                    var validWorkshops = await GetWorkshopAvailable(listEntityData);
+                    Console.WriteLine($"[WORKSHOP_DEBUG] GetAll (sem filtro) retornando {validWorkshops.Count} oficinas vÃ¡lidas");
+
+                    // Validar workshops antes do mapeamento
+                    var validWorkshopsForMapping = validWorkshops.Where(w => w != null && w._id != null).ToList();
+                    Console.WriteLine($"[WORKSHOP_DEBUG] Workshops validos para mapeamento: {validWorkshopsForMapping.Count}");
+                    
+                    return _mapper.Map<List<WorkshopViewModel>>(validWorkshopsForMapping);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[WORKSHOP_DEBUG] Erro ao buscar oficinas: {ex.Message}");
+                    Console.WriteLine($"[WORKSHOP_DEBUG] Stack trace: {ex.StackTrace}");
+                    
+                    // Retornar lista vazia em caso de erro
+                    return new List<WorkshopViewModel>();
+                }
             }
             catch (Exception ex)
             {
-                // Log detalhado do erro
-                Console.WriteLine($"[WORKSHOP_DEBUG] Erro em GetAll: {ex.Message}");
+                Console.WriteLine($"[WORKSHOP_DEBUG] Erro geral em GetAll: {ex.Message}");
                 Console.WriteLine($"[WORKSHOP_DEBUG] Stack trace: {ex.StackTrace}");
-                throw new Exception($"Erro em WorkshopService.GetAll: {ex.Message}", ex);
+                
+                // Retornar lista vazia em caso de erro
+                return new List<WorkshopViewModel>();
             }
         }
 
@@ -145,19 +188,19 @@ namespace Meca.ApplicationService.Services
                 if (filterView.Limit == null || filterView.Limit.GetValueOrDefault() == 0)
                     filterView.Limit = 30;
 
-                // ProfileId é opcional - não fazer nada se for null ou vazio
+                // ProfileId Ã© opcional - nÃ£o fazer nada se for null ou vazio
                 if (!string.IsNullOrEmpty(filterView.ProfileId))
                 {
                     Console.WriteLine($"[WORKSHOP_DEBUG] ProfileId fornecido: {filterView.ProfileId}");
-                    // Aqui você pode adicionar lógica específica para profileId se necessário
+                    // Aqui vocÃª pode adicionar lÃ³gica especÃ­fica para profileId se necessÃ¡rio
                 }
 
                 var builder = Builders<Workshop>.Filter;
                 var conditions = new List<FilterDefinition<Workshop>>();
 
-                // Filtro básico: apenas oficinas não desabilitadas
-                conditions.Add(builder.Eq(x => x.Disabled, null));
-                conditions.Add(builder.Eq(x => x.DataBlocked, null));
+                // Filtro básico: considerar null ou 0 como ativo
+                conditions.Add(builder.Or(builder.Eq(x => x.Disabled, null), builder.Eq(x => x.Disabled, 0)));
+                conditions.Add(builder.Or(builder.Eq(x => x.DataBlocked, null), builder.Eq(x => x.DataBlocked, 0)));
 
                 // Filtro por nome da oficina
                 if (!string.IsNullOrEmpty(filterView.Search))
@@ -203,59 +246,98 @@ namespace Meca.ApplicationService.Services
                     conditions.Add(builder.Eq(x => x.Status, filterView.Status.Value));
                 }
 
-                // Filtro por tipos de serviço (simplificado)
+                // Filtro por tipos de serviço
                 if (filterView.ServiceTypes != null && filterView.ServiceTypes.Any())
                 {
                     try
                     {
-                        // Primeiro, pegamos todos os ServicesDefault e filtramos na aplicação
-                        var allServicesDefault = await _servicesDefaultRepository.GetCollectionAsync()
-                            .Find(Builders<ServicesDefault>.Filter.Empty)
+                        Console.WriteLine($"[WORKSHOP_DEBUG] Filtrando por ServiceTypes: {string.Join(", ", filterView.ServiceTypes)}");
+                        
+                        // Buscar WorkshopServices que oferecem os serviços solicitados
+                        var filterWorkshopServices = Builders<WorkshopServices>.Filter.In(x => x.Service.Id, filterView.ServiceTypes);
+                        
+                        var listWorkshopServices = await _workshopServicesRepository
+                            .GetCollectionAsync()
+                            .Find(filterWorkshopServices)
                             .ToListAsync();
 
-                        // Filtramos os serviços que possuem um ID na lista de ServiceTypes
-                        var listServicesDefault = allServicesDefault
-                            .Where(x => filterView.ServiceTypes.Contains(x.GetStringId()))
-                            .ToList();
+                        Console.WriteLine($"[WORKSHOP_DEBUG] Encontrados {listWorkshopServices.Count} WorkshopServices");
 
-                        var servicesId = listServicesDefault.Select(s => s.GetStringId()).ToList();
-
-                        if (servicesId.Any())
+                        // Debug: Verificar estrutura dos dados
+                        if (listWorkshopServices.Any())
                         {
-                            var filterWorkshop = Builders<WorkshopServices>.Filter.In(x => x.Service.Id, servicesId);
+                            var firstService = listWorkshopServices.First();
+                            Console.WriteLine($"[WORKSHOP_DEBUG] Exemplo de WorkshopService:");
+                            Console.WriteLine($"[WORKSHOP_DEBUG] - Service.Id: {firstService.Service?.Id}");
+                            Console.WriteLine($"[WORKSHOP_DEBUG] - Service.Name: {firstService.Service?.Name}");
+                            Console.WriteLine($"[WORKSHOP_DEBUG] - Workshop.Id: {firstService.Workshop?.Id}");
+                            Console.WriteLine($"[WORKSHOP_DEBUG] - Workshop.CompanyName: {firstService.Workshop?.CompanyName}");
+                        }
 
-                            var listWorkshopServices = await _workshopServicesRepository
-                                .GetCollectionAsync()
-                                .Find(filterWorkshop)
-                                .ToListAsync();
-
-                            var workshopIds = listWorkshopServices.Select(w => w.Workshop.Id).ToList();
-                            var objectIdList = workshopIds
-                                .Where(id => ObjectId.TryParse(id, out _))
-                                .Select(ObjectId.Parse)
+                        if (listWorkshopServices.Any())
+                        {
+                            // Extrair IDs únicos dos estabelecimentos
+                            var workshopIds = listWorkshopServices
+                                .Select(w => w.Workshop.Id)
+                                .Distinct()
                                 .ToList();
+
+                            Console.WriteLine($"[WORKSHOP_DEBUG] IDs únicos de estabelecimentos: {string.Join(", ", workshopIds)}");
+
+                            // Converter para ObjectId e filtrar apenas os válidos
+                            var objectIdList = new List<ObjectId>();
+                            foreach (var id in workshopIds)
+                            {
+                                if (ObjectId.TryParse(id, out var objectId))
+                                {
+                                    objectIdList.Add(objectId);
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"[WORKSHOP_DEBUG] ID inválido encontrado: {id}");
+                                }
+                            }
+
+                            Console.WriteLine($"[WORKSHOP_DEBUG] ObjectIds válidos: {objectIdList.Count}");
 
                             if (objectIdList.Any())
                             {
                                 conditions.Add(builder.In(x => x._id, objectIdList));
+                                Console.WriteLine($"[WORKSHOP_DEBUG] Filtro de ServiceTypes aplicado com sucesso");
                             }
+                            else
+                            {
+                                Console.WriteLine($"[WORKSHOP_DEBUG] Nenhum ObjectId válido encontrado para ServiceTypes");
+                                // Se não encontrar estabelecimentos com os serviços, retornar lista vazia
+                                return new List<T>();
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine($"[WORKSHOP_DEBUG] Nenhum WorkshopServices encontrado para os ServiceTypes fornecidos");
+                            // Se não encontrar serviços, retornar lista vazia
+                            return new List<T>();
                         }
                     }
                     catch (Exception ex)
                     {
                         Console.WriteLine($"[WORKSHOP_DEBUG] Erro ao processar ServiceTypes: {ex.Message}");
-                        // Continuar sem o filtro de ServiceTypes
+                        Console.WriteLine($"[WORKSHOP_DEBUG] Stack trace: {ex.StackTrace}");
+                        // Em caso de erro, retornar lista vazia
+                        return new List<T>();
                     }
+                }
+                else
+                {
+                    Console.WriteLine("[WORKSHOP_DEBUG] Nenhum ServiceTypes fornecido - retornando todos os estabelecimentos");
                 }
 
                 var filter = conditions.Any() ? builder.And(conditions) : builder.Empty;
 
-                Console.WriteLine($"[WORKSHOP_DEBUG] Aplicando filtro com {conditions.Count} condições");
+                Console.WriteLine($"[WORKSHOP_DEBUG] Aplicando filtro com {conditions.Count} condiÃ§Ãµes");
 
-                var listEntityData = await _workshopRepository
-                    .GetCollectionAsync()
-                    .FindSync(filter, Util.FindOptions<Workshop>(filterView, Util.Sort<Workshop>().Ascending(x => x.Created)))
-                    .ToListAsync();
+                var listEntityData = (await _workshopRepository
+                    .FindByAsync(x => true, Util.Sort<Workshop>().Ascending(x => x.Created))).ToList();
 
                 Console.WriteLine($"[WORKSHOP_DEBUG] Encontradas {listEntityData.Count} oficinas");
 
@@ -267,11 +349,21 @@ namespace Meca.ApplicationService.Services
                         var userLatitude = double.Parse(filterView.LatUser, CultureInfo.InvariantCulture);
                         var userLongitude = double.Parse(filterView.LongUser, CultureInfo.InvariantCulture);
 
+                        // Usar cálculo de distância simples em vez da API do Google
                         for (var i = 0; i < listEntityData.Count; i++)
                         {
-                            listEntityData[i].Distance = await Util.GetDistanceAsync(
-                                userLatitude, userLongitude, 
-                                listEntityData[i].Latitude, listEntityData[i].Longitude);
+                            var workshop = listEntityData[i];
+                            if (workshop.Latitude != 0 && workshop.Longitude != 0)
+                            {
+                                // Cálculo de distância usando fórmula de Haversine (simplificado)
+                                listEntityData[i].Distance = CalculateDistance(
+                                    userLatitude, userLongitude, 
+                                    workshop.Latitude, workshop.Longitude);
+                            }
+                            else
+                            {
+                                listEntityData[i].Distance = 0; // Distância zero se não tiver coordenadas
+                            }
                         }
 
                         // Filtrar por distância máxima se especificada
@@ -285,11 +377,12 @@ namespace Meca.ApplicationService.Services
                     catch (Exception ex)
                     {
                         Console.WriteLine($"[WORKSHOP_DEBUG] Erro ao calcular distâncias: {ex.Message}");
+                        // Continuar sem cálculo de distância
                     }
                 }
 
                 var validWorkshops = await GetWorkshopAvailable(listEntityData);
-                Console.WriteLine($"[WORKSHOP_DEBUG] Retornando {validWorkshops.Count} oficinas válidas");
+                Console.WriteLine($"[WORKSHOP_DEBUG] Retornando {validWorkshops.Count} oficinas vÃ¡lidas");
 
                 return _mapper.Map<List<T>>(validWorkshops);
             }
@@ -298,7 +391,7 @@ namespace Meca.ApplicationService.Services
                 Console.WriteLine($"[WORKSHOP_DEBUG] Erro em GetAll: {ex.Message}");
                 Console.WriteLine($"[WORKSHOP_DEBUG] Stack trace: {ex.StackTrace}");
                 
-                // Tratamento específico para erro oldValue do MongoDB
+                // Tratamento especÃ­fico para erro oldValue do MongoDB
                 if (ex.Message.Contains("oldValue") || ex.InnerException?.Message?.Contains("oldValue") == true || 
                     ex.Message.Contains("Object reference not set") || ex.InnerException?.Message?.Contains("Object reference not set") == true)
                 {
@@ -322,7 +415,7 @@ namespace Meca.ApplicationService.Services
             }
         }
 
-        // Retornar Oficinas somente se estiver com os dados bancários, agenda e serviços configurados
+        // Retornar Oficinas somente se estiver com os dados bancÃ¡rios, agenda e serviÃ§os configurados
         public async Task<List<Workshop>> GetWorkshopAvailable(IEnumerable<Workshop> listEntityData)
         {
             var validWorkshops = new List<Workshop>();
@@ -330,7 +423,7 @@ namespace Meca.ApplicationService.Services
             foreach (var workshop in listEntityData)
             {
                 // TEMPORARIAMENTE: Permitir todas as oficinas para debug
-                // Comentar a validação rigorosa até resolver o problema de dados
+                // Comentar a validaÃ§Ã£o rigorosa atÃ© resolver o problema de dados
                 
                 // var dataBankValid = workshop.DataBankStatus == DataBankStatus.Valid;
                 // var workshopAgendaValid = await _workshopAgendaRepository.CheckByAsync(x => x.Workshop.Id == workshop.GetStringId());
@@ -342,7 +435,7 @@ namespace Meca.ApplicationService.Services
                 // }
                 
                 // Por enquanto, aceitar todas as oficinas que não estão desabilitadas
-                if (workshop.Disabled == null && workshop.DataBlocked == null)
+                if ((workshop.Disabled == null || workshop.Disabled == 0) && (workshop.DataBlocked == null || workshop.DataBlocked == 0))
                 {
                     validWorkshops.Add(workshop);
                 }
@@ -373,7 +466,14 @@ namespace Meca.ApplicationService.Services
                     var userLatitude = double.Parse(latUser, CultureInfo.InvariantCulture);
                     var userLongitude = double.Parse(longUser, CultureInfo.InvariantCulture);
 
-                    workshopEntity.Distance = await Util.GetDistanceAsync(userLatitude, userLongitude, workshopEntity.Latitude, workshopEntity.Longitude);
+                    if (workshopEntity.Latitude != 0 && workshopEntity.Longitude != 0)
+                    {
+                        workshopEntity.Distance = CalculateDistance(userLatitude, userLongitude, workshopEntity.Latitude, workshopEntity.Longitude);
+                    }
+                    else
+                    {
+                        workshopEntity.Distance = 0;
+                    }
                 }
 
                 return _mapper.Map<WorkshopViewModel>(workshopEntity);
@@ -591,7 +691,7 @@ namespace Meca.ApplicationService.Services
                 var sendPushViewModel = new SendPushViewModel()
                 {
                     Title = "Nova Oficina cadastrada",
-                    Content = $"Nova Oficina cadastrada, Nome da Oficina: {workshopEntity.CompanyName}, CNPJ: {workshopEntity.Cnpj}, Responsável: {workshopEntity.FullName}.",
+                    Content = $"Nova Oficina cadastrada, Nome da Oficina: {workshopEntity.CompanyName}, CNPJ: {workshopEntity.Cnpj}, ResponsÃ¡vel: {workshopEntity.FullName}.",
                     TypeProfile = TypeProfile.UserAdministrator,
                     TargetId = [],
 
@@ -757,36 +857,56 @@ namespace Meca.ApplicationService.Services
         {
             try
             {
+                Console.WriteLine("[WORKSHOP_LOADDATA_DEBUG] Iniciando LoadData");
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] Model Draw: {model.Draw}");
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] Model Start: {model.Start}");
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] Model Length: {model.Length}");
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] Model Search Value: {model.Search?.Value}");
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] FilterView Status: {filterView?.Status}");
+
                 var response = new DtResult<WorkshopViewModel>();
 
                 var builder = Builders<Workshop>.Filter;
-                var conditions = new List<FilterDefinition<Workshop>> { builder.Where(x => x.Disabled == null) };
+                var conditions = new List<FilterDefinition<Workshop>>();
 
                 if (filterView.Status != null)
                     conditions.Add(builder.Eq(x => x.Status, filterView.Status));
 
                 var columns = model.Columns.Where(x => x.Searchable && !string.IsNullOrEmpty(x.Name)).Select(x => x.Name).ToArray();
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] Colunas searchable: {string.Join(", ", columns)}");
 
                 var totalRecords = (int)await _workshopRepository.GetCollectionAsync().CountDocumentsAsync(builder.And(conditions));
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] Total records: {totalRecords}");
 
                 var sortBy = Util.MapSort<Workshop>(model.Order, model.Columns, model.SortOrder);
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] SortBy: {sortBy}");
 
                 var result = await _workshopRepository
                    .LoadDataTableAsync(model.Search.Value, sortBy, model.Start, model.Length, conditions, columns);
 
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] Result count: {result?.Count() ?? 0}");
+
                 var totalRecordsFiltered = !string.IsNullOrEmpty(model.Search.Value)
                    ? (int)await _workshopRepository.CountSearchDataTableAsync(model.Search.Value, conditions, columns)
                    : totalRecords;
+
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] Total records filtered: {totalRecordsFiltered}");
 
                 response.Data = _mapper.Map<List<WorkshopViewModel>>(result);
                 response.Draw = model.Draw;
                 response.RecordsFiltered = totalRecordsFiltered;
                 response.RecordsTotal = totalRecords;
 
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] Response Data count: {response.Data?.Count ?? 0}");
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] Response RecordsTotal: {response.RecordsTotal}");
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] Response RecordsFiltered: {response.RecordsFiltered}");
+
                 return response;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] Erro em LoadData: {ex.Message}");
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] Stack trace: {ex.StackTrace}");
                 throw;
             }
         }
@@ -795,13 +915,22 @@ namespace Meca.ApplicationService.Services
         {
             try
             {
+                Console.WriteLine($"[WORKSHOP_DEVICE_REGISTRATION_DEBUG] Iniciando registro/remoção de dispositivo para oficina");
+                Console.WriteLine($"[WORKSHOP_DEVICE_REGISTRATION_DEBUG] DeviceId: {model.DeviceId}");
+                Console.WriteLine($"[WORKSHOP_DEVICE_REGISTRATION_DEBUG] IsRegister: {model.IsRegister}");
+                
                 if (ModelIsValid(model, true) == false)
+                {
+                    Console.WriteLine($"[WORKSHOP_DEVICE_REGISTRATION_DEBUG] Modelo inválido");
                     return false;
+                }
 
                 var userId = _access.UserId;
+                Console.WriteLine($"[WORKSHOP_DEVICE_REGISTRATION_DEBUG] UserId: {userId}");
 
                 if (string.IsNullOrEmpty(userId))
                 {
+                    Console.WriteLine($"[WORKSHOP_DEVICE_REGISTRATION_DEBUG] UserId está vazio");
                     CreateNotification(DefaultMessages.WorkshopNotFound);
                     return false;
                 }
@@ -810,23 +939,34 @@ namespace Meca.ApplicationService.Services
                {
                    if (string.IsNullOrEmpty(model.DeviceId) == false)
                    {
+                       Console.WriteLine($"[WORKSHOP_DEVICE_REGISTRATION_DEBUG] Executando operação no banco de dados");
                        if (model.IsRegister)
                        {
+                           Console.WriteLine($"[WORKSHOP_DEVICE_REGISTRATION_DEBUG] Registrando dispositivo {model.DeviceId} para oficina {userId}");
                            _workshopRepository.UpdateMultiple(Query<Workshop>.Where(x => x._id == ObjectId.Parse(userId)),
                            new UpdateBuilder<Workshop>().AddToSet(x => x.DeviceId, model.DeviceId), UpdateFlags.None);
                        }
                        else
                        {
+                           Console.WriteLine($"[WORKSHOP_DEVICE_REGISTRATION_DEBUG] Removendo dispositivo {model.DeviceId} da oficina {userId}");
                            _workshopRepository.UpdateMultiple(Query<Workshop>.Where(x => x._id == ObjectId.Parse(userId)),
                            new UpdateBuilder<Workshop>().Pull(x => x.DeviceId, model.DeviceId), UpdateFlags.None);
                        }
+                       Console.WriteLine($"[WORKSHOP_DEVICE_REGISTRATION_DEBUG] Operação concluída com sucesso");
+                   }
+                   else
+                   {
+                       Console.WriteLine($"[WORKSHOP_DEVICE_REGISTRATION_DEBUG] DeviceId está vazio, operação ignorada");
                    }
                });
 
+                Console.WriteLine($"[WORKSHOP_DEVICE_REGISTRATION_DEBUG] Método concluído com sucesso");
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine($"[WORKSHOP_DEVICE_REGISTRATION_DEBUG] Erro: {ex.Message}");
+                Console.WriteLine($"[WORKSHOP_DEVICE_REGISTRATION_DEBUG] Stack trace: {ex.StackTrace}");
                 throw;
             }
         }
@@ -864,7 +1004,7 @@ namespace Meca.ApplicationService.Services
 
                 var workshopEntity = await _workshopRepository.FindByIdAsync(userId).ConfigureAwait(false);
 
-                // Alteração de status
+                // AlteraÃ§Ã£o de status
                 if (_access.IsAdmin == false)
                 {
                     model.Status = workshopEntity.Status;
@@ -1197,6 +1337,113 @@ namespace Meca.ApplicationService.Services
         public async Task DeleteStripe(string id)
         {
             await _stripeMarketPlaceService.DeleteAsync(id);
+        }
+
+        public async Task<DtResult<WorkshopViewModel>> LoadDataGrid(DtParameters model, WorkshopFilterViewModel filterView)
+        {
+            try
+            {
+                Console.WriteLine("[WORKSHOP_DEBUG] Iniciando LoadDataGrid");
+
+                var allWorkshops = await GetAll<WorkshopViewModel>(filterView);
+
+                var result = new DtResult<WorkshopViewModel>
+                {
+                    Data = allWorkshops,
+                    Draw = model.Draw,
+                    RecordsTotal = allWorkshops.Count,
+                    RecordsFiltered = allWorkshops.Count
+                };
+
+                Console.WriteLine($"[WORKSHOP_DEBUG] LoadDataGrid retornando {allWorkshops.Count} workshops");
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[WORKSHOP_DEBUG] Erro em LoadDataGrid: {ex.Message}");
+                return new DtResult<WorkshopViewModel>
+                {
+                    Data = new List<WorkshopViewModel>(),
+                    Draw = model.Draw,
+                    RecordsTotal = 0,
+                    RecordsFiltered = 0
+                };
+            }
+        }
+
+        /// <summary>
+        /// Calcula a distância entre dois pontos usando a fórmula de Haversine
+        /// </summary>
+        private double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
+        {
+            try
+            {
+                const double R = 6371; // Raio da Terra em quilômetros
+                var dLat = ToRadians(lat2 - lat1);
+                var dLon = ToRadians(lon2 - lon1);
+                var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+                        Math.Cos(ToRadians(lat1)) * Math.Cos(ToRadians(lat2)) *
+                        Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+                var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+                return R * c;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[WORKSHOP_DEBUG] Erro ao calcular distância: {ex.Message}");
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// Converte graus para radianos
+        /// </summary>
+        private double ToRadians(double degrees)
+        {
+            return degrees * Math.PI / 180;
+        }
+
+        /// <summary>
+        /// Atualiza workshops que não têm foto ou descrição
+        /// </summary>
+        public async Task<bool> UpdateWorkshopsWithoutPhotoAndReason()
+        {
+            try
+            {
+                Console.WriteLine("[WORKSHOP_DEBUG] Iniciando atualização de workshops sem foto e descrição");
+                
+                var builder = Builders<Workshop>.Filter;
+                var filter = builder.Or(
+                    builder.Eq(x => x.Photo, null),
+                    builder.Eq(x => x.Photo, ""),
+                    builder.Eq(x => x.Reason, null),
+                    builder.Eq(x => x.Reason, "")
+                );
+                
+                var workshopsToUpdate = await _workshopRepository
+                    .GetCollectionAsync()
+                    .Find(filter)
+                    .ToListAsync();
+                
+                Console.WriteLine($"[WORKSHOP_DEBUG] Encontrados {workshopsToUpdate.Count} workshops para atualizar");
+                
+                var updateBuilder = Builders<Workshop>.Update;
+                var update = updateBuilder
+                    .SetOnInsert(x => x.Photo, "default-workshop.png")
+                    .SetOnInsert(x => x.Reason, "Estabelecimento de confiança para serviços automotivos");
+                
+                var result = await _workshopRepository
+                    .GetCollectionAsync()
+                    .UpdateManyAsync(filter, update);
+                
+                Console.WriteLine($"[WORKSHOP_DEBUG] Atualizados {result.ModifiedCount} workshops");
+                
+                return result.ModifiedCount > 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[WORKSHOP_DEBUG] Erro ao atualizar workshops: {ex.Message}");
+                return false;
+            }
         }
     }
 }

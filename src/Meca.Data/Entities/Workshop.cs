@@ -23,6 +23,7 @@ namespace Meca.Data.Entities
         public string MeiCard { get; set; }
         public string BirthDate { get; set; }
         public string FileDocument { get; set; }
+        public string OpeningHours { get; set; }
 
         public WorkshopStatus Status { get; set; }
         public string Login { get; set; }

@@ -4,5 +4,20 @@
         <name>Meca.ApplicationService</name>
     </assembly>
     <members>
+        <member name="M:Meca.ApplicationService.Services.WorkshopService.CalculateDistance(System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Calcula a distância entre dois pontos usando a fórmula de Haversine
+            </summary>
+        </member>
+        <member name="M:Meca.ApplicationService.Services.WorkshopService.ToRadians(System.Double)">
+            <summary>
+            Converte graus para radianos
+            </summary>
+        </member>
+        <member name="M:Meca.ApplicationService.Services.WorkshopService.UpdateWorkshopsWithoutPhotoAndReason">
+            <summary>
+            Atualiza workshops que não têm foto ou descrição
+            </summary>
+        </member>
     </members>
 </doc>

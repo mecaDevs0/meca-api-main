@@ -144,7 +144,7 @@ namespace Meca.WebApi.Controllers
                     builder.Where(x => x.StateUf == infoZipCode.Data.Uf)
                 };
 
-                var city = await _cityRepository.GetCollectionAsync().FindSync(builder.And(conditions)).FirstOrDefaultAsync().ConfigureAwait(false);
+                var city = await _cityRepository.GetCollectionAsync().Find(builder.And(conditions)).FirstOrDefaultAsync().ConfigureAwait(false);
 
                 if (city == null)
                     return Ok(Utilities.ReturnSuccess(data: response));
