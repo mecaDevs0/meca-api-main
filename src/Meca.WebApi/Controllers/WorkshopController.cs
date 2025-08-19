@@ -482,12 +482,23 @@ namespace Meca.WebApi.Controllers
         {
             try
             {
-                var response = await _workshopService.LoadData(model, filterView);
+                Console.WriteLine("[WORKSHOP_CONTROLLER_DEBUG] Iniciando LoadData no controller");
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Model: {System.Text.Json.JsonSerializer.Serialize(model)}");
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] FilterView: {System.Text.Json.JsonSerializer.Serialize(filterView)}");
+
+                // Usar LoadDataGrid em vez de LoadData para testar
+                var response = await _workshopService.LoadDataGrid(model, filterView);
+
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Response Data count: {response?.Data?.Count ?? 0}");
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Response RecordsTotal: {response?.RecordsTotal ?? 0}");
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Response RecordsFiltered: {response?.RecordsFiltered ?? 0}");
 
                 return Ok(response);
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Erro no controller: {ex.Message}");
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Stack trace: {ex.StackTrace}");
                 return BadRequest(ex.ReturnErro());
             }
         }
@@ -830,7 +841,7 @@ namespace Meca.WebApi.Controllers
                 }
                 else
                 {
-                    return BadRequest(Utilities.ReturnError("Erro ao atualizar workshops"));
+                    return BadRequest(Utilities.ReturnErro("Erro ao atualizar workshops"));
                 }
             }
             catch (Exception ex)

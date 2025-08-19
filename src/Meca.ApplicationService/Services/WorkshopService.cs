@@ -130,8 +130,9 @@ namespace Meca.ApplicationService.Services
                 var builder = Builders<Workshop>.Filter;
                 var conditions = new List<FilterDefinition<Workshop>>
                 {
-                    builder.Eq(x => x.Disabled, null),
-                    builder.Eq(x => x.DataBlocked, null)
+                    // Considerar null ou 0 como "ativo"
+                    builder.Or(builder.Eq(x => x.Disabled, null), builder.Eq(x => x.Disabled, 0)),
+                    builder.Or(builder.Eq(x => x.DataBlocked, null), builder.Eq(x => x.DataBlocked, 0))
                 };
 
                 Console.WriteLine("[WORKSHOP_DEBUG] Aplicando filtros bÃ¡sicos");
@@ -140,7 +141,8 @@ namespace Meca.ApplicationService.Services
                 {
                     var listEntityData = await _workshopRepository
                         .GetCollectionAsync()
-                        .Find(builder.And(conditions), Util.FindOptions<Workshop>(null, Util.Sort<Workshop>().Ascending(x => x.Created)))
+                        .Find(builder.And(conditions))
+                        .Sort(Util.Sort<Workshop>().Ascending(x => x.Created))
                         .ToListAsync();
 
                     Console.WriteLine($"[WORKSHOP_DEBUG] Encontradas {listEntityData.Count} oficinas no banco");
@@ -196,9 +198,9 @@ namespace Meca.ApplicationService.Services
                 var builder = Builders<Workshop>.Filter;
                 var conditions = new List<FilterDefinition<Workshop>>();
 
-                // Filtro bÃ¡sico: apenas oficinas nÃ£o desabilitadas
-                conditions.Add(builder.Eq(x => x.Disabled, null));
-                conditions.Add(builder.Eq(x => x.DataBlocked, null));
+                // Filtro básico: considerar null ou 0 como ativo
+                conditions.Add(builder.Or(builder.Eq(x => x.Disabled, null), builder.Eq(x => x.Disabled, 0)));
+                conditions.Add(builder.Or(builder.Eq(x => x.DataBlocked, null), builder.Eq(x => x.DataBlocked, 0)));
 
                 // Filtro por nome da oficina
                 if (!string.IsNullOrEmpty(filterView.Search))
@@ -206,7 +208,7 @@ namespace Meca.ApplicationService.Services
                     conditions.Add(builder.Regex(x => x.CompanyName, new BsonRegularExpression(filterView.Search, "i")));
                 }
 
-                // Filtro por nome especÃ­fico da oficina
+                // Filtro por nome específico da oficina
                 if (!string.IsNullOrEmpty(filterView.WorkshopName))
                 {
                     conditions.Add(builder.Eq(x => x.CompanyName, filterView.WorkshopName));
@@ -221,7 +223,7 @@ namespace Meca.ApplicationService.Services
                     }
                 }
 
-                // Filtro por avaliaÃ§Ã£o
+                // Filtro por avaliação
                 if (filterView.Rating.HasValue)
                 {
                     conditions.Add(builder.Eq(x => x.Rating, filterView.Rating.Value));
@@ -334,10 +336,8 @@ namespace Meca.ApplicationService.Services
 
                 Console.WriteLine($"[WORKSHOP_DEBUG] Aplicando filtro com {conditions.Count} condiÃ§Ãµes");
 
-                var listEntityData = await _workshopRepository
-                    .GetCollectionAsync()
-                    .Find(filter, Util.FindOptions<Workshop>(filterView, Util.Sort<Workshop>().Ascending(x => x.Created)))
-                    .ToListAsync();
+                var listEntityData = (await _workshopRepository
+                    .FindByAsync(x => true, Util.Sort<Workshop>().Ascending(x => x.Created))).ToList();
 
                 Console.WriteLine($"[WORKSHOP_DEBUG] Encontradas {listEntityData.Count} oficinas");
 
@@ -353,12 +353,12 @@ namespace Meca.ApplicationService.Services
                         for (var i = 0; i < listEntityData.Count; i++)
                         {
                             var workshop = listEntityData[i];
-                            if (workshop.Latitude.HasValue && workshop.Longitude.HasValue)
+                            if (workshop.Latitude != 0 && workshop.Longitude != 0)
                             {
                                 // Cálculo de distância usando fórmula de Haversine (simplificado)
                                 listEntityData[i].Distance = CalculateDistance(
                                     userLatitude, userLongitude, 
-                                    workshop.Latitude.Value, workshop.Longitude.Value);
+                                    workshop.Latitude, workshop.Longitude);
                             }
                             else
                             {
@@ -434,8 +434,8 @@ namespace Meca.ApplicationService.Services
                 //     validWorkshops.Add(workshop);
                 // }
                 
-                // Por enquanto, aceitar todas as oficinas que nÃ£o estÃ£o desabilitadas
-                if (workshop.Disabled == null && workshop.DataBlocked == null)
+                // Por enquanto, aceitar todas as oficinas que não estão desabilitadas
+                if ((workshop.Disabled == null || workshop.Disabled == 0) && (workshop.DataBlocked == null || workshop.DataBlocked == 0))
                 {
                     validWorkshops.Add(workshop);
                 }
@@ -466,9 +466,9 @@ namespace Meca.ApplicationService.Services
                     var userLatitude = double.Parse(latUser, CultureInfo.InvariantCulture);
                     var userLongitude = double.Parse(longUser, CultureInfo.InvariantCulture);
 
-                    if (workshopEntity.Latitude.HasValue && workshopEntity.Longitude.HasValue)
+                    if (workshopEntity.Latitude != 0 && workshopEntity.Longitude != 0)
                     {
-                        workshopEntity.Distance = CalculateDistance(userLatitude, userLongitude, workshopEntity.Latitude.Value, workshopEntity.Longitude.Value);
+                        workshopEntity.Distance = CalculateDistance(userLatitude, userLongitude, workshopEntity.Latitude, workshopEntity.Longitude);
                     }
                     else
                     {
@@ -857,36 +857,56 @@ namespace Meca.ApplicationService.Services
         {
             try
             {
+                Console.WriteLine("[WORKSHOP_LOADDATA_DEBUG] Iniciando LoadData");
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] Model Draw: {model.Draw}");
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] Model Start: {model.Start}");
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] Model Length: {model.Length}");
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] Model Search Value: {model.Search?.Value}");
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] FilterView Status: {filterView?.Status}");
+
                 var response = new DtResult<WorkshopViewModel>();
 
                 var builder = Builders<Workshop>.Filter;
-                var conditions = new List<FilterDefinition<Workshop>> { builder.Where(x => x.Disabled == null) };
+                var conditions = new List<FilterDefinition<Workshop>>();
 
                 if (filterView.Status != null)
                     conditions.Add(builder.Eq(x => x.Status, filterView.Status));
 
                 var columns = model.Columns.Where(x => x.Searchable && !string.IsNullOrEmpty(x.Name)).Select(x => x.Name).ToArray();
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] Colunas searchable: {string.Join(", ", columns)}");
 
                 var totalRecords = (int)await _workshopRepository.GetCollectionAsync().CountDocumentsAsync(builder.And(conditions));
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] Total records: {totalRecords}");
 
                 var sortBy = Util.MapSort<Workshop>(model.Order, model.Columns, model.SortOrder);
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] SortBy: {sortBy}");
 
                 var result = await _workshopRepository
                    .LoadDataTableAsync(model.Search.Value, sortBy, model.Start, model.Length, conditions, columns);
 
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] Result count: {result?.Count() ?? 0}");
+
                 var totalRecordsFiltered = !string.IsNullOrEmpty(model.Search.Value)
                    ? (int)await _workshopRepository.CountSearchDataTableAsync(model.Search.Value, conditions, columns)
                    : totalRecords;
+
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] Total records filtered: {totalRecordsFiltered}");
 
                 response.Data = _mapper.Map<List<WorkshopViewModel>>(result);
                 response.Draw = model.Draw;
                 response.RecordsFiltered = totalRecordsFiltered;
                 response.RecordsTotal = totalRecords;
 
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] Response Data count: {response.Data?.Count ?? 0}");
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] Response RecordsTotal: {response.RecordsTotal}");
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] Response RecordsFiltered: {response.RecordsFiltered}");
+
                 return response;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] Erro em LoadData: {ex.Message}");
+                Console.WriteLine($"[WORKSHOP_LOADDATA_DEBUG] Stack trace: {ex.StackTrace}");
                 throw;
             }
         }

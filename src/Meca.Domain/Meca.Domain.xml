@@ -285,6 +285,11 @@
             Identificador
             </summary>
         </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopAuxViewModel.Photo">
+            <summary>
+            Foto do estabelecimento
+            </summary>
+        </member>
         <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopAuxViewModel.FullName">
             <summary>
             Nome completo
@@ -369,6 +374,11 @@
         <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopAuxViewModel.Longitude">
             <summary>
             Longitude
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopAuxViewModel.Reason">
+            <summary>
+            Descrição/Motivo
             </summary>
         </member>
         <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopServicesAuxViewModel.Id">

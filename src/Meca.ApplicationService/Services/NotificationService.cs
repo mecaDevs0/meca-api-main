@@ -243,9 +243,9 @@ namespace Meca.ApplicationService.Services
                             Console.WriteLine($"[NOTIFICATION_DEBUG] Device IDs: {string.Join(", ", listDeviceId)}");
                             
                             // Log detalhado de cada perfil
-                            foreach (var profile in listProfile)
+                            foreach (var profileItem in listProfile)
                             {
-                                Console.WriteLine($"[NOTIFICATION_DEBUG] Perfil ID: {profile._id}, Nome: {profile.FullName}, DeviceIds: {string.Join(", ", profile.DeviceId ?? new List<string>())}");
+                                Console.WriteLine($"[NOTIFICATION_DEBUG] Perfil ID: {profileItem._id}, Nome: {profileItem.FullName}, DeviceIds: {string.Join(", ", profileItem.DeviceId ?? new List<string>())}");
                             }
                         }
                         else
@@ -268,9 +268,9 @@ namespace Meca.ApplicationService.Services
                             Console.WriteLine($"[NOTIFICATION_DEBUG] Device IDs: {string.Join(", ", listDeviceId)}");
                             
                             // Log detalhado de cada oficina
-                            foreach (var workshop in listWorkshop)
+                            foreach (var workshopItem in listWorkshop)
                             {
-                                Console.WriteLine($"[NOTIFICATION_DEBUG] Oficina ID: {workshop._id}, Nome: {workshop.FullName}, DeviceIds: {string.Join(", ", workshop.DeviceId ?? new List<string>())}");
+                                Console.WriteLine($"[NOTIFICATION_DEBUG] Oficina ID: {workshopItem._id}, Nome: {workshopItem.FullName}, DeviceIds: {string.Join(", ", workshopItem.DeviceId ?? new List<string>())}");
                             }
                         }
                         else
@@ -303,7 +303,9 @@ namespace Meca.ApplicationService.Services
                         dynamic settings = Util.GetSettingsPush();
 
                         Console.WriteLine($"[NOTIFICATION_DEBUG] Enviando push com indexKeys: {indexPush}");
-                        Console.WriteLine($"[NOTIFICATION_DEBUG] App ID será: {_configuration.ONESIGNAL[indexPush].APPID}");
+                        var oneSignalSection = _configuration.GetSection("SERVICES:ONESIGNAL");
+                        var oneSignalConfig = oneSignalSection.Get<List<dynamic>>();
+                        Console.WriteLine($"[NOTIFICATION_DEBUG] App ID será: {oneSignalConfig?[indexPush]?.APPID}");
                         Console.WriteLine($"[NOTIFICATION_DEBUG] Payload: {payLoad}");
                         Console.WriteLine($"[NOTIFICATION_DEBUG] Settings: {settings}");
 

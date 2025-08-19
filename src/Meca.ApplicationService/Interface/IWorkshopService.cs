@@ -28,5 +28,7 @@ namespace Meca.ApplicationService.Interface
         Task<string> UpdateDataBank(DataBankViewModel model, string id);
         Task<DataBankViewModel> GetDataBank(string id);
         Task DeleteStripe(string id);
+        Task<DtResult<WorkshopViewModel>> LoadDataGrid(DtParameters model, WorkshopFilterViewModel filterView);
+        Task<bool> UpdateWorkshopsWithoutPhotoAndReason();
     }
 }
