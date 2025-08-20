@@ -52,6 +52,10 @@ namespace Meca.WebApi.Controllers
             IHostingEnvironment env,
             IConfiguration configuration) : base(workshopService, context, configuration)
         {
+            Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] Iniciando construtor WorkshopController");
+            Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] workshopRepository é null: {workshopRepository == null}");
+            Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] workshopService é null: {workshopService == null}");
+            
             _mapper = mapper;
             _workshopRepository = workshopRepository;
             _notificationRepository = notificationRepository;
@@ -59,6 +63,8 @@ namespace Meca.WebApi.Controllers
             _workshopService = workshopService;
             _iuguMarketPlaceServices = iuguMarketPlaceServices;
             _isSandbox = Util.IsSandBox(env);
+            
+            Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] Construtor WorkshopController finalizado");
         }
 
         /// <summary>
