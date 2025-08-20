@@ -331,76 +331,99 @@ namespace Meca.WebApi.Controllers
         [ProducesResponseType(500)]
         public async Task<IActionResult> Token([FromBody] LoginViewModel model)
         {
-            // try
-            // {
-            //     model.TrimStringProperties();
-            //     _service.SetModelState(ModelState);
-
-            //     var response = await _workshopService.Token(model);
-
-            //     return ReturnResponse(response);
-            // }
-            // catch (Exception ex)
-            // {
-            //     return BadRequest(ex.ReturnErro());
-            // }
+            Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Iniciando método Token");
+            Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Model recebido: {System.Text.Json.JsonSerializer.Serialize(model)}");
 
             var claimRole = Util.SetRole(TypeProfile.Workshop);
+            Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] ClaimRole criado: {claimRole.Type} = {claimRole.Value}");
 
             try
             {
                 model.TrimStringProperties();
+                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Model após TrimStringProperties: {System.Text.Json.JsonSerializer.Serialize(model)}");
 
                 if (string.IsNullOrEmpty(model.RefreshToken) == false)
+                {
+                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] RefreshToken encontrado, redirecionando");
                     return TokenProviderMiddleware.RefreshToken(model.RefreshToken);
+                }
 
-                Workshop workshopEntity;
+                Workshop workshopEntity = null;
+                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] TypeProvider: {model.TypeProvider}");
+
                 if (model.TypeProvider != TypeProvider.Password)
                 {
+                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Buscando por ProviderId: {model.ProviderId}");
                     workshopEntity = await _workshopRepository.FindOneByAsync(x => x.ProviderId == model.ProviderId)
                         .ConfigureAwait(false);
 
                     if (workshopEntity == null || workshopEntity.Disabled != null)
+                    {
+                        Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Workshop não encontrado ou desabilitado por ProviderId");
                         return BadRequest(Utilities.ReturnErro(DefaultMessages.ProfileNotFound, new { IsRegister = true }));
+                    }
                 }
                 else
                 {
+                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Buscando por Email/Password");
+                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Email: {model.Email}");
+                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Password (hash): {Utilities.GerarHashMd5(model.Password)}");
+
                     model.TrimStringProperties();
                     var isInvalidState = ModelState.ValidModelStateOnlyFields(nameof(model.Email), nameof(model.Password));
 
                     if (isInvalidState != null)
+                    {
+                        Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] ModelState inválido: {System.Text.Json.JsonSerializer.Serialize(isInvalidState)}");
                         return BadRequest(isInvalidState);
+                    }
 
                     workshopEntity = await _workshopRepository
                        .FindOneByAsync(x => x.Email == model.Email && x.Password == Utilities.GerarHashMd5(model.Password)).ConfigureAwait(false);
-
-#if DEBUG
-                    workshopEntity = await _workshopRepository
-          .FindOneByAsync(x => x.Email == model.Email);
-#endif
+                    
+                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Workshop encontrado: {(workshopEntity != null ? "SIM" : "NÃO")}");
                 }
 
                 if (workshopEntity == null || workshopEntity.Disabled != null)
+                {
+                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Workshop null ou desabilitado");
                     return BadRequest(Utilities.ReturnErro(DefaultMessages.InvalidLogin));
+                }
+
+                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Workshop ID: {workshopEntity.GetStringId()}");
+                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Workshop Status: {workshopEntity.Status}");
+                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Workshop DataBlocked: {workshopEntity.DataBlocked}");
 
                 if (workshopEntity.DataBlocked != null)
+                {
+                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Workshop bloqueado");
                     return BadRequest(Utilities.ReturnErro(
                         string.Format(DefaultMessages.AccessBlockedWithReason,
                         (string.IsNullOrEmpty(workshopEntity.Reason) ? $"Motivo {workshopEntity.Reason}" : "").Trim()
                         )));
+                }
 
                 if (workshopEntity.Status != WorkshopStatus.Approved)
+                {
+                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Workshop não aprovado. Status: {workshopEntity.Status}");
                     return BadRequest(Utilities.ReturnErro(workshopEntity.Status == WorkshopStatus.AwaitingApproval ? DefaultMessages.AwaitApproval : DefaultMessages.UserAdministratorBlocked));
+                }
 
                 var claims = new Claim[]
                 {
                     claimRole,
                 };
 
-                return Ok(Utilities.ReturnSuccess(data: TokenProviderMiddleware.GenerateToken(workshopEntity.GetStringId(), false, claims)));
+                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Gerando token para ID: {workshopEntity.GetStringId()}");
+                var token = TokenProviderMiddleware.GenerateToken(workshopEntity.GetStringId(), false, claims);
+                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Token gerado com sucesso");
+
+                return Ok(Utilities.ReturnSuccess(data: token));
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] ERRO: {ex.Message}");
+                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Stack trace: {ex.StackTrace}");
                 return BadRequest(ex.ReturnErro());
             }
         }
