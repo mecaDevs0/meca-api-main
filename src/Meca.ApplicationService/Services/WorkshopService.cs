@@ -801,11 +801,6 @@ namespace Meca.ApplicationService.Services
                 {
                     workshopEntity = await _workshopRepository
                       .FindOneByAsync(x => x.Email == model.Email && x.Password == Utilities.GerarHashMd5(model.Password)).ConfigureAwait(false);
-
-#if DEBUG
-                    workshopEntity = await _workshopRepository
-          .FindOneByAsync(x => x.Email == model.Email);
-#endif
                 }
 
                 if (workshopEntity == null || workshopEntity.Disabled != null)
@@ -1299,13 +1294,6 @@ namespace Meca.ApplicationService.Services
                     CreateNotification(DefaultMessages.WorkshopNotRegisteredInGateway);
                     return null;
                 }
-
-#if DEBUG
-                model.Bank = "110";
-                model.BankName = "BANCO STRIPE DE TESTE";
-                model.BankAccount = model.BankAccount.OnlyNumbers();
-                model.BankAgency = model.BankAgency.Split('-').FirstOrDefault();
-#endif
 
                 var stripeResultMarketPlace = await _stripeMarketPlaceService.GetByIdAsync(workshopEntity.ExternalId);
 
