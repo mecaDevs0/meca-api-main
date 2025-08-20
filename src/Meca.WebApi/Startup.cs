@@ -46,6 +46,10 @@ namespace Meca.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
+            // DEBUG: Verificar se a configuração está sendo lida
+            Console.WriteLine($"[DEBUG] JWT SecretKey: {Configuration["Jwt:SecretKey"]}");
+            Console.WriteLine($"[DEBUG] ConnectionString: {Configuration["ConnectionStrings:DefaultConnection"]}");
+            
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowAllOrigin", builder =>
@@ -71,6 +75,14 @@ namespace Meca.WebApi
             }, typeof(Startup));
 
             services.AddImageResizer();
+
+            // Verificar se o JWT está configurado antes de adicionar
+            var jwtSecretKey = Configuration["Jwt:SecretKey"];
+            if (string.IsNullOrEmpty(jwtSecretKey))
+            {
+                Console.WriteLine("[ERROR] JWT SecretKey não encontrado na configuração!");
+                throw new InvalidOperationException("JWT SecretKey não encontrado na configuração. Verifique o appsettings.json");
+            }
 
             services.AddJwtSwagger(ApplicationName, enableSwaggerAuth: true);
 
