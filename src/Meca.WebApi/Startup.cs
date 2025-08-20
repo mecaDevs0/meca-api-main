@@ -46,10 +46,6 @@ namespace Meca.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // DEBUG: Verificar se a configuração está sendo lida
-            Console.WriteLine($"[DEBUG] JWT SecretKey: {Configuration["Jwt:SecretKey"]}");
-            Console.WriteLine($"[DEBUG] ConnectionString: {Configuration["ConnectionStrings:DefaultConnection"]}");
-            
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowAllOrigin", builder =>
