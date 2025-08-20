@@ -275,10 +275,6 @@ namespace Meca.WebApi.Controllers
                 Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] MeiCard no model: {model.MeiCard}");
                 Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Photo no model: {model.Photo}");
                 
-                // Teste de deserialização manual
-                var requestBody = await new StreamReader(Request.Body).ReadToEndAsync();
-                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Request body raw: {requestBody}");
-                
                 model.TrimStringProperties();
                 _service.SetModelState(ModelState);
 
