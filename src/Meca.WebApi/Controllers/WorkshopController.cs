@@ -333,6 +333,7 @@ namespace Meca.WebApi.Controllers
         {
             Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Iniciando método Token");
             Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Model recebido: {System.Text.Json.JsonSerializer.Serialize(model)}");
+            Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] _workshopRepository é null: {_workshopRepository == null}");
 
             var claimRole = Util.SetRole(TypeProfile.Workshop);
             Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] ClaimRole criado: {claimRole.Type} = {claimRole.Value}");
