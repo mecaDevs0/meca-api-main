@@ -37,7 +37,9 @@ namespace Meca.Domain.AutoMapper
                 .ForMember(dest => dest.ExpYear, opt => opt.MapFrom(src => src.Data.Year))
                 .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Data.Brand));
             CreateMap<Bank, BankViewModel>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src._id.ToString()));
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src._id.ToString()))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Code));
             CreateMap<AddressInfoViewModel, InfoAddressViewModel>()
                 .ForMember(dest => dest.Neighborhood, opt => opt.MapFrom(src => src.Bairro))
                 .ForMember(dest => dest.StateUf, opt => opt.MapFrom(src => src.Uf))
