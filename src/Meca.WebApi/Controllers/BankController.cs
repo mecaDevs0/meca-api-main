@@ -60,6 +60,10 @@ namespace Meca.WebApi.Controllers
                 Console.WriteLine("[BANK_DEBUG] Iniciando busca de bancos");
                 Console.WriteLine($"[BANK_DEBUG] Repository type: {_bankRepository.GetType().Name}");
                 
+                // Teste de conexão direta
+                var testEntity = new Bank { Name = "Teste", Code = "001" };
+                Console.WriteLine($"[BANK_DEBUG] Collection name: {testEntity.CollectionName}");
+                
                 var listBank = await _bankRepository.FindAllAsync(Builders<Bank>.Sort.Ascending(nameof(Bank.Name))).ConfigureAwait(false);
                 var bankList = listBank?.ToList() ?? new List<Bank>();
                 
@@ -67,6 +71,10 @@ namespace Meca.WebApi.Controllers
                 if (bankList.Count > 0)
                 {
                     Console.WriteLine($"[BANK_DEBUG] Primeiro banco: {bankList[0].Name} - {bankList[0].Code}");
+                }
+                else
+                {
+                    Console.WriteLine("[BANK_DEBUG] Nenhum banco encontrado na coleção");
                 }
                 
                 var mappedData = _mapper.Map<List<BankViewModel>>(bankList);
