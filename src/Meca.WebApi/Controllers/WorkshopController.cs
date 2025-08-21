@@ -41,7 +41,7 @@ namespace Meca.WebApi.Controllers
         private readonly IWorkshopService _workshopService;
         private readonly IIuguMarketPlaceServices _iuguMarketPlaceServices;
         private readonly bool _isSandbox;
-        private readonly IService _service;
+
 
         public WorkshopController(IMapper mapper,
             IBusinessBaseAsync<Workshop> workshopRepository,
@@ -51,8 +51,7 @@ namespace Meca.WebApi.Controllers
             IHttpContextAccessor context,
             IIuguMarketPlaceServices iuguMarketPlaceServices,
             IHostingEnvironment env,
-            IConfiguration configuration,
-            IService service)
+            IConfiguration configuration)
         {
             Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] Iniciando construtor WorkshopController");
             Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] mapper é null: {mapper == null}");
@@ -64,7 +63,6 @@ namespace Meca.WebApi.Controllers
             Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] iuguMarketPlaceServices é null: {iuguMarketPlaceServices == null}");
             Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] env é null: {env == null}");
             Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] configuration é null: {configuration == null}");
-            Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] service é null: {service == null}");
             
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _workshopRepository = workshopRepository ?? throw new ArgumentNullException(nameof(workshopRepository));
@@ -72,34 +70,12 @@ namespace Meca.WebApi.Controllers
             _senderMailService = senderMailService ?? throw new ArgumentNullException(nameof(senderMailService));
             _workshopService = workshopService ?? throw new ArgumentNullException(nameof(workshopService));
             _iuguMarketPlaceServices = iuguMarketPlaceServices ?? throw new ArgumentNullException(nameof(iuguMarketPlaceServices));
-            _service = service ?? throw new ArgumentNullException(nameof(service));
             _isSandbox = Util.IsSandBox(env);
             
             Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] Construtor WorkshopController finalizado com sucesso");
         }
 
-        protected IActionResult ReturnResponse(object result, string message = null)
-        {
-            var returnViewModel = _service?.GetReturnViewModel();
-            var errosValidation = _service?.ReturnValidations()?.Errors?.Select(x => x.ErrorMessage).ToList();
 
-            var erros = new List<string>();
-
-            if (errosValidation != null && errosValidation.Count > 0)
-                erros.AddRange(errosValidation.ToList());
-
-            if (returnViewModel != null)
-                return BadRequest(returnViewModel);
-
-            else if (erros.Count != 0)
-                return BadRequest(Utilities.ReturnErro(erros[0], result));
-
-            else if (result != null)
-                return Ok(Utilities.ReturnSuccess(data: result, message: message));
-
-            else
-                return BadRequest(Utilities.ReturnErro(DefaultMessages.DefaultError, null));
-        }
 
         /// <summary>
         /// OFICINA - METODO PARA LISTAR TODOS PAGINADO OU C/S FILTRO
@@ -152,7 +128,7 @@ namespace Meca.WebApi.Controllers
             {
                 var response = await _workshopService.Detail(id, latUser, longUser);
 
-                return ReturnResponse(response);
+                return Ok(Utilities.ReturnSuccess(data: response));
             }
             catch (Exception ex)
             {
@@ -180,7 +156,7 @@ namespace Meca.WebApi.Controllers
             {
                 var response = await _workshopService.GetInfo();
 
-                return ReturnResponse(response);
+                return Ok(Utilities.ReturnSuccess(data: response));
             }
             catch (Exception ex)
             {
@@ -208,7 +184,7 @@ namespace Meca.WebApi.Controllers
             {
                 var response = await _workshopService.Delete(id);
 
-                return ReturnResponse(null, DefaultMessages.Deleted);
+                return Ok(Utilities.ReturnSuccess(message: DefaultMessages.Deleted));
             }
             catch (Exception ex)
             {
@@ -235,7 +211,7 @@ namespace Meca.WebApi.Controllers
             {
                 await _workshopService.DeleteStripe(id);
 
-                return ReturnResponse(null, DefaultMessages.Deleted);
+                return Ok(Utilities.ReturnSuccess(message: DefaultMessages.Deleted));
             }
             catch (Exception ex)
             {
@@ -264,7 +240,7 @@ namespace Meca.WebApi.Controllers
             {
                 var response = await _workshopService.DeleteByEmail(email);
 
-                return ReturnResponse(null, DefaultMessages.Deleted);
+                return Ok(Utilities.ReturnSuccess(message: DefaultMessages.Deleted));
             }
             catch (Exception ex)
             {
@@ -316,7 +292,7 @@ namespace Meca.WebApi.Controllers
                 Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Photo no model: {model.Photo}");
                 
                 model.TrimStringProperties();
-                _service.SetModelState(ModelState);
+
 
                 Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] ModelState.IsValid: {ModelState.IsValid}");
                 Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] ModelState errors: {string.Join(", ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage))}");
@@ -330,9 +306,9 @@ namespace Meca.WebApi.Controllers
                     Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Response data: {System.Text.Json.JsonSerializer.Serialize(response)}");
                 }
 
-                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Chamando ReturnResponse...");
-                var result = ReturnResponse(response, "Agradecemos pelas informações, nossa equipe efetuará uma análise e em breve você receberá um e-mail com a liberação de acesso à plataforma.");
-                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] ReturnResponse retornou: {result.GetType().Name}");
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Retornando resposta...");
+                var result = Ok(Utilities.ReturnSuccess(data: response, message: "Agradecemos pelas informações, nossa equipe efetuará uma análise e em breve você receberá um e-mail com a liberação de acesso à plataforma."));
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Resposta retornada: {result.GetType().Name}");
                 return result;
             }
             catch (Exception ex)
@@ -450,11 +426,11 @@ namespace Meca.WebApi.Controllers
             try
             {
                 model.TrimStringProperties();
-                _service.SetModelState(ModelState);
+
 
                 var response = await _workshopService.BlockUnBlock(model);
 
-                return ReturnResponse(response != null, response);
+                return Ok(Utilities.ReturnSuccess(data: response != null, message: response?.ToString()));
             }
             catch (Exception ex)
             {
@@ -490,11 +466,11 @@ namespace Meca.WebApi.Controllers
             try
             {
                 model.TrimStringProperties();
-                _service.SetModelState(ModelState);
+
 
                 var response = await _workshopService.ChangePassword(model);
 
-                return ReturnResponse(response, DefaultMessages.PasswordChanged);
+                return Ok(Utilities.ReturnSuccess(data: response, message: DefaultMessages.PasswordChanged));
             }
             catch (Exception ex)
             {
@@ -568,7 +544,7 @@ namespace Meca.WebApi.Controllers
             try
             {
                 model.TrimStringProperties();
-                _service.SetModelState(ModelState);
+
 
                 await _workshopService.RegisterUnRegisterDeviceId(model);
 
@@ -618,11 +594,11 @@ namespace Meca.WebApi.Controllers
             try
             {
                 model.TrimStringProperties();
-                _service.SetModelState(ModelState);
+
 
                 var response = await _workshopService.UpdatePatch(id, model);
 
-                return ReturnResponse(response, DefaultMessages.Updated);
+                return Ok(Utilities.ReturnSuccess(data: response, message: DefaultMessages.Updated));
             }
             catch (Exception ex)
             {
@@ -658,11 +634,11 @@ namespace Meca.WebApi.Controllers
             try
             {
                 model.TrimStringProperties();
-                _service.SetModelState(ModelState);
+
 
                 var response = await _workshopService.ForgotPassword(model);
 
-                return ReturnResponse(response, DefaultMessages.VerifyYourEmail);
+                return Ok(Utilities.ReturnSuccess(data: response, message: DefaultMessages.VerifyYourEmail));
             }
             catch (Exception ex)
             {
@@ -698,7 +674,7 @@ namespace Meca.WebApi.Controllers
             try
             {
                 model.TrimStringProperties();
-                _service.SetModelState(ModelState);
+
 
                 var response = await _workshopService.CheckEmail(model);
 
@@ -738,7 +714,7 @@ namespace Meca.WebApi.Controllers
             try
             {
                 model.TrimStringProperties();
-                _service.SetModelState(ModelState);
+
 
                 var response = await _workshopService.CheckCnpj(model);
 
@@ -779,7 +755,7 @@ namespace Meca.WebApi.Controllers
             try
             {
                 model.TrimStringProperties();
-                _service.SetModelState(ModelState);
+
 
                 var response = await _workshopService.CheckAll(model);
 
@@ -810,11 +786,11 @@ namespace Meca.WebApi.Controllers
             try
             {
                 model.TrimStringProperties();
-                _service.SetModelState(ModelState);
+
 
                 var response = await _workshopService.UpdateDataBank(model, id);
 
-                return ReturnResponse(response, DefaultMessages.Updated);
+                return Ok(Utilities.ReturnSuccess(data: response, message: DefaultMessages.Updated));
             }
             catch (Exception ex)
             {
@@ -844,7 +820,7 @@ namespace Meca.WebApi.Controllers
             {
                 var response = await _workshopService.GetDataBank(id);
 
-                return ReturnResponse(response);
+                return Ok(Utilities.ReturnSuccess(data: response));
             }
             catch (Exception ex)
             {
