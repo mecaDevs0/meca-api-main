@@ -83,8 +83,22 @@ namespace Meca.WebApi.Controllers
                     Console.WriteLine("[BANK_DEBUG] Nenhum banco encontrado na coleção");
                 }
                 
+                // Debug: verificar dados antes do mapeamento
+                if (bankList.Count > 0)
+                {
+                    var firstBank = bankList[0];
+                    Console.WriteLine($"[BANK_DEBUG] Primeiro banco antes do mapeamento: Name='{firstBank.Name}', Code='{firstBank.Code}', Id='{firstBank._id}'");
+                }
+
                 var mappedData = _mapper.Map<List<BankViewModel>>(bankList);
                 Console.WriteLine($"[BANK_DEBUG] Dados mapeados: {mappedData?.Count ?? 0}");
+
+                // Debug: verificar dados após o mapeamento
+                if (mappedData?.Count > 0)
+                {
+                    var firstMappedBank = mappedData[0];
+                    Console.WriteLine($"[BANK_DEBUG] Primeiro banco após mapeamento: Name='{firstMappedBank.Name}', Code='{firstMappedBank.Code}', Id='{firstMappedBank.Id}'");
+                }
 
                 return Ok(Utilities.ReturnSuccess(data: mappedData));
             }
