@@ -2,11 +2,12 @@
 
 namespace Meca.Data.Entities
 {
-    [BsonIgnoreExtraElements]
     public class Bank : TEntity<Bank>
     {
+        [BsonElement("code")]
         public string Code { get; set; }
+        
+        [BsonElement("name")]
         public string Name { get; set; }
-
     }
 }
