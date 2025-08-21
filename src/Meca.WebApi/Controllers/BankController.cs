@@ -64,10 +64,16 @@ namespace Meca.WebApi.Controllers
                 var testEntity = new Bank { Name = "Teste", Code = "001" };
                 Console.WriteLine($"[BANK_DEBUG] Collection name: {testEntity.CollectionName}");
                 
+                // Teste sem filtro primeiro
+                var allBanks = await _bankRepository.FindAllAsync().ConfigureAwait(false);
+                var allBankList = allBanks?.ToList() ?? new List<Bank>();
+                Console.WriteLine($"[BANK_DEBUG] Todos os bancos (sem filtro): {allBankList.Count}");
+                
+                // Teste com filtro
                 var listBank = await _bankRepository.FindAllAsync(Builders<Bank>.Sort.Ascending(nameof(Bank.Name))).ConfigureAwait(false);
                 var bankList = listBank?.ToList() ?? new List<Bank>();
                 
-                Console.WriteLine($"[BANK_DEBUG] Bancos encontrados: {bankList.Count}");
+                Console.WriteLine($"[BANK_DEBUG] Bancos encontrados (com filtro): {bankList.Count}");
                 if (bankList.Count > 0)
                 {
                     Console.WriteLine($"[BANK_DEBUG] Primeiro banco: {bankList[0].Name} - {bankList[0].Code}");
