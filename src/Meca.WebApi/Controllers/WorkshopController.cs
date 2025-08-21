@@ -32,7 +32,7 @@ namespace Meca.WebApi.Controllers
     [Route("api/v1/[controller]")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
-    public class WorkshopController : MainController
+    public class WorkshopController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly IBusinessBaseAsync<Workshop> _workshopRepository;
@@ -41,6 +41,7 @@ namespace Meca.WebApi.Controllers
         private readonly IWorkshopService _workshopService;
         private readonly IIuguMarketPlaceServices _iuguMarketPlaceServices;
         private readonly bool _isSandbox;
+        private readonly IService _service;
 
         public WorkshopController(IMapper mapper,
             IBusinessBaseAsync<Workshop> workshopRepository,
@@ -50,21 +51,54 @@ namespace Meca.WebApi.Controllers
             IHttpContextAccessor context,
             IIuguMarketPlaceServices iuguMarketPlaceServices,
             IHostingEnvironment env,
-            IConfiguration configuration) : base(workshopService, context, configuration)
+            IConfiguration configuration,
+            IService service)
         {
             Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] Iniciando construtor WorkshopController");
+            Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] mapper é null: {mapper == null}");
             Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] workshopRepository é null: {workshopRepository == null}");
+            Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] notificationRepository é null: {notificationRepository == null}");
+            Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] senderMailService é null: {senderMailService == null}");
             Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] workshopService é null: {workshopService == null}");
+            Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] context é null: {context == null}");
+            Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] iuguMarketPlaceServices é null: {iuguMarketPlaceServices == null}");
+            Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] env é null: {env == null}");
+            Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] configuration é null: {configuration == null}");
+            Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] service é null: {service == null}");
             
-            _mapper = mapper;
-            _workshopRepository = workshopRepository;
-            _notificationRepository = notificationRepository;
-            _senderMailService = senderMailService;
-            _workshopService = workshopService;
-            _iuguMarketPlaceServices = iuguMarketPlaceServices;
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _workshopRepository = workshopRepository ?? throw new ArgumentNullException(nameof(workshopRepository));
+            _notificationRepository = notificationRepository ?? throw new ArgumentNullException(nameof(notificationRepository));
+            _senderMailService = senderMailService ?? throw new ArgumentNullException(nameof(senderMailService));
+            _workshopService = workshopService ?? throw new ArgumentNullException(nameof(workshopService));
+            _iuguMarketPlaceServices = iuguMarketPlaceServices ?? throw new ArgumentNullException(nameof(iuguMarketPlaceServices));
+            _service = service ?? throw new ArgumentNullException(nameof(service));
             _isSandbox = Util.IsSandBox(env);
             
-            Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] Construtor WorkshopController finalizado");
+            Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] Construtor WorkshopController finalizado com sucesso");
+        }
+
+        protected IActionResult ReturnResponse(object result, string message = null)
+        {
+            var returnViewModel = _service?.GetReturnViewModel();
+            var errosValidation = _service?.ReturnValidations()?.Errors?.Select(x => x.ErrorMessage).ToList();
+
+            var erros = new List<string>();
+
+            if (errosValidation != null && errosValidation.Count > 0)
+                erros.AddRange(errosValidation.ToList());
+
+            if (returnViewModel != null)
+                return BadRequest(returnViewModel);
+
+            else if (erros.Count != 0)
+                return BadRequest(Utilities.ReturnErro(erros[0], result));
+
+            else if (result != null)
+                return Ok(Utilities.ReturnSuccess(data: result, message: message));
+
+            else
+                return BadRequest(Utilities.ReturnErro(DefaultMessages.DefaultError, null));
         }
 
         /// <summary>
@@ -87,9 +121,9 @@ namespace Meca.WebApi.Controllers
             try
             {
                 if (filterModel.HasFilter() == false)
-                    return ReturnResponse(await _workshopService.GetAll());
-                else
-                    return ReturnResponse(await _workshopService.GetAll<WorkshopViewModel>(filterModel));
+                                    return Ok(Utilities.ReturnSuccess(data: await _workshopService.GetAll()));
+            else
+                return Ok(Utilities.ReturnSuccess(data: await _workshopService.GetAll<WorkshopViewModel>(filterModel)));
             }
             catch (Exception ex)
             {
@@ -339,93 +373,44 @@ namespace Meca.WebApi.Controllers
         {
             Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Iniciando método Token");
             Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Model recebido: {System.Text.Json.JsonSerializer.Serialize(model)}");
-            Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] _workshopRepository é null: {_workshopRepository == null}");
+            Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] _workshopService é null: {_workshopService == null}");
 
-            var claimRole = Util.SetRole(TypeProfile.Workshop);
-            Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] ClaimRole criado: {claimRole.Type} = {claimRole.Value}");
+            // CORREÇÃO: Verificar se o model não é null
+            if (model == null)
+            {
+                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] ERRO: Model é null");
+                return BadRequest(Utilities.ReturnErro("Dados de login inválidos"));
+            }
+
+            // CORREÇÃO: Usar o WorkshopService em vez do repository diretamente
+            if (_workshopService == null)
+            {
+                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] ERRO: _workshopService é null");
+                return StatusCode(500, Utilities.ReturnErro("Erro interno do servidor: WorkshopService não inicializado"));
+            }
 
             try
             {
-                model.TrimStringProperties();
-                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Model após TrimStringProperties: {System.Text.Json.JsonSerializer.Serialize(model)}");
-
-                if (string.IsNullOrEmpty(model.RefreshToken) == false)
+                // CORREÇÃO: Verificar se o model não é null antes de chamar TrimStringProperties
+                if (model != null)
                 {
-                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] RefreshToken encontrado, redirecionando");
-                    return TokenProviderMiddleware.RefreshToken(model.RefreshToken);
+                    model.TrimStringProperties();
+                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Model após TrimStringProperties: {System.Text.Json.JsonSerializer.Serialize(model)}");
                 }
 
-                Workshop workshopEntity = null;
-                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] TypeProvider: {model.TypeProvider}");
-
-                if (model.TypeProvider != TypeProvider.Password)
+                // Usar o método Token do WorkshopService
+                var result = await _workshopService.Token(model);
+                
+                if (result != null)
                 {
-                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Buscando por ProviderId: {model.ProviderId}");
-                    workshopEntity = await _workshopRepository.FindOneByAsync(x => x.ProviderId == model.ProviderId)
-                        .ConfigureAwait(false);
-
-                    if (workshopEntity == null || workshopEntity.Disabled != null)
-                    {
-                        Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Workshop não encontrado ou desabilitado por ProviderId");
-                        return BadRequest(Utilities.ReturnErro(DefaultMessages.ProfileNotFound, new { IsRegister = true }));
-                    }
+                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Token gerado com sucesso via WorkshopService");
+                    return Ok(Utilities.ReturnSuccess(data: result));
                 }
                 else
                 {
-                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Buscando por Email/Password");
-                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Email: {model.Email}");
-                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Password (hash): {Utilities.GerarHashMd5(model.Password)}");
-
-                    model.TrimStringProperties();
-                    var isInvalidState = ModelState.ValidModelStateOnlyFields(nameof(model.Email), nameof(model.Password));
-
-                    if (isInvalidState != null)
-                    {
-                        Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] ModelState inválido: {System.Text.Json.JsonSerializer.Serialize(isInvalidState)}");
-                        return BadRequest(isInvalidState);
-                    }
-
-                    workshopEntity = await _workshopRepository
-                       .FindOneByAsync(x => x.Email == model.Email && x.Password == Utilities.GerarHashMd5(model.Password)).ConfigureAwait(false);
-                    
-                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Workshop encontrado: {(workshopEntity != null ? "SIM" : "NÃO")}");
-                }
-
-                if (workshopEntity == null || workshopEntity.Disabled != null)
-                {
-                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Workshop null ou desabilitado");
+                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Falha na autenticação via WorkshopService");
                     return BadRequest(Utilities.ReturnErro(DefaultMessages.InvalidLogin));
                 }
-
-                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Workshop ID: {workshopEntity.GetStringId()}");
-                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Workshop Status: {workshopEntity.Status}");
-                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Workshop DataBlocked: {workshopEntity.DataBlocked}");
-
-                if (workshopEntity.DataBlocked != null)
-                {
-                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Workshop bloqueado");
-                    return BadRequest(Utilities.ReturnErro(
-                        string.Format(DefaultMessages.AccessBlockedWithReason,
-                        (string.IsNullOrEmpty(workshopEntity.Reason) ? $"Motivo {workshopEntity.Reason}" : "").Trim()
-                        )));
-                }
-
-                if (workshopEntity.Status != WorkshopStatus.Approved)
-                {
-                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Workshop não aprovado. Status: {workshopEntity.Status}");
-                    return BadRequest(Utilities.ReturnErro(workshopEntity.Status == WorkshopStatus.AwaitingApproval ? DefaultMessages.AwaitApproval : DefaultMessages.UserAdministratorBlocked));
-                }
-
-                var claims = new Claim[]
-                {
-                    claimRole,
-                };
-
-                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Gerando token para ID: {workshopEntity.GetStringId()}");
-                var token = TokenProviderMiddleware.GenerateToken(workshopEntity.GetStringId(), false, claims);
-                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Token gerado com sucesso");
-
-                return Ok(Utilities.ReturnSuccess(data: token));
             }
             catch (Exception ex)
             {
