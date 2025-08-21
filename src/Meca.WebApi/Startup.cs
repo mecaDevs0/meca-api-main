@@ -33,11 +33,29 @@ namespace Meca.WebApi
         {
             Configuration = configuration;
             
+            // DEBUG: Verificar se a configuração está sendo lida corretamente
+            Console.WriteLine($"[DEBUG_STARTUP] Iniciando Startup");
+            
+            var connectionString = configuration.GetSection("DATABASE:CONNECTIONSTRING").Value;
+            Console.WriteLine($"[DEBUG_STARTUP] Connection String: {connectionString}");
+            
+            var jwtKey = configuration.GetSection("Jwt:SecretKey").Value;
+            Console.WriteLine($"[DEBUG_STARTUP] JWT Key: {jwtKey}");
+            
+            var databaseName = configuration.GetSection("DATABASE:NAME").Value;
+            Console.WriteLine($"[DEBUG_STARTUP] Database Name: {databaseName}");
+            
             BaseConfig.ApplicationName = ApplicationName =
                 configuration.GetSection("ApplicationName").Get<string>() ?? Assembly.GetEntryAssembly().GetName().Name?.Split('.')[0];
             
+            Console.WriteLine($"[DEBUG_STARTUP] Application Name: {ApplicationName}");
+            
             EnableSwagger = configuration.GetSection("EnableSwagger").Get<bool>();
             EnableService = configuration.GetSection("EnableService").Get<bool>();
+            
+            Console.WriteLine($"[DEBUG_STARTUP] EnableSwagger: {EnableSwagger}");
+            Console.WriteLine($"[DEBUG_STARTUP] EnableService: {EnableService}");
+            Console.WriteLine($"[DEBUG_STARTUP] Startup finalizado");
         }
         
         public static string ApplicationName { get; set; }
@@ -46,6 +64,8 @@ namespace Meca.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
+            Console.WriteLine($"[DEBUG_STARTUP] Iniciando ConfigureServices");
+            
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowAllOrigin", builder =>
@@ -78,11 +98,22 @@ namespace Meca.WebApi
 
             services.AddScoped(typeof(IBusinessBaseAsync<>), typeof(BusinessBaseAsync<>));
 
+            Console.WriteLine($"[DEBUG_STARTUP] Registrando serviços de injeção");
             services.AddServicesInjection();
             
+            Console.WriteLine($"[DEBUG_STARTUP] Registrando serviços de aplicação");
             services.AddAplicationServicesInjection();
 
+            // CORREÇÃO: Adicionar configuração do Hangfire
+            if (EnableService)
+            {
+                Console.WriteLine($"[DEBUG_STARTUP] Configurando Hangfire");
+                services.AddHangfireMongoDb(Configuration);
+            }
+
             services.AddOptions();
+            
+            Console.WriteLine($"[DEBUG_STARTUP] ConfigureServices finalizado");
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, IHttpContextAccessor httpContextAccessor, IServiceProvider serviceProvider)
