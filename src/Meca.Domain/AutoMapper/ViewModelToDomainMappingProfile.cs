@@ -72,6 +72,18 @@ namespace Meca.Domain.AutoMapper
                 .ForMember(dest => dest._id, opt => opt.MapFrom(src => ObjectId.Parse(src.Id)));
             CreateMap<WorkshopRegisterViewModel, Workshop>()
                 .ForMember(dest => dest._id, opt => opt.MapFrom(src => ObjectId.Parse(src.Id)));
+            CreateMap<DataBankViewModel, Workshop>()
+                .ForMember(dest => dest._id, opt => opt.MapFrom(src => ObjectId.Parse(src.Id)))
+                .ForMember(dest => dest.AccountableName, opt => opt.MapFrom(src => src.AccountableName))
+                .ForMember(dest => dest.AccountableCpf, opt => opt.MapFrom(src => src.AccountableCpf))
+                .ForMember(dest => dest.BankAccount, opt => opt.MapFrom(src => src.BankAccount))
+                .ForMember(dest => dest.BankAgency, opt => opt.MapFrom(src => src.BankAgency))
+                .ForMember(dest => dest.Bank, opt => opt.MapFrom(src => src.Bank))
+                .ForMember(dest => dest.BankName, opt => opt.MapFrom(src => src.BankName))
+                .ForMember(dest => dest.BankCnpj, opt => opt.MapFrom(src => src.BankCnpj))
+                .ForMember(dest => dest.TypeAccount, opt => opt.MapFrom(src => src.TypeAccount))
+                .ForMember(dest => dest.PersonType, opt => opt.MapFrom(src => src.PersonType))
+                .ForMember(dest => dest.DataBankStatus, opt => opt.MapFrom(src => src.DataBankStatus));
             CreateMap<WorkshopAgendaViewModel, WorkshopAgenda>()
                 .ForMember(dest => dest._id, opt => opt.MapFrom(src => ObjectId.Parse(src.Id)));
             CreateMap<VehicleViewModel, Vehicle>()
