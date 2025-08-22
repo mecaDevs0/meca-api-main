@@ -1260,18 +1260,27 @@ namespace Meca.ApplicationService.Services
         {
             try
             {
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Iniciando UpdateDataBank para ID: {id}");
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Model recebido: {System.Text.Json.JsonSerializer.Serialize(model)}");
+
                 var ignoreField = new List<string>();
 
                 if (model.PersonType == TypePersonBank.PhysicalPerson)
                     ignoreField.Add(nameof(model.BankCnpj));
 
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Campos ignorados: {string.Join(", ", ignoreField)}");
+
                 if (ModelIsValid(model, true, ignoredFields: ignoreField.ToArray()) == false)
+                {
+                    Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] ModelIsValid retornou false");
                     return null;
+                }
 
                 var userId = id;
 
                 if (_access.TypeToken != (int)TypeProfile.Workshop)
                 {
+                    Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Tipo de token inválido: {_access.TypeToken}");
                     CreateNotification(DefaultMessages.InvalidCredentials);
                     return null;
                 }
@@ -1279,9 +1288,13 @@ namespace Meca.ApplicationService.Services
                 var workshopEntity = await _workshopRepository.FindByIdAsync(userId);
                 if (workshopEntity == null)
                 {
+                    Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Workshop não encontrado para ID: {userId}");
                     CreateNotification(DefaultMessages.WorkshopNotFound);
                     return null;
                 }
+
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Workshop encontrado: {workshopEntity.GetStringId()}");
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] ExternalId atual: {workshopEntity.ExternalId}");
 
                 // Se não tem ExternalId, criar conta Stripe automaticamente
                 if (string.IsNullOrEmpty(workshopEntity.ExternalId))
@@ -1312,6 +1325,7 @@ namespace Meca.ApplicationService.Services
 
                 if (stripeResultMarketPlace.Success == false)
                 {
+                    Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Erro ao obter conta Stripe: {stripeResultMarketPlace.ErrorMessage}");
                     CreateNotification(stripeResultMarketPlace.ErrorMessage);
                     return null;
                 }
@@ -1325,24 +1339,50 @@ namespace Meca.ApplicationService.Services
                     HolderType = model.PersonType == TypePersonBank.PhysicalPerson ? EStripeHolderType.Individual : EStripeHolderType.Company,
                 });
 
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Opções bancárias criadas: {System.Text.Json.JsonSerializer.Serialize(dataBankOptions)}");
+
                 stripeResultMarketPlace = await _stripeMarketPlaceService.UpdateExternalAccountAsync(workshopEntity.ExternalId, dataBankOptions);
 
                 if (stripeResultMarketPlace.Success == false)
                 {
+                    Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Erro ao atualizar conta bancária no Stripe: {stripeResultMarketPlace.ErrorMessage}");
                     CreateNotification(stripeResultMarketPlace.ErrorMessage);
                     return null;
                 }
 
+                Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Conta bancária atualizada no Stripe com sucesso");
+
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] _jsonBodyFields: {string.Join(", ", _jsonBodyFields ?? new string[0])}");
+                Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Antes do SetIfDifferent:");
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - AccountableName: {workshopEntity.AccountableName}");
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - BankAccount: {workshopEntity.BankAccount}");
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - BankAgency: {workshopEntity.BankAgency}");
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - Bank: {workshopEntity.Bank}");
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - BankName: {workshopEntity.BankName}");
+
                 workshopEntity.SetIfDifferent(model, _jsonBodyFields, _mapper);
+
+                Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Após o SetIfDifferent:");
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - AccountableName: {workshopEntity.AccountableName}");
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - BankAccount: {workshopEntity.BankAccount}");
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - BankAgency: {workshopEntity.BankAgency}");
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - Bank: {workshopEntity.Bank}");
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - BankName: {workshopEntity.BankName}");
 
                 workshopEntity.HasDataBank = stripeResultMarketPlace.Data.ExternalAccounts.Any();
 
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] HasDataBank definido como: {workshopEntity.HasDataBank}");
+
+                Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Salvando workshop no banco...");
                 await _workshopRepository.UpdateAsync(workshopEntity);
+                Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Workshop salvo com sucesso");
 
                 return "Dados atualizados com sucesso";
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] ERRO no UpdateDataBank: {ex.Message}");
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] StackTrace: {ex.StackTrace}");
                 throw;
             }
         }
