@@ -498,7 +498,6 @@ namespace Meca.ApplicationService.Services
                     return null;
                 }
 
-                Console.WriteLine($"[GET_INFO_DEBUG] UserId válido, buscando workshop...");
                 var workshopEntity = await _workshopRepository.FindByIdAsync(userId).ConfigureAwait(false);
                 
                 if (workshopEntity == null)
@@ -510,9 +509,7 @@ namespace Meca.ApplicationService.Services
 
                 Console.WriteLine($"[GET_INFO_DEBUG] Workshop encontrado: {workshopEntity.GetStringId()}");
                 Console.WriteLine($"[GET_INFO_DEBUG] Workshop CompanyName: {workshopEntity.CompanyName}");
-                Console.WriteLine($"[GET_INFO_DEBUG] Workshop Status: {workshopEntity.Status}");
 
-                Console.WriteLine("[GET_INFO_DEBUG] Iniciando mapeamento para WorkshopViewModel...");
                 var responseVm = _mapper.Map<WorkshopViewModel>(workshopEntity);
                 
                 if (responseVm == null)
@@ -522,33 +519,22 @@ namespace Meca.ApplicationService.Services
                 }
 
                 Console.WriteLine($"[GET_INFO_DEBUG] WorkshopViewModel mapeado com sucesso");
-                Console.WriteLine($"[GET_INFO_DEBUG] WorkshopViewModel ID: {responseVm.Id}");
-                Console.WriteLine($"[GET_INFO_DEBUG] WorkshopViewModel CompanyName: {responseVm.CompanyName}");
 
-                Console.WriteLine("[GET_INFO_DEBUG] Verificando agenda...");
                 responseVm.WorkshopAgendaValid = await _workshopAgendaRepository.CheckByAsync(x => x.Workshop.Id == userId);
-                Console.WriteLine($"[GET_INFO_DEBUG] WorkshopAgendaValid: {responseVm.WorkshopAgendaValid}");
-
-                Console.WriteLine("[GET_INFO_DEBUG] Verificando serviços...");
                 responseVm.WorkshopServicesValid = await _workshopServicesRepository.CheckByAsync(x => x.Workshop.Id == userId);
-                Console.WriteLine($"[GET_INFO_DEBUG] WorkshopServicesValid: {responseVm.WorkshopServicesValid}");
-
-                Console.WriteLine("[GET_INFO_DEBUG] Verificando dados bancários...");
                 responseVm.DataBankValid = !string.IsNullOrEmpty(workshopEntity.AccountableName) && 
                                           !string.IsNullOrEmpty(workshopEntity.BankAccount) && 
                                           !string.IsNullOrEmpty(workshopEntity.BankAgency);
-                Console.WriteLine($"[GET_INFO_DEBUG] DataBankValid: {responseVm.DataBankValid}");
-                Console.WriteLine($"[GET_INFO_DEBUG] AccountableName: {workshopEntity.AccountableName}");
-                Console.WriteLine($"[GET_INFO_DEBUG] BankAccount: {workshopEntity.BankAccount}");
-                Console.WriteLine($"[GET_INFO_DEBUG] BankAgency: {workshopEntity.BankAgency}");
 
-                Console.WriteLine("[GET_INFO_DEBUG] GetInfo concluído com sucesso");
+                Console.WriteLine($"[GET_INFO_DEBUG] DataBankValid: {responseVm.DataBankValid}");
+                Console.WriteLine($"[GET_INFO_DEBUG] WorkshopAgendaValid: {responseVm.WorkshopAgendaValid}");
+                Console.WriteLine($"[GET_INFO_DEBUG] WorkshopServicesValid: {responseVm.WorkshopServicesValid}");
+
                 return responseVm;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"[GET_INFO_DEBUG] ERRO no GetInfo: {ex.Message}");
-                Console.WriteLine($"[GET_INFO_DEBUG] StackTrace: {ex.StackTrace}");
                 CreateNotification(DefaultMessages.Error);
                 return null;
             }
