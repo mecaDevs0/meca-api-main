@@ -802,9 +802,14 @@ namespace Meca.WebApi.Controllers
         [ProducesResponseType(500)]
         public async Task<IActionResult> UpdateDataBank([FromRoute] string id, [FromBody] DataBankViewModel model)
         {
+            Console.WriteLine($"[CONTROLLER_DEBUG] ===== UpdateDataBank INICIADO =====");
+            Console.WriteLine($"[CONTROLLER_DEBUG] UpdateDataBank chamado - ID: {id}");
+            Console.WriteLine($"[CONTROLLER_DEBUG] Request Path: {Request.Path}");
+            Console.WriteLine($"[CONTROLLER_DEBUG] Request Method: {Request.Method}");
+            Console.WriteLine($"[CONTROLLER_DEBUG] Request Headers: {string.Join(", ", Request.Headers.Select(h => $"{h.Key}={h.Value}"))}");
+            
             try
             {
-                Console.WriteLine($"[CONTROLLER_DEBUG] UpdateDataBank chamado - ID: {id}");
                 Console.WriteLine($"[CONTROLLER_DEBUG] Model recebido: {System.Text.Json.JsonSerializer.Serialize(model)}");
                 Console.WriteLine($"[CONTROLLER_DEBUG] Model é null: {model == null}");
                 
