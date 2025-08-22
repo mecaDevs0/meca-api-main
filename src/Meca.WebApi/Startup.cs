@@ -138,6 +138,7 @@ namespace Meca.WebApi
             app.UseCors("AllowAllOrigin");
 
             app.UseJwtTokenApiAuth((IConfigurationRoot)Configuration);
+            app.UseAuthorization();
 
             if (EnableService)
                 app.UseHangFire();
