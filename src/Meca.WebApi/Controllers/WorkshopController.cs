@@ -807,6 +807,9 @@ namespace Meca.WebApi.Controllers
             Console.WriteLine($"[CONTROLLER_DEBUG] Request Path: {Request.Path}");
             Console.WriteLine($"[CONTROLLER_DEBUG] Request Method: {Request.Method}");
             Console.WriteLine($"[CONTROLLER_DEBUG] Request Headers: {string.Join(", ", Request.Headers.Select(h => $"{h.Key}={h.Value}"))}");
+            Console.WriteLine($"[CONTROLLER_DEBUG] Request Body: {Request.Body}");
+            Console.WriteLine($"[CONTROLLER_DEBUG] Request ContentType: {Request.ContentType}");
+            Console.WriteLine($"[CONTROLLER_DEBUG] Request ContentLength: {Request.ContentLength}");
             
             try
             {
