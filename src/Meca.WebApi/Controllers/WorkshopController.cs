@@ -804,15 +804,29 @@ namespace Meca.WebApi.Controllers
         {
             try
             {
+                Console.WriteLine($"[CONTROLLER_DEBUG] UpdateDataBank chamado - ID: {id}");
+                Console.WriteLine($"[CONTROLLER_DEBUG] Model recebido: {System.Text.Json.JsonSerializer.Serialize(model)}");
+                Console.WriteLine($"[CONTROLLER_DEBUG] Model é null: {model == null}");
+                
+                if (model == null)
+                {
+                    Console.WriteLine("[CONTROLLER_DEBUG] Model é null - retornando erro");
+                    return BadRequest(Utilities.ReturnErro("Dados bancários inválidos"));
+                }
+
                 model.TrimStringProperties();
+                Console.WriteLine($"[CONTROLLER_DEBUG] Model após TrimStringProperties: {System.Text.Json.JsonSerializer.Serialize(model)}");
 
-
+                Console.WriteLine("[CONTROLLER_DEBUG] Chamando _workshopService.UpdateDataBank...");
                 var response = await _workshopService.UpdateDataBank(model, id);
+                Console.WriteLine($"[CONTROLLER_DEBUG] Response do UpdateDataBank: {response}");
 
                 return Ok(Utilities.ReturnSuccess(data: response, message: DefaultMessages.Updated));
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"[CONTROLLER_DEBUG] ERRO no UpdateDataBank: {ex.Message}");
+                Console.WriteLine($"[CONTROLLER_DEBUG] StackTrace: {ex.StackTrace}");
                 return BadRequest(ex.ReturnErro());
             }
         }

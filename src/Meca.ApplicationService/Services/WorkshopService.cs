@@ -1262,6 +1262,15 @@ namespace Meca.ApplicationService.Services
             {
                 Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Iniciando UpdateDataBank para ID: {id}");
                 Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Model recebido: {System.Text.Json.JsonSerializer.Serialize(model)}");
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Model é null: {model == null}");
+                if (model != null)
+                {
+                    Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] AccountableName: {model.AccountableName}");
+                    Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] BankAccount: {model.BankAccount}");
+                    Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] BankAgency: {model.BankAgency}");
+                    Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Bank: {model.Bank}");
+                    Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] BankName: {model.BankName}");
+                }
 
                 var ignoreField = new List<string>();
 
