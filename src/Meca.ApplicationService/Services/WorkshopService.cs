@@ -498,102 +498,59 @@ namespace Meca.ApplicationService.Services
                     return null;
                 }
 
+                Console.WriteLine($"[GET_INFO_DEBUG] UserId válido, buscando workshop...");
                 var workshopEntity = await _workshopRepository.FindByIdAsync(userId).ConfigureAwait(false);
-                Console.WriteLine($"[GET_INFO_DEBUG] Workshop encontrado: {workshopEntity != null}");
+                
                 if (workshopEntity == null)
                 {
-                    Console.WriteLine("[GET_INFO_DEBUG] Workshop não encontrado");
-                    CreateNotification(DefaultMessages.WorkshopNotFound);
+                    Console.WriteLine($"[GET_INFO_DEBUG] Workshop NÃO encontrado no banco para ID: {userId}");
+                    CreateNotification(DefaultMessages.NotFound);
                     return null;
                 }
-                Console.WriteLine($"[GET_INFO_DEBUG] Workshop ID: {workshopEntity.GetStringId()}, Status: {workshopEntity.Status}, ExternalId: {workshopEntity.ExternalId}");
 
-                if (workshopEntity.Status == WorkshopStatus.Approved && string.IsNullOrEmpty(workshopEntity.ExternalId))
-                {
-                    Console.WriteLine("[GET_INFO_DEBUG] Criando conta Stripe automaticamente...");
-                    var remoteIp = Utilities.GetClientIp();
-                    var userAgent = _httpContextAccessor?.HttpContext?.Request?.Headers["User-Agent"].ToString() ?? "Unknown";
-
-                    var accountOptions = workshopEntity.MapAccount(remoteIp, userAgent);
-                    var subAccount = await _stripeMarketPlaceService.CreateAsync(accountOptions);
-
-                    if (subAccount.Success == false)
-                    {
-                        Console.WriteLine($"[GET_INFO_DEBUG] Erro ao criar conta Stripe: {subAccount.ErrorMessage}");
-                        CreateNotification(subAccount.ErrorMessage);
-                        return null;
-                    }
-
-                    workshopEntity.ExternalId = subAccount.Data?.Id;
-                    Console.WriteLine($"[GET_INFO_DEBUG] Conta Stripe criada com ID: {workshopEntity.ExternalId}");
-
-                    workshopEntity = await _workshopRepository.UpdateAsync(workshopEntity);
-                }
-
-                if (workshopEntity.DataBankStatus != DataBankStatus.Valid && string.IsNullOrEmpty(workshopEntity.ExternalId) == false)
-                {
-                    Console.WriteLine("[GET_INFO_DEBUG] Verificando status dos dados bancários...");
-                    var account = await _stripeMarketPlaceService.GetByIdAsync(workshopEntity.ExternalId);
-
-                    workshopEntity.DataBankStatus = account.Data?.ExternalAccounts?.Data?.FirstOrDefault() is not BankAccount bankAccount ? DataBankStatus.Uninformed : bankAccount.Status.MapDataBankStatus();
-
-                    workshopEntity = await _workshopRepository.UpdateAsync(workshopEntity, false);
-                }
+                Console.WriteLine($"[GET_INFO_DEBUG] Workshop encontrado: {workshopEntity.Id}");
+                Console.WriteLine($"[GET_INFO_DEBUG] Workshop CompanyName: {workshopEntity.CompanyName}");
+                Console.WriteLine($"[GET_INFO_DEBUG] Workshop Status: {workshopEntity.Status}");
 
                 Console.WriteLine("[GET_INFO_DEBUG] Iniciando mapeamento para WorkshopViewModel...");
                 var responseVm = _mapper.Map<WorkshopViewModel>(workshopEntity);
-                Console.WriteLine($"[GET_INFO_DEBUG] WorkshopViewModel mapeado: {responseVm != null}");
                 
-                if (responseVm != null)
+                if (responseVm == null)
                 {
-                    Console.WriteLine($"[GET_INFO_DEBUG] WorkshopViewModel ID: {responseVm.Id}");
-                    Console.WriteLine($"[GET_INFO_DEBUG] WorkshopViewModel CompanyName: {responseVm.CompanyName}");
+                    Console.WriteLine("[GET_INFO_DEBUG] ERRO: WorkshopViewModel mapeado é NULL");
+                    return null;
                 }
+
+                Console.WriteLine($"[GET_INFO_DEBUG] WorkshopViewModel mapeado com sucesso");
+                Console.WriteLine($"[GET_INFO_DEBUG] WorkshopViewModel ID: {responseVm.Id}");
+                Console.WriteLine($"[GET_INFO_DEBUG] WorkshopViewModel CompanyName: {responseVm.CompanyName}");
 
                 Console.WriteLine("[GET_INFO_DEBUG] Verificando agenda...");
-                responseVm.WorkshopAgendaValid = await _workshopAgendaRepository.CheckByAsync(x => x.Workshop.Id == workshopEntity.GetStringId());
+                responseVm.WorkshopAgendaValid = await _workshopAgendaRepository.AnyAsync(x => x.Workshop.Id == userId).ConfigureAwait(false);
                 Console.WriteLine($"[GET_INFO_DEBUG] WorkshopAgendaValid: {responseVm.WorkshopAgendaValid}");
-                
+
                 Console.WriteLine("[GET_INFO_DEBUG] Verificando serviços...");
-                responseVm.WorkshopServicesValid = await _workshopServicesRepository.CheckByAsync(x => x.Workshop.Id == workshopEntity.GetStringId());
+                responseVm.WorkshopServicesValid = await _workshopServicesRepository.AnyAsync(x => x.Workshop.Id == userId).ConfigureAwait(false);
                 Console.WriteLine($"[GET_INFO_DEBUG] WorkshopServicesValid: {responseVm.WorkshopServicesValid}");
 
-                Console.WriteLine("[GET_INFO_DEBUG] Contando notificações...");
-                responseVm.TotalNotificationNoRead = await _notificationRepository.CountLongAsync(x =>
-                    x.ReferenceId == userId &&
-                    x.DateRead == null &&
-                    x.TypeReference == TypeProfile.Workshop
-                );
-                Console.WriteLine($"[GET_INFO_DEBUG] TotalNotificationNoRead: {responseVm.TotalNotificationNoRead}");
+                Console.WriteLine("[GET_INFO_DEBUG] Verificando dados bancários...");
+                responseVm.DataBankValid = !string.IsNullOrEmpty(workshopEntity.AccountableName) && 
+                                          !string.IsNullOrEmpty(workshopEntity.BankAccount) && 
+                                          !string.IsNullOrEmpty(workshopEntity.BankAgency);
+                Console.WriteLine($"[GET_INFO_DEBUG] DataBankValid: {responseVm.DataBankValid}");
+                Console.WriteLine($"[GET_INFO_DEBUG] AccountableName: {workshopEntity.AccountableName}");
+                Console.WriteLine($"[GET_INFO_DEBUG] BankAccount: {workshopEntity.BankAccount}");
+                Console.WriteLine($"[GET_INFO_DEBUG] BankAgency: {workshopEntity.BankAgency}");
 
-                if (string.IsNullOrEmpty(workshopEntity.ExternalId) == false)
-                {
-                    Console.WriteLine("[GET_INFO_DEBUG] Verificando requisitos Stripe...");
-                    var account = await _stripeMarketPlaceService.GetByIdAsync(workshopEntity.ExternalId);
-
-                    if (account.Success)
-                    {
-                        responseVm.Requirements = account.Data.Requirements.CurrentlyDue.MapRequirements();
-                        responseVm.DataBankValid = !responseVm.Requirements.Any(x => x == StripeAccountRequirement.BankAccount);
-                        Console.WriteLine($"[GET_INFO_DEBUG] Requirements count: {responseVm.Requirements.Count}");
-                        Console.WriteLine($"[GET_INFO_DEBUG] DataBankValid: {responseVm.DataBankValid}");
-                    }
-                }
-
-                Console.WriteLine("[GET_INFO_DEBUG] Retornando resposta final...");
-                Console.WriteLine($"[GET_INFO_DEBUG] Final Response ID: {responseVm.Id}");
-                Console.WriteLine($"[GET_INFO_DEBUG] Final Response CompanyName: {responseVm.CompanyName}");
-                Console.WriteLine($"[GET_INFO_DEBUG] Final Response DataBankValid: {responseVm.DataBankValid}");
-                Console.WriteLine($"[GET_INFO_DEBUG] Final Response WorkshopAgendaValid: {responseVm.WorkshopAgendaValid}");
-                Console.WriteLine($"[GET_INFO_DEBUG] Final Response WorkshopServicesValid: {responseVm.WorkshopServicesValid}");
-                
+                Console.WriteLine("[GET_INFO_DEBUG] GetInfo concluído com sucesso");
                 return responseVm;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"[GET_INFO_DEBUG] ERRO no GetInfo: {ex.Message}");
-                Console.WriteLine($"[GET_INFO_DEBUG] Stack trace: {ex.StackTrace}");
-                throw;
+                Console.WriteLine($"[GET_INFO_DEBUG] StackTrace: {ex.StackTrace}");
+                CreateNotification(DefaultMessages.InternalServerError);
+                return null;
             }
         }
 
