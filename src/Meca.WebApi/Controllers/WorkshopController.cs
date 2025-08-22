@@ -154,12 +154,31 @@ namespace Meca.WebApi.Controllers
         {
             try
             {
+                Console.WriteLine("[WORKSHOP_CONTROLLER_DEBUG] Iniciando GetInfo no controller");
+                
                 var response = await _workshopService.GetInfo();
+                
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Response do GetInfo: {(response == null ? "NULL" : "NOT NULL")}");
+                if (response != null)
+                {
+                    Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Response ID: {response.Id}");
+                    Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Response CompanyName: {response.CompanyName}");
+                }
 
+                // Verificar se o response é null e retornar erro apropriado
+                if (response == null)
+                {
+                    Console.WriteLine("[WORKSHOP_CONTROLLER_DEBUG] Response é NULL - retornando erro");
+                    return BadRequest(Utilities.ReturnErro("Workshop não encontrado ou dados inválidos"));
+                }
+
+                Console.WriteLine("[WORKSHOP_CONTROLLER_DEBUG] Retornando resposta com sucesso");
                 return Ok(Utilities.ReturnSuccess(data: response));
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] ERRO no controller: {ex.Message}");
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Stack trace: {ex.StackTrace}");
                 return BadRequest(ex.ReturnErro());
             }
         }
