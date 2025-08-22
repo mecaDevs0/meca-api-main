@@ -489,6 +489,8 @@ namespace Meca.ApplicationService.Services
             try
             {
                 var userId = _access.UserId;
+                Console.WriteLine($"[GET_INFO_DEBUG] Iniciando GetInfo para userId: {userId}");
+                Console.WriteLine($"[GET_INFO_DEBUG] Iniciando GetInfo para userId: {userId}");
 
                 if (ObjectId.TryParse(userId, out var _id) == false)
                 {
@@ -497,11 +499,14 @@ namespace Meca.ApplicationService.Services
                 }
 
                 var workshopEntity = await _workshopRepository.FindByIdAsync(userId).ConfigureAwait(false);
+                Console.WriteLine($"[GET_INFO_DEBUG] Workshop encontrado: {workshopEntity != null}");
                 if (workshopEntity == null)
                 {
+                    Console.WriteLine("[GET_INFO_DEBUG] Workshop não encontrado");
                     CreateNotification(DefaultMessages.WorkshopNotFound);
                     return null;
                 }
+                Console.WriteLine($"[GET_INFO_DEBUG] Workshop ID: {workshopEntity.GetStringId()}, Status: {workshopEntity.Status}, ExternalId: {workshopEntity.ExternalId}");
 
                 if (workshopEntity.Status == WorkshopStatus.Approved && string.IsNullOrEmpty(workshopEntity.ExternalId))
                 {
@@ -532,9 +537,11 @@ namespace Meca.ApplicationService.Services
                 }
 
                 var responseVm = _mapper.Map<WorkshopViewModel>(workshopEntity);
+                Console.WriteLine($"[GET_INFO_DEBUG] WorkshopViewModel mapeado: {responseVm != null}");
 
                 responseVm.WorkshopAgendaValid = await _workshopAgendaRepository.CheckByAsync(x => x.Workshop.Id == workshopEntity.GetStringId());
                 responseVm.WorkshopServicesValid = await _workshopServicesRepository.CheckByAsync(x => x.Workshop.Id == workshopEntity.GetStringId());
+                Console.WriteLine($"[GET_INFO_DEBUG] WorkshopAgendaValid: {responseVm.WorkshopAgendaValid}, WorkshopServicesValid: {responseVm.WorkshopServicesValid}");
 
                 responseVm.TotalNotificationNoRead = await _notificationRepository.CountLongAsync(x =>
                     x.ReferenceId == userId &&
@@ -552,7 +559,9 @@ namespace Meca.ApplicationService.Services
                         responseVm.DataBankValid = !responseVm.Requirements.Any(x => x == StripeAccountRequirement.BankAccount);
                     }
                 }
-                return _mapper.Map<WorkshopViewModel>(responseVm);
+                var finalResponse = _mapper.Map<WorkshopViewModel>(responseVm);
+                Console.WriteLine($"[GET_INFO_DEBUG] Resposta final: {finalResponse != null}");
+                return finalResponse;
             }
             catch (Exception)
             {
@@ -1289,10 +1298,29 @@ namespace Meca.ApplicationService.Services
                     return null;
                 }
 
+                // Se não tem ExternalId, criar conta Stripe automaticamente
                 if (string.IsNullOrEmpty(workshopEntity.ExternalId))
                 {
-                    CreateNotification(DefaultMessages.WorkshopNotRegisteredInGateway);
-                    return null;
+                    Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Workshop sem ExternalId, criando conta Stripe...");
+                    
+                    var remoteIp = Utilities.GetClientIp();
+                    var userAgent = _httpContextAccessor?.HttpContext?.Request?.Headers["User-Agent"].ToString() ?? "Unknown";
+
+                    var accountOptions = workshopEntity.MapAccount(remoteIp, userAgent);
+                    var subAccount = await _stripeMarketPlaceService.CreateAsync(accountOptions);
+
+                    if (subAccount.Success == false)
+                    {
+                        Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Erro ao criar conta Stripe: {subAccount.ErrorMessage}");
+                        CreateNotification(subAccount.ErrorMessage);
+                        return null;
+                    }
+
+                    workshopEntity.ExternalId = subAccount.Data?.Id;
+                    Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Conta Stripe criada com ID: {workshopEntity.ExternalId}");
+                    
+                    // Salvar o ExternalId no workshop
+                    await _workshopRepository.UpdateAsync(workshopEntity);
                 }
 
                 var stripeResultMarketPlace = await _stripeMarketPlaceService.GetByIdAsync(workshopEntity.ExternalId);
