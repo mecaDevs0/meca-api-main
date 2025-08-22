@@ -535,7 +535,7 @@ namespace Meca.ApplicationService.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"[GET_INFO_DEBUG] ERRO no GetInfo: {ex.Message}");
-                CreateNotification(DefaultMessages.Error);
+                CreateNotification(DefaultMessages.DefaultError);
                 return null;
             }
         }
