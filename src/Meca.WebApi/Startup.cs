@@ -137,27 +137,7 @@ namespace Meca.WebApi
 
             app.UseCors("AllowAllOrigin");
 
-            // TESTE: Desabilitar temporariamente o UseResponseShowInternalServerError
-            // app.UseJwtTokenApiAuth((IConfigurationRoot)Configuration);
-            
-            // Configuração manual do JWT sem o middleware problemático
-            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(BaseConfig.SecretKey));
-            var tokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = signingKey,
-                ValidateIssuer = true,
-                ValidIssuer = BaseConfig.Issuer,
-                ValidateAudience = true,
-                ValidAudience = BaseConfig.Audience,
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.Zero,
-            };
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-            app.UseAuthentication();
-            app.UseAuthorization();
+            app.UseJwtTokenApiAuth((IConfigurationRoot)Configuration);
 
             if (EnableService)
                 app.UseHangFire();
