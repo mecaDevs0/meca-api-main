@@ -1369,8 +1369,17 @@ namespace Meca.ApplicationService.Services
                 Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - Bank: {workshopEntity.Bank}");
                 Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - BankName: {workshopEntity.BankName}");
 
-                // Usar AutoMapper para mapear os dados bancários
-                _mapper.Map(model, workshopEntity);
+                // Mapear os dados bancários manualmente para evitar problemas com AutoMapper
+                workshopEntity.AccountableName = model.AccountableName;
+                workshopEntity.AccountableCpf = model.AccountableCpf;
+                workshopEntity.BankAccount = model.BankAccount;
+                workshopEntity.BankAgency = model.BankAgency;
+                workshopEntity.Bank = model.Bank;
+                workshopEntity.BankName = model.BankName;
+                workshopEntity.BankCnpj = model.BankCnpj;
+                workshopEntity.TypeAccount = model.TypeAccount;
+                workshopEntity.PersonType = model.PersonType;
+                workshopEntity.DataBankStatus = model.DataBankStatus;
 
                 Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Após o mapeamento AutoMapper:");
                 Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - AccountableName: {workshopEntity.AccountableName}");
