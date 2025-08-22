@@ -1353,16 +1353,17 @@ namespace Meca.ApplicationService.Services
                 Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Conta bancária atualizada no Stripe com sucesso");
 
                 Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] _jsonBodyFields: {string.Join(", ", _jsonBodyFields ?? new string[0])}");
-                Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Antes do SetIfDifferent:");
+                Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Antes do mapeamento:");
                 Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - AccountableName: {workshopEntity.AccountableName}");
                 Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - BankAccount: {workshopEntity.BankAccount}");
                 Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - BankAgency: {workshopEntity.BankAgency}");
                 Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - Bank: {workshopEntity.Bank}");
                 Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - BankName: {workshopEntity.BankName}");
 
-                workshopEntity.SetIfDifferent(model, _jsonBodyFields, _mapper);
+                // Usar AutoMapper para mapear os dados bancários
+                _mapper.Map(model, workshopEntity);
 
-                Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Após o SetIfDifferent:");
+                Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Após o mapeamento AutoMapper:");
                 Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - AccountableName: {workshopEntity.AccountableName}");
                 Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - BankAccount: {workshopEntity.BankAccount}");
                 Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - BankAgency: {workshopEntity.BankAgency}");
