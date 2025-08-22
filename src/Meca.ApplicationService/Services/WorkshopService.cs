@@ -504,11 +504,11 @@ namespace Meca.ApplicationService.Services
                 if (workshopEntity == null)
                 {
                     Console.WriteLine($"[GET_INFO_DEBUG] Workshop NÃO encontrado no banco para ID: {userId}");
-                    CreateNotification(DefaultMessages.NotFound);
+                    CreateNotification(DefaultMessages.WorkshopNotFound);
                     return null;
                 }
 
-                Console.WriteLine($"[GET_INFO_DEBUG] Workshop encontrado: {workshopEntity.Id}");
+                Console.WriteLine($"[GET_INFO_DEBUG] Workshop encontrado: {workshopEntity.GetStringId()}");
                 Console.WriteLine($"[GET_INFO_DEBUG] Workshop CompanyName: {workshopEntity.CompanyName}");
                 Console.WriteLine($"[GET_INFO_DEBUG] Workshop Status: {workshopEntity.Status}");
 
@@ -526,11 +526,11 @@ namespace Meca.ApplicationService.Services
                 Console.WriteLine($"[GET_INFO_DEBUG] WorkshopViewModel CompanyName: {responseVm.CompanyName}");
 
                 Console.WriteLine("[GET_INFO_DEBUG] Verificando agenda...");
-                responseVm.WorkshopAgendaValid = await _workshopAgendaRepository.AnyAsync(x => x.Workshop.Id == userId).ConfigureAwait(false);
+                responseVm.WorkshopAgendaValid = await _workshopAgendaRepository.CheckByAsync(x => x.Workshop.Id == userId);
                 Console.WriteLine($"[GET_INFO_DEBUG] WorkshopAgendaValid: {responseVm.WorkshopAgendaValid}");
 
                 Console.WriteLine("[GET_INFO_DEBUG] Verificando serviços...");
-                responseVm.WorkshopServicesValid = await _workshopServicesRepository.AnyAsync(x => x.Workshop.Id == userId).ConfigureAwait(false);
+                responseVm.WorkshopServicesValid = await _workshopServicesRepository.CheckByAsync(x => x.Workshop.Id == userId);
                 Console.WriteLine($"[GET_INFO_DEBUG] WorkshopServicesValid: {responseVm.WorkshopServicesValid}");
 
                 Console.WriteLine("[GET_INFO_DEBUG] Verificando dados bancários...");
@@ -549,7 +549,7 @@ namespace Meca.ApplicationService.Services
             {
                 Console.WriteLine($"[GET_INFO_DEBUG] ERRO no GetInfo: {ex.Message}");
                 Console.WriteLine($"[GET_INFO_DEBUG] StackTrace: {ex.StackTrace}");
-                CreateNotification(DefaultMessages.InternalServerError);
+                CreateNotification(DefaultMessages.Error);
                 return null;
             }
         }
