@@ -794,6 +794,21 @@ namespace Meca.WebApi.Controllers
         /// <response code="401">Unauthorize Error</response>
         /// <response code="500">Exception Error</response>
         /// <returns></returns>
+        [HttpPost("UpdateDataBankTest/{id}")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ReturnViewModel), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> UpdateDataBankTest([FromRoute] string id, [FromBody] DataBankViewModel model)
+        {
+            Console.WriteLine($"[CONTROLLER_DEBUG] ===== UpdateDataBankTest INICIADO =====");
+            Console.WriteLine($"[CONTROLLER_DEBUG] UpdateDataBankTest chamado - ID: {id}");
+            
+            // Chamar o mesmo método do PATCH
+            return await UpdateDataBank(id, model);
+        }
+
         [HttpPatch("UpdateDataBank/{id}")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(ReturnViewModel), 200)]
