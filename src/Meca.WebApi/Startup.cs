@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using Hangfire;
 using Meca.ApplicationService.Interface;
 using Meca.ApplicationService.Services;
@@ -18,6 +19,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using UtilityFramework.Application.Core3;
 using UtilityFramework.Infra.Core3.MongoDb.Business;
 using System.Linq;
@@ -135,7 +137,25 @@ namespace Meca.WebApi
 
             app.UseCors("AllowAllOrigin");
 
-            app.UseJwtTokenApiAuth((IConfigurationRoot)Configuration);
+            // TESTE: Desabilitar temporariamente o UseResponseShowInternalServerError
+            // app.UseJwtTokenApiAuth((IConfigurationRoot)Configuration);
+            
+            // Configuração manual do JWT sem o middleware problemático
+            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(BaseConfig.SecretKey));
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = signingKey,
+                ValidateIssuer = true,
+                ValidIssuer = BaseConfig.Issuer,
+                ValidateAudience = true,
+                ValidAudience = BaseConfig.Audience,
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero,
+            };
+
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseAuthentication();
             app.UseAuthorization();
 
