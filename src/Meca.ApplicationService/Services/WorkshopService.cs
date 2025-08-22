@@ -534,10 +534,10 @@ namespace Meca.ApplicationService.Services
                 Console.WriteLine($"[GET_INFO_DEBUG] WorkshopServicesValid: {responseVm.WorkshopServicesValid}");
 
                 Console.WriteLine("[GET_INFO_DEBUG] Verificando dados bancários...");
-                responseVm.DataBankValid = !string.IsNullOrEmpty(workshopEntity.AccountableName) && 
-                                          !string.IsNullOrEmpty(workshopEntity.BankAccount) && 
-                                          !string.IsNullOrEmpty(workshopEntity.BankAgency);
+                // CORREÇÃO: Usar o campo HasDataBank que é atualizado no UpdateDataBank
+                responseVm.DataBankValid = workshopEntity.HasDataBank;
                 Console.WriteLine($"[GET_INFO_DEBUG] DataBankValid: {responseVm.DataBankValid}");
+                Console.WriteLine($"[GET_INFO_DEBUG] HasDataBank: {workshopEntity.HasDataBank}");
                 Console.WriteLine($"[GET_INFO_DEBUG] AccountableName: {workshopEntity.AccountableName}");
                 Console.WriteLine($"[GET_INFO_DEBUG] BankAccount: {workshopEntity.BankAccount}");
                 Console.WriteLine($"[GET_INFO_DEBUG] BankAgency: {workshopEntity.BankAgency}");
