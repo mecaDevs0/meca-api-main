@@ -488,12 +488,28 @@ namespace Meca.ApplicationService.Services
         {
             try
             {
+                Console.WriteLine("[GET_INFO_DEBUG] Iniciando GetInfo - verificando acesso...");
+                
+                if (_access == null)
+                {
+                    Console.WriteLine("[GET_INFO_DEBUG] ERRO: _access é null");
+                    CreateNotification(DefaultMessages.DefaultError);
+                    return null;
+                }
+                
                 var userId = _access.UserId;
-                Console.WriteLine($"[GET_INFO_DEBUG] Iniciando GetInfo para userId: {userId}");
+                Console.WriteLine($"[GET_INFO_DEBUG] UserId obtido: '{userId}'");
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    Console.WriteLine("[GET_INFO_DEBUG] ERRO: UserId é null ou vazio");
+                    CreateNotification(DefaultMessages.InvalidIdentifier);
+                    return null;
+                }
 
                 if (ObjectId.TryParse(userId, out var _id) == false)
                 {
-                    Console.WriteLine($"[GET_INFO_DEBUG] UserId inválido: {userId}");
+                    Console.WriteLine($"[GET_INFO_DEBUG] ERRO: UserId inválido: '{userId}'");
                     CreateNotification(DefaultMessages.InvalidIdentifier);
                     return null;
                 }
@@ -1413,10 +1429,31 @@ namespace Meca.ApplicationService.Services
         {
             try
             {
+                Console.WriteLine($"[GET_DATA_BANK_DEBUG] Iniciando GetDataBank para ID: '{id}'");
+                
+                if (_access == null)
+                {
+                    Console.WriteLine("[GET_DATA_BANK_DEBUG] ERRO: _access é null");
+                    CreateNotification(DefaultMessages.DefaultError);
+                    return null;
+                }
+                
+                Console.WriteLine($"[GET_DATA_BANK_DEBUG] _access.UserId: '{_access.UserId}'");
+                Console.WriteLine($"[GET_DATA_BANK_DEBUG] _access.TypeToken: {_access.TypeToken}");
+                
                 id = string.IsNullOrEmpty(id) ? _access.UserId : id;
+                Console.WriteLine($"[GET_DATA_BANK_DEBUG] ID final para busca: '{id}'");
+
+                if (string.IsNullOrEmpty(id))
+                {
+                    Console.WriteLine("[GET_DATA_BANK_DEBUG] ERRO: ID é null ou vazio após determinação");
+                    CreateNotification(DefaultMessages.InvalidIdentifier);
+                    return null;
+                }
 
                 if (_access.TypeToken != (int)TypeProfile.Workshop && _access.TypeToken != (int)TypeProfile.UserAdministrator)
                 {
+                    Console.WriteLine($"[GET_DATA_BANK_DEBUG] ERRO: Tipo de token inválido: {_access.TypeToken}");
                     CreateNotification(DefaultMessages.NotPermission);
                     return null;
                 }
