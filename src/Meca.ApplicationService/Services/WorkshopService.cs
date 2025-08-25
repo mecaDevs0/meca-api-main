@@ -1347,60 +1347,55 @@ namespace Meca.ApplicationService.Services
                     await _workshopRepository.UpdateAsync(workshopEntity);
                 }
 
-                // Declarar variável fora do escopo para poder usar depois
-                var stripeResultMarketPlace = default(object);
-
-                // Só tentar obter conta Stripe se não for o ID temporário
+                // Só tentar operações Stripe se não for o ID temporário
                 if (workshopEntity.ExternalId != "STRIPE_ERROR_TEMP")
                 {
-                    stripeResultMarketPlace = await _stripeMarketPlaceService.GetByIdAsync(workshopEntity.ExternalId);
+                    try
+                    {
+                        var stripeResultMarketPlace = await _stripeMarketPlaceService.GetByIdAsync(workshopEntity.ExternalId);
 
-                    if (stripeResultMarketPlace.Success == false)
-                    {
-                        Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] AVISO: Erro ao obter conta Stripe: {stripeResultMarketPlace.ErrorMessage}");
-                        Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Continuando para salvar dados no MongoDB mesmo com erro no Stripe...");
-                        // Não retornar null - continuar para salvar no MongoDB
+                        if (stripeResultMarketPlace.Success == false)
+                        {
+                            Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] AVISO: Erro ao obter conta Stripe: {stripeResultMarketPlace.ErrorMessage}");
+                            Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Continuando para salvar dados no MongoDB mesmo com erro no Stripe...");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Conta Stripe obtida com sucesso: {workshopEntity.ExternalId}");
+
+                            var dataBankOptions = _stripeMarketPlaceService.CreateBankAccountOptions(new StripeExternalAccountMarketPlaceRequest()
+                            {
+                                AccountNumber = model.BankAccount,
+                                BankCode = model.Bank,
+                                AgencyNumber = model.BankAgency,
+                                HolderName = model.AccountableName,
+                                HolderType = model.PersonType == TypePersonBank.PhysicalPerson ? EStripeHolderType.Individual : EStripeHolderType.Company,
+                            });
+
+                            Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Opções bancárias criadas: {System.Text.Json.JsonSerializer.Serialize(dataBankOptions)}");
+
+                            stripeResultMarketPlace = await _stripeMarketPlaceService.UpdateExternalAccountAsync(workshopEntity.ExternalId, dataBankOptions);
+
+                            if (stripeResultMarketPlace.Success == false)
+                            {
+                                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] AVISO: Erro ao atualizar conta bancária no Stripe: {stripeResultMarketPlace.ErrorMessage}");
+                                Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Continuando para salvar dados no MongoDB mesmo com erro no Stripe...");
+                            }
+                            else
+                            {
+                                Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Conta bancária atualizada no Stripe com sucesso");
+                            }
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Conta Stripe obtida com sucesso: {workshopEntity.ExternalId}");
+                        Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] AVISO: Exceção ao tentar operações Stripe: {ex.Message}");
+                        Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Continuando para salvar dados no MongoDB mesmo com erro no Stripe...");
                     }
                 }
                 else
                 {
-                    Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Pulando verificação Stripe (ID temporário)");
-                }
-
-                // Só tentar atualizar conta bancária no Stripe se não for o ID temporário
-                if (workshopEntity.ExternalId != "STRIPE_ERROR_TEMP")
-                {
-                    var dataBankOptions = _stripeMarketPlaceService.CreateBankAccountOptions(new StripeExternalAccountMarketPlaceRequest()
-                    {
-                        AccountNumber = model.BankAccount,
-                        BankCode = model.Bank,
-                        AgencyNumber = model.BankAgency,
-                        HolderName = model.AccountableName,
-                        HolderType = model.PersonType == TypePersonBank.PhysicalPerson ? EStripeHolderType.Individual : EStripeHolderType.Company,
-                    });
-
-                    Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Opções bancárias criadas: {System.Text.Json.JsonSerializer.Serialize(dataBankOptions)}");
-
-                    stripeResultMarketPlace = await _stripeMarketPlaceService.UpdateExternalAccountAsync(workshopEntity.ExternalId, dataBankOptions);
-
-                    if (stripeResultMarketPlace.Success == false)
-                    {
-                        Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] AVISO: Erro ao atualizar conta bancária no Stripe: {stripeResultMarketPlace.ErrorMessage}");
-                        Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Continuando para salvar dados no MongoDB mesmo com erro no Stripe...");
-                        // Não retornar null - continuar para salvar no MongoDB
-                    }
-                    else
-                    {
-                        Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Conta bancária atualizada no Stripe com sucesso");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Pulando atualização Stripe (ID temporário)");
+                    Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Pulando operações Stripe (ID temporário)");
                 }
 
                 Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Conta bancária atualizada no Stripe com sucesso");
