@@ -1295,11 +1295,26 @@ namespace Meca.ApplicationService.Services
 
                 Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Campos ignorados: {string.Join(", ", ignoreField)}");
 
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Validando modelo...");
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Model.AccountableName: '{model.AccountableName}'");
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Model.AccountableCpf: '{model.AccountableCpf}'");
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Model.BankAccount: '{model.BankAccount}'");
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Model.BankAgency: '{model.BankAgency}'");
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Model.Bank: '{model.Bank}'");
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Model.BankName: '{model.BankName}'");
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Model.TypeAccount: {model.TypeAccount}");
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Model.PersonType: {model.PersonType}");
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Model.HasDataBank: {model.HasDataBank}");
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Model.BankCnpj: '{model.BankCnpj}'");
+                
                 if (ModelIsValid(model, true, ignoredFields: ignoreField.ToArray()) == false)
                 {
                     Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] ModelIsValid retornou false");
+                    Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Retornando null devido à validação falhar");
                     return null;
                 }
+                
+                Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] ModelIsValid retornou true - modelo válido");
 
                 var userId = id;
 
