@@ -1347,13 +1347,25 @@ namespace Meca.ApplicationService.Services
                     await _workshopRepository.UpdateAsync(workshopEntity);
                 }
 
-                var stripeResultMarketPlace = await _stripeMarketPlaceService.GetByIdAsync(workshopEntity.ExternalId);
-
-                if (stripeResultMarketPlace.Success == false)
+                // Só tentar obter conta Stripe se não for o ID temporário
+                if (workshopEntity.ExternalId != "STRIPE_ERROR_TEMP")
                 {
-                    Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Erro ao obter conta Stripe: {stripeResultMarketPlace.ErrorMessage}");
-                    CreateNotification(stripeResultMarketPlace.ErrorMessage);
-                    return null;
+                    var stripeResultMarketPlace = await _stripeMarketPlaceService.GetByIdAsync(workshopEntity.ExternalId);
+
+                    if (stripeResultMarketPlace.Success == false)
+                    {
+                        Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] AVISO: Erro ao obter conta Stripe: {stripeResultMarketPlace.ErrorMessage}");
+                        Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Continuando para salvar dados no MongoDB mesmo com erro no Stripe...");
+                        // Não retornar null - continuar para salvar no MongoDB
+                    }
+                    else
+                    {
+                        Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Conta Stripe obtida com sucesso: {workshopEntity.ExternalId}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Pulando verificação Stripe (ID temporário)");
                 }
 
                 var dataBankOptions = _stripeMarketPlaceService.CreateBankAccountOptions(new StripeExternalAccountMarketPlaceRequest()
