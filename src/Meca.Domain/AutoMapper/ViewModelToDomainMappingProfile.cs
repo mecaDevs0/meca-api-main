@@ -74,6 +74,7 @@ namespace Meca.Domain.AutoMapper
                 .ForMember(dest => dest._id, opt => opt.MapFrom(src => ObjectId.Parse(src.Id)));
             CreateMap<DataBankViewModel, Workshop>()
                 .ForMember(dest => dest._id, opt => opt.Ignore()) // Ignorar _id para evitar sobrescrever
+                .ForMember(dest => dest.HasDataBank, opt => opt.MapFrom(src => src.HasDataBank))
                 .ForMember(dest => dest.AccountableName, opt => opt.MapFrom(src => src.AccountableName))
                 .ForMember(dest => dest.AccountableCpf, opt => opt.MapFrom(src => src.AccountableCpf))
                 .ForMember(dest => dest.BankAccount, opt => opt.MapFrom(src => src.BankAccount))
