@@ -1348,7 +1348,7 @@ namespace Meca.ApplicationService.Services
                 }
 
                 // Declarar variável fora do escopo para poder usar depois
-                var stripeResultMarketPlace = default(StripeResult<StripeAccountMarketPlace>);
+                var stripeResultMarketPlace = default(object);
 
                 // Só tentar obter conta Stripe se não for o ID temporário
                 if (workshopEntity.ExternalId != "STRIPE_ERROR_TEMP")
