@@ -80,7 +80,8 @@ namespace Meca.WebApi
 
             services.AddResponseCompression();
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddNewtonsoftJson();
 
             services.AddSignalR();
 
