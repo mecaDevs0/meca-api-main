@@ -1334,9 +1334,10 @@ namespace Meca.ApplicationService.Services
 
                     if (subAccount.Success == false)
                     {
-                        Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Erro ao criar conta Stripe: {subAccount.ErrorMessage}");
-                        CreateNotification(subAccount.ErrorMessage);
-                        return null;
+                        Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] AVISO: Erro ao criar conta Stripe: {subAccount.ErrorMessage}");
+                        Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Continuando para salvar dados no MongoDB mesmo com erro no Stripe...");
+                        // Não retornar null - continuar para salvar no MongoDB
+                        workshopEntity.ExternalId = "STRIPE_ERROR_TEMP"; // ID temporário
                     }
 
                     workshopEntity.ExternalId = subAccount.Data?.Id;
