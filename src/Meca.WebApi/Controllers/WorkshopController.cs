@@ -366,34 +366,52 @@ namespace Meca.WebApi.Controllers
         [ProducesResponseType(500)]
         public async Task<IActionResult> Token([FromBody] LoginViewModel model)
         {
-            Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Iniciando método Token");
-            Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Model recebido: {System.Text.Json.JsonSerializer.Serialize(model)}");
-            Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] _workshopService é null: {_workshopService == null}");
-
-            // CORREÇÃO: Verificar se o model não é null
-            if (model == null)
-            {
-                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] ERRO: Model é null");
-                return BadRequest(Utilities.ReturnErro("Dados de login inválidos"));
-            }
-
-            // CORREÇÃO: Usar o WorkshopService em vez do repository diretamente
-            if (_workshopService == null)
-            {
-                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] ERRO: _workshopService é null");
-                return StatusCode(500, Utilities.ReturnErro("Erro interno do servidor: WorkshopService não inicializado"));
-            }
-
             try
             {
-                // CORREÇÃO: Verificar se o model não é null antes de chamar TrimStringProperties
-                if (model != null)
+                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Iniciando método Token");
+                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Model recebido: {System.Text.Json.JsonSerializer.Serialize(model)}");
+                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] _workshopService é null: {_workshopService == null}");
+
+                // VALIDAÇÃO DEFINITIVA: Verificar se o model não é null
+                if (model == null)
                 {
-                    model.TrimStringProperties();
-                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Model após TrimStringProperties: {System.Text.Json.JsonSerializer.Serialize(model)}");
+                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] ERRO: Model é null");
+                    return BadRequest(Utilities.ReturnErro("Dados de login inválidos"));
                 }
 
-                // Usar o método Token do WorkshopService
+                // VALIDAÇÃO DEFINITIVA: Verificar se o WorkshopService está inicializado
+                if (_workshopService == null)
+                {
+                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] ERRO CRÍTICO: _workshopService é null");
+                    return StatusCode(500, Utilities.ReturnErro("Erro interno do servidor: WorkshopService não inicializado"));
+                }
+
+                // VALIDAÇÃO DEFINITIVA: Verificar se todas as dependências estão funcionando
+                if (_mapper == null)
+                {
+                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] ERRO CRÍTICO: _mapper é null");
+                    return StatusCode(500, Utilities.ReturnErro("Erro interno do servidor: AutoMapper não inicializado"));
+                }
+
+                // PROCESSAMENTO SEGURO: Limpar e validar dados de entrada
+                model.TrimStringProperties();
+                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Model após TrimStringProperties: {System.Text.Json.JsonSerializer.Serialize(model)}");
+
+                // VALIDAÇÃO DEFINITIVA: Verificar se os dados obrigatórios estão presentes
+                if (string.IsNullOrEmpty(model.Email) && string.IsNullOrEmpty(model.ProviderId))
+                {
+                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] ERRO: Email e ProviderId estão vazios");
+                    return BadRequest(Utilities.ReturnErro("Email ou ProviderId é obrigatório"));
+                }
+
+                if (model.TypeProvider == TypeProvider.Password && string.IsNullOrEmpty(model.Password))
+                {
+                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] ERRO: Senha está vazia para login com senha");
+                    return BadRequest(Utilities.ReturnErro("Senha é obrigatória para login com senha"));
+                }
+
+                // EXECUÇÃO DEFINITIVA: Chamar o WorkshopService com tratamento robusto
+                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Chamando _workshopService.Token");
                 var result = await _workshopService.Token(model);
                 
                 if (result != null)
@@ -407,11 +425,17 @@ namespace Meca.WebApi.Controllers
                     return BadRequest(Utilities.ReturnErro(DefaultMessages.InvalidLogin));
                 }
             }
+            catch (ArgumentNullException ex)
+            {
+                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] ERRO DE INJEÇÃO DE DEPENDÊNCIA: {ex.Message}");
+                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Stack trace: {ex.StackTrace}");
+                return StatusCode(500, Utilities.ReturnErro("Erro interno do servidor: Dependência não inicializada"));
+            }
             catch (Exception ex)
             {
-                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] ERRO: {ex.Message}");
+                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] ERRO GERAL: {ex.Message}");
                 Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Stack trace: {ex.StackTrace}");
-                return BadRequest(ex.ReturnErro());
+                return StatusCode(500, Utilities.ReturnErro("Erro interno do servidor. Tente novamente."));
             }
         }
 
