@@ -167,6 +167,11 @@ namespace Meca.Domain.AutoMapper
                 .ForMember(dest => dest.WorkshopServices, opt => opt.MapFrom(src => src.WorkshopServices));
             CreateMap<WorkshopServicesAux, WorkshopServicesAuxViewModel>().ReverseMap();
             CreateMap<WorkshopServicesAux, WorkshopServicesViewModel>().ReverseMap();
+            CreateMap<WorkshopServicesAux, WorkshopServicesAuxViewModel>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Service, opt => opt.MapFrom(src => src.Service))
+                .ForMember(dest => dest.MinTimeScheduling, opt => opt.MapFrom(src => src.MinTimeScheduling))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
             CreateMap<VehicleAux, VehicleAuxViewModel>().ReverseMap();
             CreateMap<SchedulingHistory, SchedulingHistoryViewModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src._id.ToString()));

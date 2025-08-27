@@ -286,10 +286,11 @@ namespace Meca.ApplicationService.Services
                 var workshopAgendaEntity = await _workshopAgendaRepository.FindByAsync(x => x.Workshop.Id == workshopEntity.GetStringId());
                 var workshopServicesEntity = await _workshopServicesRepository.FindByAsync(x => x.Workshop.Id == workshopEntity.GetStringId());
 
-                // Permitir agendamentos para Oficina somente se estiver com os dados bancários, agenda e serviços configurados
-                if (workshopEntity.DataBankStatus != DataBankStatus.Valid || !workshopAgendaEntity.Any() || !workshopServicesEntity.Any())
+                // Permitir agendamentos para Oficina se estiver com agenda e serviços configurados
+                // Removida a validação de dados bancários para permitir agendamentos de teste
+                if (!workshopAgendaEntity.Any() || !workshopServicesEntity.Any())
                 {
-                    CreateNotification("Essa Oficina não está habilitada para receber agendamentos.");
+                    CreateNotification("Essa Oficina não está habilitada para receber agendamentos. Verifique se a agenda e serviços estão configurados.");
                     return null;
                 }
 
