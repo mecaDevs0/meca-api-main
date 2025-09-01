@@ -157,14 +157,189 @@ namespace Meca.WebApi.Controllers
         {
             try
             {
+                Console.WriteLine("[WORKSHOP_CONTROLLER_DEBUG] Iniciando método Get");
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] filterModel é null: {filterModel == null}");
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] _workshopService é null: {_workshopService == null}");
+                
+                // Teste simples: retornar dados mock primeiro
+                var mockWorkshops = new List<WorkshopViewModel>
+                {
+                    new WorkshopViewModel
+                    {
+                        Id = "test123",
+                        CompanyName = "Oficina Teste",
+                        Address = "Rua Teste, 123",
+                        Phone = "(11) 99999-9999",
+                        Email = "teste@oficina.com"
+                    }
+                };
+                
                 if (filterModel.HasFilter() == false)
-                                    return Ok(Utilities.ReturnSuccess(data: await _workshopService.GetAll()));
-            else
-                return Ok(Utilities.ReturnSuccess(data: await _workshopService.GetAll<WorkshopViewModel>(filterModel)));
+                    return Ok(Utilities.ReturnSuccess(data: await _workshopService.GetAll()));
+                else
+                    return Ok(Utilities.ReturnSuccess(data: await _workshopService.GetAll<WorkshopViewModel>(filterModel)));
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Erro no método Get: {ex.Message}");
+                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Stack trace: {ex.StackTrace}");
                 return BadRequest(ex.ReturnErro());
+            }
+        }
+
+        /// <summary>
+        /// OFICINA - ENDPOINT DE TESTE COM DADOS REAIS DO MONGODB
+        /// </summary>
+        /// <response code="200">Returns success</response>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("TestReal")]
+        [Produces("application/json")]
+        public async Task<IActionResult> TestReal()
+        {
+            try
+            {
+                Console.WriteLine("[WORKSHOP_TEST_REAL_DEBUG] Iniciando endpoint de teste com dados reais");
+                
+                // Usar diretamente o repositório para buscar dados reais
+                var workshops = await _workshopRepository.FindAllAsync();
+                Console.WriteLine($"[WORKSHOP_TEST_REAL_DEBUG] Encontradas {workshops.Count} oficinas no banco");
+                
+                var workshopsList = workshops.Select(w => new
+                {
+                    Id = w._id?.ToString(),
+                    CompanyName = w.CompanyName,
+                    Address = w.Address,
+                    Phone = w.Phone,
+                    Email = w.Email,
+                    Latitude = w.Latitude,
+                    Longitude = w.Longitude,
+                    Photo = w.Photo
+                }).ToList();
+                
+                Console.WriteLine("[WORKSHOP_TEST_REAL_DEBUG] Retornando dados reais do MongoDB");
+                return Ok(new { data = workshopsList, erro = false, message = "Sucesso" });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[WORKSHOP_TEST_REAL_DEBUG] Erro no endpoint de teste: {ex.Message}");
+                return BadRequest(new { data = (object)null, erro = true, message = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// OFICINA - ENDPOINT SIMPLES SEM DEPENDÊNCIAS
+        /// </summary>
+        /// <response code="200">Returns success</response>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("Simple")]
+        [Produces("application/json")]
+        public IActionResult Simple()
+        {
+            try
+            {
+                Console.WriteLine("[WORKSHOP_SIMPLE_DEBUG] Iniciando endpoint simples");
+                
+                // Retornar dados simples sem usar nenhum serviço
+                var simpleData = new
+                {
+                    message = "Endpoint funcionando",
+                    timestamp = DateTime.Now,
+                    status = "OK"
+                };
+                
+                Console.WriteLine("[WORKSHOP_SIMPLE_DEBUG] Retornando dados simples");
+                return Ok(simpleData);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[WORKSHOP_SIMPLE_DEBUG] Erro no endpoint simples: {ex.Message}");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// OFICINA - ENDPOINT DIRETO COM MONGODB
+        /// </summary>
+        /// <response code="200">Returns success</response>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("Direct")]
+        [Produces("application/json")]
+        public async Task<IActionResult> Direct()
+        {
+            try
+            {
+                Console.WriteLine("[WORKSHOP_DIRECT_DEBUG] Iniciando endpoint direto");
+                
+                // Usar diretamente o repositório para buscar dados reais
+                var workshops = await _workshopRepository.FindAllAsync();
+                Console.WriteLine($"[WORKSHOP_DIRECT_DEBUG] Encontradas {workshops.Count} oficinas no banco");
+                
+                var workshopsList = workshops.Select(w => new
+                {
+                    Id = w._id?.ToString(),
+                    CompanyName = w.CompanyName,
+                    Address = w.Address,
+                    Phone = w.Phone,
+                    Email = w.Email,
+                    Latitude = w.Latitude,
+                    Longitude = w.Longitude,
+                    Photo = w.Photo
+                }).ToList();
+                
+                Console.WriteLine("[WORKSHOP_DIRECT_DEBUG] Retornando dados reais do MongoDB");
+                return Ok(workshopsList);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[WORKSHOP_DIRECT_DEBUG] Erro no endpoint direto: {ex.Message}");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// OFICINA - ENDPOINT DE TESTE DE CONFIGURAÇÃO
+        /// </summary>
+        /// <response code="200">Returns success</response>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("ConfigTest")]
+        [Produces("application/json")]
+        public IActionResult ConfigTest()
+        {
+            try
+            {
+                Console.WriteLine("[CONFIG_TEST_DEBUG] Iniciando teste de configuração");
+                
+                var currentDir = Directory.GetCurrentDirectory();
+                Console.WriteLine($"[CONFIG_TEST_DEBUG] Diretório atual: {currentDir}");
+                
+                var appsettingsPath = Path.Combine(currentDir, "appsettings.Production.json");
+                Console.WriteLine($"[CONFIG_TEST_DEBUG] Caminho do appsettings: {appsettingsPath}");
+                
+                var fileExists = File.Exists(appsettingsPath);
+                Console.WriteLine($"[CONFIG_TEST_DEBUG] Arquivo existe: {fileExists}");
+                
+                if (fileExists)
+                {
+                    var content = File.ReadAllText(appsettingsPath);
+                    var hasStripeKey = content.Contains("Stripe:SecretKey");
+                    Console.WriteLine($"[CONFIG_TEST_DEBUG] Contém Stripe:SecretKey: {hasStripeKey}");
+                }
+                
+                return Ok(new { 
+                    currentDirectory = currentDir,
+                    appsettingsPath = appsettingsPath,
+                    fileExists = fileExists,
+                    message = "Teste de configuração concluído"
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[CONFIG_TEST_DEBUG] Erro no teste de configuração: {ex.Message}");
+                return BadRequest(new { error = ex.Message });
             }
         }
 
@@ -1002,6 +1177,66 @@ namespace Meca.WebApi.Controllers
                 timestamp = DateTime.UtcNow,
                 workshops = "Endpoint de teste criado com sucesso"
             });
+        }
+
+        /// <summary>
+        /// TEMPORÁRIO - CONFIGURAR AGENDA E SERVIÇOS PARA OFICINA MC
+        /// </summary>
+        [AllowAnonymous]
+        [HttpPost("setup-workshop-mc")]
+        [Produces("application/json")]
+        public async Task<IActionResult> SetupWorkshopMC()
+        {
+            try
+            {
+                var workshopId = "68a60a7a092c6cce3b52a96d"; // ID da Oficina MC
+                
+                // Verificar se a oficina existe
+                var workshop = await _workshopRepository.FindByIdAsync(workshopId);
+                if (workshop == null)
+                {
+                    return BadRequest(Utilities.ReturnErro("Oficina não encontrada"));
+                }
+
+                // Criar dados de agenda e serviços diretamente no MongoDB
+                var agendaData = new
+                {
+                    Sunday = new { Open = false, StartTime = "", ClosingTime = "", StartOfBreak = "", EndOfBreak = "" },
+                    Monday = new { Open = true, StartTime = "08:00", ClosingTime = "18:00", StartOfBreak = "12:00", EndOfBreak = "13:00" },
+                    Tuesday = new { Open = true, StartTime = "08:00", ClosingTime = "18:00", StartOfBreak = "12:00", EndOfBreak = "13:00" },
+                    Wednesday = new { Open = true, StartTime = "08:00", ClosingTime = "18:00", StartOfBreak = "12:00", EndOfBreak = "13:00" },
+                    Thursday = new { Open = true, StartTime = "08:00", ClosingTime = "18:00", StartOfBreak = "12:00", EndOfBreak = "13:00" },
+                    Friday = new { Open = true, StartTime = "08:00", ClosingTime = "18:00", StartOfBreak = "12:00", EndOfBreak = "13:00" },
+                    Saturday = new { Open = false, StartTime = "", ClosingTime = "", StartOfBreak = "", EndOfBreak = "" },
+                    Workshop = new { Id = workshopId, CompanyName = workshop.CompanyName, FullName = workshop.FullName },
+                    Created = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                    LastUpdate = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
+                };
+
+                var serviceData = new
+                {
+                    Service = new { Id = "682dcd131236edc26160c572", Name = "Mecânica geral" },
+                    QuickService = false,
+                    MinTimeScheduling = 1.0,
+                    Description = "Serviços gerais de mecânica automotiva",
+                    EstimatedTime = 2.0,
+                    Photo = "mecanica-geral.png",
+                    Workshop = new { Id = workshopId, CompanyName = workshop.CompanyName, FullName = workshop.FullName },
+                    Created = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                    LastUpdate = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
+                };
+
+                return Ok(Utilities.ReturnSuccess("Dados preparados para inserção", new { 
+                    workshop = workshop.CompanyName,
+                    agendaData = agendaData,
+                    serviceData = serviceData,
+                    message = "Execute manualmente no MongoDB: db.WorkshopAgenda.insertOne(agendaData) e db.WorkshopServices.insertOne(serviceData)"
+                }));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(Utilities.ReturnErro($"Erro ao configurar oficina: {ex.Message}"));
+            }
         }
     }
 }
