@@ -39,6 +39,7 @@
   "SERVICES": {
     "ONESIGNAL": [
       {
+        "APP_NAME": "Meca Cliente",
         "KEY": "os_v2_app_po7mgpf77rd3dk4qucalonjxmmtigcwsmthu7rujgcwrfkuyutg4sgiyg4fybzj2rp55j24ebdmtqvw7yo24oolisi7uqyh4vs63zdy",
         "SOUND": "default",
         "ICON": "default",

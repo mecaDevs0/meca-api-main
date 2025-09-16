@@ -44,8 +44,8 @@ namespace Meca.ApplicationService.Services
             )
         {
             _env = env;
-            _notificationRepository = new BusinessBaseAsync<Notification>(env);
-            _profileRepository = new BusinessBaseAsync<Data.Entities.Profile>(env);
+            _notificationRepository = new BusinessBaseAsync<Notification>(env, configuration);
+            _profileRepository = new BusinessBaseAsync<Data.Entities.Profile>(env, configuration);
             _mapper = mapper;
             _configuration = configuration;
             _senderNotificationService = new SendService();
@@ -198,7 +198,7 @@ namespace Meca.ApplicationService.Services
                 if (ModelIsValid(model, true) == false)
                     return false;
 
-                var indexPush = (int)IndexPush.Profile;
+                var indexPush = 0; // Default para clientes
 
                 switch (model.TypeProfile)
                 {
@@ -212,6 +212,7 @@ namespace Meca.ApplicationService.Services
                         }
                         break;
                     case TypeProfile.Profile:
+                        indexPush = (int)IndexPush.Profile; // 0 = Clientes
 
                         var listProfile = await GetEntitiesForNotification<Data.Entities.Profile>(model.TargetId);
 
@@ -222,8 +223,7 @@ namespace Meca.ApplicationService.Services
                         }
                         break;
                     case TypeProfile.Workshop:
-
-                        indexPush = (int)IndexPush.Workshop;
+                        indexPush = (int)IndexPush.Workshop; // 1 = Oficinas
 
                         var listWorkshop = await GetEntitiesForNotification<Workshop>(model.TargetId);
 
@@ -257,10 +257,24 @@ namespace Meca.ApplicationService.Services
 
                         dynamic settings = Util.GetSettingsPush();
 
+                        // Log para debug
+                        System.Diagnostics.Debug.WriteLine($"[NOTIFICATION DEBUG] Enviando para {listDeviceId.Count} dispositivos");
+                        System.Diagnostics.Debug.WriteLine($"[NOTIFICATION DEBUG] IndexPush: {indexPush}");
+                        System.Diagnostics.Debug.WriteLine($"[NOTIFICATION DEBUG] Título: {model.Title}");
+                        System.Diagnostics.Debug.WriteLine($"[NOTIFICATION DEBUG] Conteúdo: {model.Content}");
+                        System.Diagnostics.Debug.WriteLine($"[NOTIFICATION DEBUG] Device IDs: {string.Join(", ", listDeviceId)}");
+
                         var result = (OneSignalResponse)await _senderNotificationService.SendPushAsync(model.Title, model.Content, listDeviceId, data: payLoad, settings: settings, priority: 10, indexKeys: indexPush);
+
+                        // Log do resultado
+                        System.Diagnostics.Debug.WriteLine($"[NOTIFICATION DEBUG] Resultado: Success={result.Success}, Erro={result.Erro}, StatusCode={result.StatusCode}");
 
                         if (_env.EnvironmentName != "Production" && result.Erro)
                             throw new Exception(DefaultMessages.ErrorOnSendPush);
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("[NOTIFICATION DEBUG] Nenhum device ID encontrado para envio");
                     }
                 }
 
@@ -298,7 +312,7 @@ namespace Meca.ApplicationService.Services
             var response = new List<T>();
             try
             {
-                IBusinessBaseAsync<T> _genericRepository = new BusinessBaseAsync<T>(_env);
+                IBusinessBaseAsync<T> _genericRepository = new BusinessBaseAsync<T>(_env, _configuration);
 
                 var builder = Builders<T>.Filter;
                 var conditions = new List<FilterDefinition<T>>();

@@ -89,7 +89,7 @@ namespace Meca.ApplicationService.Services
             string testUnit,
             IBusinessBaseAsync<Fees> feesRepository)
         {
-            _schedulingRepository = new BusinessBaseAsync<Scheduling>(env);
+            _schedulingRepository = new BusinessBaseAsync<Scheduling>(env, configuration);
             _mapper = mapper;
             _configuration = configuration;
 
@@ -146,7 +146,7 @@ namespace Meca.ApplicationService.Services
 
             var listScheduling = await _schedulingRepository
             .GetCollectionAsync()
-            .FindSync(builder.And(conditions), Util.FindOptions(filterView, Util.Sort<Scheduling>().Descending(x => x._id)))
+            .FindSync(builder.And(conditions), Util.FindOptions(filterView, Util.Sort<Scheduling>().Descending(x => x.Date)))
             .ToListAsync();
 
             return _mapper.Map<List<T>>(listScheduling);

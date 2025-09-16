@@ -12,6 +12,8 @@ using UtilityFramework.Services.Iugu.Core3;
 using UtilityFramework.Services.Iugu.Core3.Interface;
 using UtilityFramework.Services.Stripe.Core3;
 using UtilityFramework.Services.Stripe.Core3.Interfaces;
+using Meca.ApplicationService.Interface;
+using Meca.ApplicationService.Services;
 
 namespace Meca.WebApi.Services
 {
@@ -72,6 +74,9 @@ namespace Meca.WebApi.Services
             services.AddSingleton(typeof(IStripePaymentIntentService), typeof(StripePaymentIntentService));
             services.AddSingleton(typeof(IStripeTransferService), typeof(StripeTransferService));
 
+            /*PAGBANK*/
+            services.AddHttpClient<IPagBankService, PagBankService>();
+
 
 
             /* NOTIFICAÇÕES & EMAIL*/
@@ -82,8 +87,8 @@ namespace Meca.WebApi.Services
             services.AddSingleton(typeof(IFirebaseServices), typeof(FirebaseServices));
 
             /*UTILIDADES */
-            services.AddSingleton(typeof(IUtilService), typeof(UtilService));
-            services.AddSingleton(typeof(IHangfireService), typeof(HangfireService));
+            services.AddScoped(typeof(IUtilService), typeof(UtilService));
+            services.AddScoped(typeof(IHangfireService), typeof(HangfireService));
             services.AddSingleton(typeof(IAgoraIOService), typeof(AgoraIOService));
 
             return services;

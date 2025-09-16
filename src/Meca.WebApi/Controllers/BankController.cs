@@ -58,7 +58,14 @@ namespace Meca.WebApi.Controllers
             {
                 var listBank = await _bankRepository.FindAllAsync(Builders<Bank>.Sort.Ascending(nameof(Bank.Name))).ConfigureAwait(false);
 
-                return Ok(Utilities.ReturnSuccess(data: _mapper.Map<List<BankViewModel>>(listBank)));
+                // Remover duplicatas por nome, mantendo apenas o primeiro (código principal)
+                var uniqueBanks = listBank
+                    .GroupBy(b => b.Name)
+                    .Select(g => g.First())
+                    .OrderBy(b => b.Name)
+                    .ToList();
+
+                return Ok(Utilities.ReturnSuccess(data: _mapper.Map<List<BankViewModel>>(uniqueBanks)));
             }
             catch (Exception ex)
             {
