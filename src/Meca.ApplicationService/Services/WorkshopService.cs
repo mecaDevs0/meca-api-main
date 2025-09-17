@@ -1707,16 +1707,25 @@ namespace Meca.ApplicationService.Services
                     return null;
                 }
 
+                Console.WriteLine($"[GET_DATA_BANK_DEBUG] Verificando _workshopRepository: {_workshopRepository != null}");
+                Console.WriteLine($"[GET_DATA_BANK_DEBUG] Verificando _mapper: {_mapper != null}");
+                
                 var workshopEntity = await _workshopRepository.FindByIdAsync(id);
+                Console.WriteLine($"[GET_DATA_BANK_DEBUG] Workshop encontrado: {workshopEntity != null}");
 
                 if (workshopEntity == null)
                 {
+                    Console.WriteLine("[GET_DATA_BANK_DEBUG] Workshop não encontrado");
                     CreateNotification(DefaultMessages.WorkshopNotFound);
                     return null;
                 }
 
+                Console.WriteLine($"[GET_DATA_BANK_DEBUG] Workshop ID: {workshopEntity.Id}");
+                Console.WriteLine($"[GET_DATA_BANK_DEBUG] Workshop CompanyName: {workshopEntity.CompanyName}");
+
                 if (!string.IsNullOrEmpty(workshopEntity.ExternalId) && _stripeMarketPlaceService != null)
                 {
+                    Console.WriteLine("[GET_DATA_BANK_DEBUG] Verificando Stripe account...");
                     var account = await _stripeMarketPlaceService.GetByIdAsync(workshopEntity.ExternalId);
 
                     workshopEntity.DataBankStatus = account.Data?.ExternalAccounts?.Data?.FirstOrDefault() is not BankAccount bankAccount ? DataBankStatus.Uninformed : bankAccount.Status.MapDataBankStatus();
@@ -1724,7 +1733,9 @@ namespace Meca.ApplicationService.Services
                     workshopEntity = await _workshopRepository.UpdateAsync(workshopEntity, false);
                 }
 
+                Console.WriteLine("[GET_DATA_BANK_DEBUG] Fazendo mapeamento...");
                 var response = _mapper.Map<DataBankViewModel>(workshopEntity);
+                Console.WriteLine($"[GET_DATA_BANK_DEBUG] Mapeamento concluído: {response != null}");
 
                 return response;
             }
