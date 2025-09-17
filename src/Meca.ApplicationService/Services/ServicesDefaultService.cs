@@ -61,7 +61,16 @@ namespace Meca.ApplicationService.Services
         {
             try
             {
-                filterView.SetDefault();
+                // Se Limit=0, não aplicar SetDefault para permitir listar todos
+                if (filterView.Limit != 0)
+                {
+                    filterView.SetDefault();
+                }
+                else
+                {
+                    // Para Limit=0, apenas definir Page=1 se não estiver definido
+                    filterView.Page = filterView.Page ?? 1;
+                }
 
                 var builder = Builders<Data.Entities.ServicesDefault>.Filter;
                 var conditions = new List<FilterDefinition<Data.Entities.ServicesDefault>>();
@@ -112,7 +121,16 @@ namespace Meca.ApplicationService.Services
 
                 var filter = conditions.Any() ? builder.And(conditions) : builder.Empty;
 
-                var listServices = await _servicesDefaultRepository.GetCollectionAsync().Find(filter).ToListAsync();
+                var query = _servicesDefaultRepository.GetCollectionAsync().Find(filter);
+                
+                // Aplicar paginação apenas se Limit > 0
+                if (filterView.Limit > 0)
+                {
+                    var skip = filterView.SkipDocuments();
+                    query = query.Skip(skip).Limit(filterView.Limit.Value);
+                }
+
+                var listServices = await query.ToListAsync();
 
                 return _mapper.Map<List<T>>(listServices);
             }
