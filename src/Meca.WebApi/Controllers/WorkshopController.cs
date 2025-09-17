@@ -275,7 +275,7 @@ namespace Meca.WebApi.Controllers
                 
                 // Usar diretamente o repositório para buscar dados reais
                 var workshops = await _workshopRepository.FindAllAsync();
-                Console.WriteLine($"[WORKSHOP_DIRECT_DEBUG] Encontradas {workshops.Count} oficinas no banco");
+                Console.WriteLine($"[WORKSHOP_DIRECT_DEBUG] Encontradas {workshops.Count()} oficinas no banco");
                 
                 var workshopsList = workshops.Select(w => new
                 {
