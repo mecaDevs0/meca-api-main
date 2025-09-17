@@ -1659,9 +1659,23 @@ namespace Meca.ApplicationService.Services
                 Console.WriteLine("[GET_DATA_BANK_DEBUG] Definindo DataBankStatus padrão (Stripe removido)...");
                 workshopEntity.DataBankStatus = DataBankStatus.Uninformed;
 
-                Console.WriteLine("[GET_DATA_BANK_DEBUG] Fazendo mapeamento...");
-                var response = _mapper.Map<DataBankViewModel>(workshopEntity);
-                Console.WriteLine($"[GET_DATA_BANK_DEBUG] Mapeamento concluído: {response != null}");
+                Console.WriteLine("[GET_DATA_BANK_DEBUG] Fazendo mapeamento manual...");
+                // Mapeamento manual para evitar problemas com AutoMapper
+                var response = new DataBankViewModel
+                {
+                    Id = workshopEntity._id?.ToString(),
+                    AccountableName = workshopEntity.AccountableName,
+                    AccountableCpf = workshopEntity.AccountableCpf,
+                    BankAccount = workshopEntity.BankAccount,
+                    BankAgency = workshopEntity.BankAgency,
+                    Bank = workshopEntity.Bank,
+                    BankName = workshopEntity.BankName,
+                    TypeAccount = workshopEntity.TypeAccount,
+                    PersonType = workshopEntity.PersonType,
+                    DataBankStatus = workshopEntity.DataBankStatus,
+                    HasDataBank = workshopEntity.HasDataBank
+                };
+                Console.WriteLine($"[GET_DATA_BANK_DEBUG] Mapeamento manual concluído: {response != null}");
 
                 return response;
             }

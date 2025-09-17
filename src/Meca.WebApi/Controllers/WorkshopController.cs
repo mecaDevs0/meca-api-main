@@ -822,15 +822,23 @@ namespace Meca.WebApi.Controllers
         {
             try
             {
+                Console.WriteLine($"[REGISTER_DEVICE_DEBUG] Endpoint chamado com sucesso!");
+                Console.WriteLine($"[REGISTER_DEVICE_DEBUG] DeviceId: {model?.DeviceId}");
+                
+                if (model == null)
+                {
+                    Console.WriteLine("[REGISTER_DEVICE_DEBUG] ERRO: Model é null");
+                    return BadRequest("Model é null");
+                }
+
                 model.TrimStringProperties();
-
-
                 await _workshopService.RegisterUnRegisterDeviceId(model);
 
                 return Ok(Utilities.ReturnSuccess());
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"[REGISTER_DEVICE_DEBUG] ERRO: {ex.Message}");
                 return BadRequest(ex.ReturnErro());
             }
         }
