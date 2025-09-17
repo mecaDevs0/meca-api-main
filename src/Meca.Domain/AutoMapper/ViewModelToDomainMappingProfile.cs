@@ -112,8 +112,6 @@ namespace Meca.Domain.AutoMapper
             CreateMap<BudgetServicesAuxViewModel, BudgetServicesAux>().ReverseMap();
             CreateMap<WorkshopAux, WorkshopAuxViewModel>().ReverseMap();
             CreateMap<WorkshopAux, WorkshopViewModel>().ReverseMap()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src._id.ToString()))
-                .ForMember(dest => dest._id, opt => opt.MapFrom(src => ObjectId.Parse(src.Id)))
                 .ForMember(dest => dest.Photo, opt => opt.MapFrom(src => src.Photo))
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName))
                 .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.CompanyName))
