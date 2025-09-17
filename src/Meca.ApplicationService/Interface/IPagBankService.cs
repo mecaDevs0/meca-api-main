@@ -12,3 +12,9 @@ namespace Meca.ApplicationService.Interface
         Task<PagBankWebhookResponse> ProcessWebhookAsync(string payload, string signature);
     }
 }
+
+
+
+
+
+

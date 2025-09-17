@@ -1656,9 +1656,27 @@ namespace Meca.ApplicationService.Services
             {
                 Console.WriteLine($"[GET_DATA_BANK_DEBUG] Iniciando GetDataBank para ID: '{id}'");
                 
+                // Se _access é null, tentar redefinir o acesso
                 if (_access == null)
                 {
-                    Console.WriteLine("[GET_DATA_BANK_DEBUG] ERRO: _access é null");
+                    Console.WriteLine("[GET_DATA_BANK_DEBUG] _access é null, tentando redefinir...");
+                    if (_httpContextAccessor != null && _httpContextAccessor.HttpContext != null)
+                    {
+                        SetAccess(_httpContextAccessor);
+                        Console.WriteLine($"[GET_DATA_BANK_DEBUG] _access redefinido. UserId: '{_access?.UserId}', TypeToken: {_access?.TypeToken}");
+                    }
+                    else
+                    {
+                        Console.WriteLine("[GET_DATA_BANK_DEBUG] ERRO: _httpContextAccessor ou HttpContext é null");
+                        CreateNotification(DefaultMessages.DefaultError);
+                        return null;
+                    }
+                }
+                
+                // Se ainda é null após tentar redefinir
+                if (_access == null)
+                {
+                    Console.WriteLine("[GET_DATA_BANK_DEBUG] ERRO: _access ainda é null após redefinir");
                     CreateNotification(DefaultMessages.DefaultError);
                     return null;
                 }
@@ -1697,7 +1715,7 @@ namespace Meca.ApplicationService.Services
                     return null;
                 }
 
-                if (!string.IsNullOrEmpty(workshopEntity.ExternalId))
+                if (!string.IsNullOrEmpty(workshopEntity.ExternalId) && _stripeMarketPlaceService != null)
                 {
                     var account = await _stripeMarketPlaceService.GetByIdAsync(workshopEntity.ExternalId);
 
@@ -1710,9 +1728,10 @@ namespace Meca.ApplicationService.Services
 
                 return response;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                Console.WriteLine($"[GET_DATA_BANK_DEBUG] ERRO no GetDataBank: {ex.Message}");
+                Console.WriteLine($"[GET_DATA_BANK_DEBUG] StackTrace: {ex.StackTrace}");
                 throw;
             }
         }

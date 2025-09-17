@@ -313,3 +313,9 @@ namespace Meca.Domain.ViewModels
         public List<PagBankPaymentResponse> PaymentResponses { get; set; }
     }
 }
+
+
+
+
+
+
