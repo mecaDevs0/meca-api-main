@@ -132,3 +132,5 @@ namespace Meca.WebApi.Controllers
         public Meca.Data.Enum.TypeProfile TypeProfile { get; set; }
     }
 }
+
+
