@@ -76,14 +76,14 @@ namespace Meca.Domain
             try
             {
                 var message = new StringBuilder();
-                message.AppendLine("<p>Grande abraço,<br/>");
-                message.AppendLine("Equipe {{ appName }}</p>");
+                message.AppendLine("<div class=\"divider\"></div>");
+                message.AppendLine("<p style=\"margin: 0; font-size: 16px; color: #4a5568;\">Grande abraço,</p>");
+                message.AppendLine("<p style=\"margin: 0; font-weight: 600; color: #2d3748;\">Equipe {{ appName }}</p>");
 
                 return message.ToString();
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
@@ -93,15 +93,28 @@ namespace Meca.Domain
             try
             {
                 var message = new StringBuilder();
-                message.AppendLine("<p>Olá <strong>{{ name }}</strong><br/>");
+                message.AppendLine("<p>Olá <strong>{{ name }}</strong>,</p>");
 
                 switch (status)
                 {
                     case "accepted":
-                        message.AppendLine("Informamos que seus dados bancários foram válidados com sucesso, você já pode receber suas transações com cartão de crédito</p>");
+                        message.AppendLine("<p>✅ <strong>Ótimas notícias!</strong> Seus dados bancários foram <strong>validados com sucesso</strong>.</p>");
+                        message.AppendLine("<p>Agora você já pode receber suas transações com cartão de crédito em nossa plataforma.</p>");
+                        message.AppendLine("<div style=\"background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 12px; padding: 20px; margin: 20px 0;\">");
+                        message.AppendLine("<p style=\"margin: 0; color: #0c4a6e;\"><strong>Status:</strong> Dados bancários aprovados ✅</p>");
+                        message.AppendLine("</div>");
+                        message.AppendLine("<p>Você pode começar a receber pagamentos imediatamente!</p>");
                         break;
                     default:
-                        message.AppendLine("Informamos que seus dados bancários encontram-se inválidos, por favor verifique os dados informados e atualize os mesmos</p>");
+                        message.AppendLine("<p>❌ <strong>Atenção!</strong> Seus dados bancários foram <strong>rejeitados</strong>.</p>");
+                        message.AppendLine("<p>Infelizmente, os dados bancários informados não puderam ser validados.</p>");
+                        message.AppendLine("<div style=\"background: #fef2f2; border: 1px solid #ef4444; border-radius: 12px; padding: 20px; margin: 20px 0;\">");
+                        message.AppendLine("<p style=\"margin: 0; color: #991b1b;\"><strong>Status:</strong> Dados bancários rejeitados ❌</p>");
+                        message.AppendLine("</div>");
+                        message.AppendLine("<p>Por favor, verifique os dados informados e atualize-os em sua conta para continuar recebendo pagamentos.</p>");
+                        message.AppendLine("<div style=\"text-align: center; margin: 30px 0;\">");
+                        message.AppendLine("<a href=\"#\" class=\"cta-button\">Atualizar Dados Bancários</a>");
+                        message.AppendLine("</div>");
                         break;
                 }
 
@@ -122,10 +135,19 @@ namespace Meca.Domain
                 var isDashboard = dashboard ? " - Dashboard" : "";
 
                 var message = new StringBuilder();
-                message.AppendLine("<p>Olá <strong>{{ name }}</strong>,<br/>");
-                message.AppendLine("Seja bem vindo a plataforma {{ appName }}" + isDashboard + ", segue abaixo suas credênciais de acesso<br/>");
-                message.AppendLine("<strong>e-mail<strong/>: {{ email }}<br/>");
-                message.AppendLine("<strong>senha<strong/>: {{ password }}</p>");
+                message.AppendLine("<p>Olá <strong>{{ name }}</strong>,</p>");
+                message.AppendLine("<p>Seja bem-vindo à plataforma <strong>{{ appName }}</strong>" + isDashboard + "! Suas credenciais de acesso foram criadas com sucesso.</p>");
+                message.AppendLine("<div class=\"credentials\">");
+                message.AppendLine("<div class=\"credential-item\">");
+                message.AppendLine("<span class=\"credential-label\">E-mail:</span>");
+                message.AppendLine("<span class=\"credential-value\">{{ email }}</span>");
+                message.AppendLine("</div>");
+                message.AppendLine("<div class=\"credential-item\">");
+                message.AppendLine("<span class=\"credential-label\">Senha:</span>");
+                message.AppendLine("<span class=\"credential-value\">{{ password }}</span>");
+                message.AppendLine("</div>");
+                message.AppendLine("</div>");
+                message.AppendLine("<p>Recomendamos que você altere sua senha no primeiro acesso por questões de segurança.</p>");
                 message.AppendLine(GetEmailSignature());
 
                 return message.ToString();
@@ -144,10 +166,19 @@ namespace Meca.Domain
                 var isDashboard = dashboard ? "- Dashboard" : "";
 
                 var message = new StringBuilder();
-                message.AppendLine("<p>Olá <strong>{{ name }}</strong>,<br/>");
-                message.AppendLine("Segue sua senha de acesso ao {{ appName }}" + isDashboard + ", segue abaixo suas credênciais de acesso<br/>");
-                message.AppendLine("<strong>e-mail<strong/>: {{ email }}<br/>");
-                message.AppendLine("<strong>senha<strong/>: {{ password }}</p>");
+                message.AppendLine("<p>Olá <strong>{{ name }}</strong>,</p>");
+                message.AppendLine("<p>Recebemos sua solicitação de recuperação de senha para o <strong>{{ appName }}</strong>" + isDashboard + ". Sua nova senha foi gerada com sucesso.</p>");
+                message.AppendLine("<div class=\"credentials\">");
+                message.AppendLine("<div class=\"credential-item\">");
+                message.AppendLine("<span class=\"credential-label\">E-mail:</span>");
+                message.AppendLine("<span class=\"credential-value\">{{ email }}</span>");
+                message.AppendLine("</div>");
+                message.AppendLine("<div class=\"credential-item\">");
+                message.AppendLine("<span class=\"credential-label\">Nova Senha:</span>");
+                message.AppendLine("<span class=\"credential-value\">{{ password }}</span>");
+                message.AppendLine("</div>");
+                message.AppendLine("</div>");
+                message.AppendLine("<p><strong>Importante:</strong> Por segurança, recomendamos que você altere esta senha no próximo acesso.</p>");
                 message.AppendLine(GetEmailSignature());
 
                 return message.ToString();
@@ -164,17 +195,25 @@ namespace Meca.Domain
             try
             {
                 var message = new StringBuilder();
-                message.AppendLine("<p>Olá <strong>{{ name }}</strong>,<br/>");
+                message.AppendLine("<p>Olá <strong>{{ name }}</strong>,</p>");
+                
                 if (approve)
                 {
-                    message.AppendLine($"Seja bem-vindo ao <strong>{BaseConfig.ApplicationName}</strong>!<br/>");
-                    message.AppendLine("Seu cadastro foi aprovado e você está habilitado para realizar serviços.<br/>");
-                    message.AppendLine("Acesse o sistema e comece a utilizar agora mesmo!<br/>");
+                    message.AppendLine($"<p>🎉 <strong>Parabéns!</strong> Seja bem-vindo ao <strong>{BaseConfig.ApplicationName}</strong>!</p>");
+                    message.AppendLine("<p>Seu cadastro foi <strong>aprovado</strong> e você está habilitado para realizar serviços em nossa plataforma.</p>");
+                    message.AppendLine("<p>Acesse o sistema e comece a utilizar agora mesmo! Estamos ansiosos para trabalhar com você.</p>");
+                    message.AppendLine("<div style=\"text-align: center; margin: 30px 0;\">");
+                    message.AppendLine("<a href=\"#\" class=\"cta-button\">Acessar Plataforma</a>");
+                    message.AppendLine("</div>");
                 }
                 else
                 {
-                    message.AppendLine($"Infelizmente seu cadastro ao <strong>{BaseConfig.ApplicationName}</strong> foi reprovado e você não poderá realizar serviços.<br/>");
-                    message.AppendLine("Caso tenha dúvidas, entre em contato com o suporte.<br/>");
+                    message.AppendLine($"<p>Infelizmente, seu cadastro no <strong>{BaseConfig.ApplicationName}</strong> foi <strong>reprovado</strong>.</p>");
+                    message.AppendLine("<p>Você não poderá realizar serviços em nossa plataforma no momento.</p>");
+                    message.AppendLine("<p>Caso tenha dúvidas sobre esta decisão ou queira mais informações, entre em contato com nosso suporte.</p>");
+                    message.AppendLine("<div style=\"text-align: center; margin: 30px 0;\">");
+                    message.AppendLine("<a href=\"mailto:{{ contact }}\" class=\"cta-button\">Entrar em Contato</a>");
+                    message.AppendLine("</div>");
                 }
 
                 message.AppendLine(GetEmailSignature());
