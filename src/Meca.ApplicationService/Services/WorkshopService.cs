@@ -1508,96 +1508,9 @@ namespace Meca.ApplicationService.Services
                 Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Workshop encontrado: {workshopEntity.GetStringId()}");
                 Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] ExternalId atual: {workshopEntity.ExternalId}");
 
-                // PROCESSAMENTO DEFINITIVO: Criar conta Stripe se necessário
-                if (string.IsNullOrEmpty(workshopEntity.ExternalId))
-                {
-                    Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Workshop sem ExternalId, criando conta Stripe...");
-                    
-                    try
-                    {
-                        var remoteIp = Utilities.GetClientIp();
-                        var userAgent = _httpContextAccessor?.HttpContext?.Request?.Headers["User-Agent"].ToString() ?? "Unknown";
-
-                        Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] RemoteIP: {remoteIp}");
-                        Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] UserAgent: {userAgent}");
-
-                        var accountOptions = workshopEntity.MapAccount(remoteIp, userAgent);
-                        Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] AccountOptions criadas: {System.Text.Json.JsonSerializer.Serialize(accountOptions)}");
-
-                        var subAccount = await _stripeMarketPlaceService.CreateAsync(accountOptions);
-
-                        if (subAccount.Success == false)
-                        {
-                            Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] AVISO: Erro ao criar conta Stripe: {subAccount.ErrorMessage}");
-                            Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Continuando para salvar dados no MongoDB mesmo com erro no Stripe...");
-                            workshopEntity.ExternalId = "STRIPE_ERROR_TEMP"; // ID temporário
-                        }
-                        else
-                        {
-                            workshopEntity.ExternalId = subAccount.Data?.Id;
-                            Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Conta Stripe criada com ID: {workshopEntity.ExternalId}");
-                            
-                            // Salvar o ExternalId no workshop
-                            await _workshopRepository.UpdateAsync(workshopEntity);
-                            Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] ExternalId salvo no workshop");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] AVISO: Exceção ao criar conta Stripe: {ex.Message}");
-                        Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Continuando para salvar dados no MongoDB...");
-                        workshopEntity.ExternalId = "STRIPE_ERROR_TEMP"; // ID temporário
-                    }
-                }
-
-                // PROCESSAMENTO DEFINITIVO: Atualizar dados no Stripe (se possível)
-                if (workshopEntity.ExternalId != "STRIPE_ERROR_TEMP")
-                {
-                    Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Tentando atualizar dados no Stripe...");
-                    try
-                    {
-                        var stripeResultMarketPlace = await _stripeMarketPlaceService.GetByIdAsync(workshopEntity.ExternalId);
-
-                        if (stripeResultMarketPlace.Success == false)
-                        {
-                            Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] AVISO: Erro ao obter conta Stripe: {stripeResultMarketPlace.ErrorMessage}");
-                        }
-                        else
-                        {
-                            Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Conta Stripe obtida com sucesso: {workshopEntity.ExternalId}");
-
-                            var dataBankOptions = _stripeMarketPlaceService.CreateBankAccountOptions(new StripeExternalAccountMarketPlaceRequest()
-                            {
-                                AccountNumber = model.BankAccount,
-                                BankCode = model.Bank,
-                                AgencyNumber = model.BankAgency,
-                                HolderName = model.AccountableName,
-                                HolderType = model.PersonType == TypePersonBank.PhysicalPerson ? EStripeHolderType.Individual : EStripeHolderType.Company,
-                            });
-
-                            Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Opções bancárias criadas: {System.Text.Json.JsonSerializer.Serialize(dataBankOptions)}");
-
-                            stripeResultMarketPlace = await _stripeMarketPlaceService.UpdateExternalAccountAsync(workshopEntity.ExternalId, dataBankOptions);
-
-                            if (stripeResultMarketPlace.Success == false)
-                            {
-                                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] AVISO: Erro ao atualizar conta bancária no Stripe: {stripeResultMarketPlace.ErrorMessage}");
-                            }
-                            else
-                            {
-                                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Conta bancária atualizada no Stripe com sucesso");
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] AVISO: Exceção ao tentar operações Stripe: {ex.Message}");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Pulando operações Stripe (ID temporário)");
-                }
+                // CORREÇÃO: Remover toda a lógica do Stripe que está causando problemas
+                // O Stripe não é mais usado, então vamos pular essas operações
+                Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Pulando operações Stripe (Stripe removido)...");
 
                 // SALVAMENTO DEFINITIVO: Salvar dados no MongoDB
                 Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Salvando dados no MongoDB...");
@@ -1632,7 +1545,11 @@ namespace Meca.ApplicationService.Services
                                            !string.IsNullOrEmpty(workshopEntity.BankAccount) && 
                                            !string.IsNullOrEmpty(workshopEntity.BankAgency);
 
+                // CORREÇÃO: Definir DataBankStatus padrão (Stripe removido)
+                workshopEntity.DataBankStatus = DataBankStatus.Uninformed;
+
                 Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] HasDataBank definido como: {workshopEntity.HasDataBank}");
+                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] DataBankStatus definido como: {workshopEntity.DataBankStatus}");
 
                 // SALVAMENTO DEFINITIVO: Salvar workshop no MongoDB
                 Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Salvando workshop no MongoDB...");
@@ -1723,15 +1640,10 @@ namespace Meca.ApplicationService.Services
                 Console.WriteLine($"[GET_DATA_BANK_DEBUG] Workshop ID: {workshopEntity._id}");
                 Console.WriteLine($"[GET_DATA_BANK_DEBUG] Workshop CompanyName: {workshopEntity.CompanyName}");
 
-                if (!string.IsNullOrEmpty(workshopEntity.ExternalId) && _stripeMarketPlaceService != null)
-                {
-                    Console.WriteLine("[GET_DATA_BANK_DEBUG] Verificando Stripe account...");
-                    var account = await _stripeMarketPlaceService.GetByIdAsync(workshopEntity.ExternalId);
-
-                    workshopEntity.DataBankStatus = account.Data?.ExternalAccounts?.Data?.FirstOrDefault() is not BankAccount bankAccount ? DataBankStatus.Uninformed : bankAccount.Status.MapDataBankStatus();
-
-                    workshopEntity = await _workshopRepository.UpdateAsync(workshopEntity, false);
-                }
+                // CORREÇÃO: Remover verificação do Stripe que está causando null reference
+                // O Stripe não é mais usado, então vamos definir um status padrão
+                Console.WriteLine("[GET_DATA_BANK_DEBUG] Definindo DataBankStatus padrão (Stripe removido)...");
+                workshopEntity.DataBankStatus = DataBankStatus.Uninformed;
 
                 Console.WriteLine("[GET_DATA_BANK_DEBUG] Fazendo mapeamento...");
                 var response = _mapper.Map<DataBankViewModel>(workshopEntity);
