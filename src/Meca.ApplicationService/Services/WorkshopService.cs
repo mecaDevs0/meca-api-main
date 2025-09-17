@@ -1720,7 +1720,7 @@ namespace Meca.ApplicationService.Services
                     return null;
                 }
 
-                Console.WriteLine($"[GET_DATA_BANK_DEBUG] Workshop ID: {workshopEntity.Id}");
+                Console.WriteLine($"[GET_DATA_BANK_DEBUG] Workshop ID: {workshopEntity._id}");
                 Console.WriteLine($"[GET_DATA_BANK_DEBUG] Workshop CompanyName: {workshopEntity.CompanyName}");
 
                 if (!string.IsNullOrEmpty(workshopEntity.ExternalId) && _stripeMarketPlaceService != null)
