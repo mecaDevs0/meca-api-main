@@ -1655,14 +1655,36 @@ namespace Meca.ApplicationService.Services
 
             try
             {
+                // Validar se os horários são válidos antes de fazer o parse
+                if (!TimeSpan.TryParse(startTime, out _) || !TimeSpan.TryParse(closingTime, out _))
+                {
+                    Console.WriteLine($"[GenerateSchedule] Horários inválidos - startTime: '{startTime}', closingTime: '{closingTime}'");
+                    return schedule;
+                }
+                
                 // Converter strings de tempo para DateTime
                 DateTime start = DateTime.Parse(startTime);
                 DateTime close = DateTime.Parse(closingTime);
                 
                 // Verificar se há intervalo de pausa configurado
                 bool hasBreak = !string.IsNullOrEmpty(startOfBreak) && !string.IsNullOrEmpty(endOfBreak);
-                DateTime breakStart = hasBreak ? DateTime.Parse(startOfBreak) : DateTime.MinValue;
-                DateTime breakEnd = hasBreak ? DateTime.Parse(endOfBreak) : DateTime.MinValue;
+                DateTime breakStart = DateTime.MinValue;
+                DateTime breakEnd = DateTime.MinValue;
+                
+                if (hasBreak)
+                {
+                    // Validar se os horários de pausa são válidos
+                    if (!TimeSpan.TryParse(startOfBreak, out _) || !TimeSpan.TryParse(endOfBreak, out _))
+                    {
+                        Console.WriteLine($"[GenerateSchedule] Horários de pausa inválidos - startOfBreak: '{startOfBreak}', endOfBreak: '{endOfBreak}'");
+                        hasBreak = false; // Desabilitar pausa se os horários forem inválidos
+                    }
+                    else
+                    {
+                        breakStart = DateTime.Parse(startOfBreak);
+                        breakEnd = DateTime.Parse(endOfBreak);
+                    }
+                }
 
                 // Iterar de 30 em 30 minutos
                 var time = 30;
