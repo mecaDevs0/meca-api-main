@@ -77,7 +77,7 @@ namespace Meca.Domain
             {
                 var message = new StringBuilder();
                 message.AppendLine("<div class=\"divider\"></div>");
-                message.AppendLine("<p style=\"margin: 0; font-size: 16px; color: #4a5568;\">Grande abraço,</p>");
+                message.AppendLine("<p style=\"margin: 0; font-size: 16px; color: #4a5568;\">Atenciosamente,</p>");
                 message.AppendLine("<p style=\"margin: 0; font-weight: 600; color: #2d3748;\">Equipe {{ appName }}</p>");
 
                 return message.ToString();
@@ -136,7 +136,8 @@ namespace Meca.Domain
 
                 var message = new StringBuilder();
                 message.AppendLine("<p>Olá <strong>{{ name }}</strong>,</p>");
-                message.AppendLine("<p>Seja bem-vindo à plataforma <strong>{{ appName }}</strong>" + isDashboard + "! Suas credenciais de acesso foram criadas com sucesso.</p>");
+                message.AppendLine("<p>Seja muito bem-vindo ao <strong>{{ appName }}</strong>" + isDashboard + "! 🎉</p>");
+                message.AppendLine("<p>Sua conta foi criada com sucesso e você já pode acessar nossa plataforma. Suas credenciais de acesso estão abaixo:</p>");
                 message.AppendLine("<div class=\"credentials\">");
                 message.AppendLine("<div class=\"credential-item\">");
                 message.AppendLine("<span class=\"credential-label\">E-mail:</span>");
@@ -147,7 +148,8 @@ namespace Meca.Domain
                 message.AppendLine("<span class=\"credential-value\">{{ password }}</span>");
                 message.AppendLine("</div>");
                 message.AppendLine("</div>");
-                message.AppendLine("<p>Recomendamos que você altere sua senha no primeiro acesso por questões de segurança.</p>");
+                message.AppendLine("<p><strong>🔐 Importante:</strong> Por segurança, recomendamos que você altere sua senha no primeiro acesso.</p>");
+                message.AppendLine("<p>Estamos felizes em tê-lo conosco! Se precisar de ajuda, não hesite em entrar em contato.</p>");
                 message.AppendLine(GetEmailSignature());
 
                 return message.ToString();
@@ -163,11 +165,11 @@ namespace Meca.Domain
         {
             try
             {
-                var isDashboard = dashboard ? "- Dashboard" : "";
+                var isDashboard = dashboard ? " - Dashboard" : "";
 
                 var message = new StringBuilder();
                 message.AppendLine("<p>Olá <strong>{{ name }}</strong>,</p>");
-                message.AppendLine("<p>Recebemos sua solicitação de recuperação de senha para o <strong>{{ appName }}</strong>" + isDashboard + ". Sua nova senha foi gerada com sucesso.</p>");
+                message.AppendLine("<p>Recebemos sua solicitação de recuperação de senha para o <strong>{{ appName }}</strong>" + isDashboard + ". Sua nova senha foi gerada com sucesso e está pronta para uso!</p>");
                 message.AppendLine("<div class=\"credentials\">");
                 message.AppendLine("<div class=\"credential-item\">");
                 message.AppendLine("<span class=\"credential-label\">E-mail:</span>");
@@ -178,7 +180,8 @@ namespace Meca.Domain
                 message.AppendLine("<span class=\"credential-value\">{{ password }}</span>");
                 message.AppendLine("</div>");
                 message.AppendLine("</div>");
-                message.AppendLine("<p><strong>Importante:</strong> Por segurança, recomendamos que você altere esta senha no próximo acesso.</p>");
+                message.AppendLine("<p><strong>💡 Dica de Segurança:</strong> Para sua proteção, recomendamos que você altere esta senha no próximo acesso ao sistema.</p>");
+                message.AppendLine("<p>Se você não solicitou esta recuperação de senha, entre em contato conosco imediatamente.</p>");
                 message.AppendLine(GetEmailSignature());
 
                 return message.ToString();

@@ -493,7 +493,7 @@ namespace Meca.WebApi.Controllers
                         {
                             Email = rootEmail,
                             Password = Utilities.GerarHashMd5(rootPassword),
-                            Name = "Mecaleios",
+                            Name = "Meca",
                             AccessLevel = new BaseReferenceAux()
                             {
                                 Id = accessLevelServiceDefaultEntity.Id,
