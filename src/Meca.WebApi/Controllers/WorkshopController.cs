@@ -53,87 +53,13 @@ namespace Meca.WebApi.Controllers
             IHostingEnvironment env,
             IConfiguration configuration)
         {
-            try
-            {
-                Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] ===== INICIANDO CONSTRUTOR WORKSHOP CONTROLLER =====");
-                Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] mapper é null: {mapper == null}");
-                Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] workshopRepository é null: {workshopRepository == null}");
-                Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] notificationRepository é null: {notificationRepository == null}");
-                Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] senderMailService é null: {senderMailService == null}");
-                Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] workshopService é null: {workshopService == null}");
-                Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] context é null: {context == null}");
-                Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] iuguMarketPlaceServices é null: {iuguMarketPlaceServices == null}");
-                Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] env é null: {env == null}");
-                Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] configuration é null: {configuration == null}");
-                
-                // VALIDAÇÃO DEFINITIVA: Verificar se todas as dependências estão presentes
-                if (mapper == null)
-                {
-                    Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] ERRO CRÍTICO: mapper é null");
-                    throw new ArgumentNullException(nameof(mapper), "AutoMapper não foi injetado corretamente");
-                }
-                
-                if (workshopRepository == null)
-                {
-                    Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] ERRO CRÍTICO: workshopRepository é null");
-                    throw new ArgumentNullException(nameof(workshopRepository), "WorkshopRepository não foi injetado corretamente");
-                }
-                
-                if (notificationRepository == null)
-                {
-                    Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] ERRO CRÍTICO: notificationRepository é null");
-                    throw new ArgumentNullException(nameof(notificationRepository), "NotificationRepository não foi injetado corretamente");
-                }
-                
-                if (senderMailService == null)
-                {
-                    Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] ERRO CRÍTICO: senderMailService é null");
-                    throw new ArgumentNullException(nameof(senderMailService), "SenderMailService não foi injetado corretamente");
-                }
-                
-                if (workshopService == null)
-                {
-                    Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] ERRO CRÍTICO: workshopService é null");
-                    throw new ArgumentNullException(nameof(workshopService), "WorkshopService não foi injetado corretamente");
-                }
-                
-                if (iuguMarketPlaceServices == null)
-                {
-                    Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] ERRO CRÍTICO: iuguMarketPlaceServices é null");
-                    throw new ArgumentNullException(nameof(iuguMarketPlaceServices), "IuguMarketPlaceServices não foi injetado corretamente");
-                }
-                
-                if (env == null)
-                {
-                    Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] ERRO CRÍTICO: env é null");
-                    throw new ArgumentNullException(nameof(env), "HostingEnvironment não foi injetado corretamente");
-                }
-                
-                if (configuration == null)
-                {
-                    Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] ERRO CRÍTICO: configuration é null");
-                    throw new ArgumentNullException(nameof(configuration), "Configuration não foi injetado corretamente");
-                }
-                
-                // ATRIBUIÇÃO DEFINITIVA: Atribuir as dependências
-                _mapper = mapper;
-                _workshopRepository = workshopRepository;
-                _notificationRepository = notificationRepository;
-                _senderMailService = senderMailService;
-                _workshopService = workshopService;
-                _iuguMarketPlaceServices = iuguMarketPlaceServices;
-                _isSandbox = Util.IsSandBox(env);
-                
-                Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] Todas as dependências foram validadas e atribuídas com sucesso");
-                Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] _isSandbox: {_isSandbox}");
-                Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] ===== CONSTRUTOR WORKSHOP CONTROLLER FINALIZADO COM SUCESSO =====");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] ERRO CRÍTICO no construtor: {ex.Message}");
-                Console.WriteLine($"[WORKSHOP_CONSTRUCTOR_DEBUG] Stack trace: {ex.StackTrace}");
-                throw;
-            }
+            _mapper = mapper;
+            _workshopRepository = workshopRepository;
+            _notificationRepository = notificationRepository;
+            _senderMailService = senderMailService;
+            _workshopService = workshopService;
+            _iuguMarketPlaceServices = iuguMarketPlaceServices;
+            _isSandbox = Util.IsSandBox(env);
         }
 
 
@@ -1063,6 +989,7 @@ namespace Meca.WebApi.Controllers
         /// <response code="500">Exception Error</response>
         /// <returns></returns>
         [HttpPatch("UpdateDataBank/{id}")]
+        [HttpPost("UpdateDataBank/{id}")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(ReturnViewModel), 200)]
         [ProducesResponseType(400)]

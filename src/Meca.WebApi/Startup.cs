@@ -157,26 +157,7 @@ namespace Meca.WebApi
                 RequestPath = new PathString("/content")
             });
 
-            // TESTE: Middleware personalizado para interceptar requisições PATCH
-            app.Use(async (context, next) =>
-            {
-                if (context.Request.Method == "PATCH")
-                {
-                    Console.WriteLine($"[PATCH_INTERCEPTOR] ===== PATCH INTERCEPTADO =====");
-                    Console.WriteLine($"[PATCH_INTERCEPTOR] Path: {context.Request.Path}");
-                    Console.WriteLine($"[PATCH_INTERCEPTOR] Headers: {string.Join(", ", context.Request.Headers.Select(h => $"{h.Key}={h.Value}"))}");
-                    Console.WriteLine($"[PATCH_INTERCEPTOR] ContentType: {context.Request.ContentType}");
-                    Console.WriteLine($"[PATCH_INTERCEPTOR] ContentLength: {context.Request.ContentLength}");
-                }
-                
-                await next();
-                
-                if (context.Request.Method == "PATCH")
-                {
-                    Console.WriteLine($"[PATCH_INTERCEPTOR] ===== PATCH FINALIZADO =====");
-                    Console.WriteLine($"[PATCH_INTERCEPTOR] StatusCode: {context.Response.StatusCode}");
-                }
-            });
+            // Middleware de interceptação PATCH removido temporariamente para debug
             
             app.UseRequestResponseLoggingLite();
             app.UseBlockMiddleware();
