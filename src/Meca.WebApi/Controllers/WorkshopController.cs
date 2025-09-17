@@ -168,7 +168,7 @@ namespace Meca.WebApi.Controllers
                     {
                         Id = "test123",
                         CompanyName = "Oficina Teste",
-                        Address = "Rua Teste, 123",
+                        StreetAddress = "Rua Teste, 123",
                         Phone = "(11) 99999-9999",
                         Email = "teste@oficina.com"
                     }
@@ -203,13 +203,13 @@ namespace Meca.WebApi.Controllers
                 
                 // Usar diretamente o repositório para buscar dados reais
                 var workshops = await _workshopRepository.FindAllAsync();
-                Console.WriteLine($"[WORKSHOP_TEST_REAL_DEBUG] Encontradas {workshops.Count} oficinas no banco");
+                Console.WriteLine($"[WORKSHOP_TEST_REAL_DEBUG] Encontradas {workshops.Count()} oficinas no banco");
                 
                 var workshopsList = workshops.Select(w => new
                 {
-                    Id = w._id?.ToString(),
+                    Id = w._id.ToString(),
                     CompanyName = w.CompanyName,
-                    Address = w.Address,
+                    StreetAddress = w.StreetAddress,
                     Phone = w.Phone,
                     Email = w.Email,
                     Latitude = w.Latitude,
@@ -279,9 +279,9 @@ namespace Meca.WebApi.Controllers
                 
                 var workshopsList = workshops.Select(w => new
                 {
-                    Id = w._id?.ToString(),
+                    Id = w._id.ToString(),
                     CompanyName = w.CompanyName,
-                    Address = w.Address,
+                    StreetAddress = w.StreetAddress,
                     Phone = w.Phone,
                     Email = w.Email,
                     Latitude = w.Latitude,
@@ -319,12 +319,12 @@ namespace Meca.WebApi.Controllers
                 var appsettingsPath = Path.Combine(currentDir, "appsettings.Production.json");
                 Console.WriteLine($"[CONFIG_TEST_DEBUG] Caminho do appsettings: {appsettingsPath}");
                 
-                var fileExists = File.Exists(appsettingsPath);
+                var fileExists = System.IO.File.Exists(appsettingsPath);
                 Console.WriteLine($"[CONFIG_TEST_DEBUG] Arquivo existe: {fileExists}");
                 
                 if (fileExists)
                 {
-                    var content = File.ReadAllText(appsettingsPath);
+                    var content = System.IO.File.ReadAllText(appsettingsPath);
                     var hasStripeKey = content.Contains("Stripe:SecretKey");
                     Console.WriteLine($"[CONFIG_TEST_DEBUG] Contém Stripe:SecretKey: {hasStripeKey}");
                 }
