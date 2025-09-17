@@ -30,7 +30,6 @@ using UtilityFramework.Services.Iugu.Core3.Models;
 using UtilityFramework.Services.Stripe.Core3;
 using UtilityFramework.Services.Stripe.Core3.Interfaces;
 using UtilityFramework.Services.Stripe.Core3.Models;
-using Meca.ApplicationService.Interface;
 using PaymentMethod = Meca.Data.Enum.PaymentMethod;
 
 namespace Meca.ApplicationService.Services
@@ -55,7 +54,6 @@ namespace Meca.ApplicationService.Services
         private readonly IHostingEnvironment _env;
         private readonly bool _isSandBox;
         private readonly IStripePaymentIntentService _stripePaymentIntentService;
-        private readonly IPagBankService _pagBankService;
 
         public FinancialHistoryService(
             IMapper mapper,
@@ -74,8 +72,7 @@ namespace Meca.ApplicationService.Services
             ISenderMailService senderMailService,
             IHubContext<PaymentNotificationHub> hubContext,
             IUtilService utilService,
-            IStripePaymentIntentService stripePaymentIntentService,
-            IPagBankService pagBankService)
+            IStripePaymentIntentService stripePaymentIntentService)
         {
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
@@ -95,7 +92,6 @@ namespace Meca.ApplicationService.Services
             _utilService = utilService;
             _hubContext = hubContext;
             _stripePaymentIntentService = stripePaymentIntentService;
-            _pagBankService = pagBankService;
         }
 
         /*CONSTRUTOR UTILIZADO POR TESTES DE UNIDADE*/
@@ -104,17 +100,19 @@ namespace Meca.ApplicationService.Services
             IMapper mapper,
             IConfiguration configuration,
             Acesso acesso,
+            IBusinessBaseAsync<FinancialHistory> financialHistoryRepository,
+            IUtilService utilService,
             string testUnit)
         {
 
-            _financialHistoryRepository = new BusinessBaseAsync<FinancialHistory>(env, configuration);
+            _financialHistoryRepository = financialHistoryRepository;
 
             var iuguService = new IuguService();
 
             _mapper = mapper;
             _configuration = configuration;
             _env = env;
-            _utilService = new UtilService(iuguService, iuguService, new BusinessBaseAsync<Data.Entities.Transfer>(env, configuration), env);
+            _utilService = utilService;
 
             SetAccessTest(acesso);
         }
@@ -240,18 +238,15 @@ namespace Meca.ApplicationService.Services
                     return null;
                 }
 
-                // Buscar detalhes do pedido no PagBank
-                var orderDetails = await _pagBankService.GetOrderDetailsAsync(model.InvoiceId);
+                var paymentIntentDefail = await _stripePaymentIntentService.GetPaymentIntentDetailsAsync(model.InvoiceId);
 
-                if (orderDetails == null)
+                if (paymentIntentDefail.Success == false)
                 {
-                    CreateNotification("Pedido não encontrado no PagBank");
+                    CreateNotification(paymentIntentDefail.ErrorMessage);
                     return null;
                 }
 
-                // Verificar se o pagamento foi aprovado
-                var approvedPayment = orderDetails.PaymentResponses?.FirstOrDefault(p => p.Status == "PAID");
-                if (approvedPayment == null)
+                if (paymentIntentDefail.Data.PaymentStatus != EStripePaymentStatus.Paid)
                 {
                     CreateNotification(DefaultMessages.NotIdentifyedPayment);
                     return null;
@@ -260,13 +255,12 @@ namespace Meca.ApplicationService.Services
                 var platformFeeEntity = await _feesRepository.FindOneByAsync(x => x.DataBlocked == null);
 
                 var platformFee = platformFeeEntity?.PlatformFee ?? 0.0;
-                var grossAmount = orderDetails.Amount.Value / 100.0; // PagBank retorna valores em centavos
-                var platformValue = Utilities.GetValueOfPercent(grossAmount, platformFee).NotAround();
+                var platformValue = Utilities.GetValueOfPercent(paymentIntentDefail.Data.GrossAmount, platformFee).NotAround();
 
-                var paymentStatus = MapPagBankPaymentStatus(approvedPayment.Status);
+                var paymentStatus = paymentIntentDefail.Data.PaymentStatus.MapPaymentStatus();
 
                 double splitPercentage = 0.0025; // 0.25%
-                double netAmount = grossAmount - platformValue;
+                double netAmount = paymentIntentDefail.Data.NetAmount - platformValue;
                 double splitFee = netAmount * splitPercentage;
 
                 var financialHistoryEntity = new FinancialHistory()
@@ -278,12 +272,12 @@ namespace Meca.ApplicationService.Services
                     SchedulingId = schedulingEntity.GetStringId(),
                     InvoiceId = model.InvoiceId,
                     PaymentStatus = paymentStatus,
-                    PaymentMethod = MapPagBankPaymentMethod(approvedPayment.PaymentMethod.Type),
-                    Value = grossAmount,
+                    PaymentMethod = paymentIntentDefail.Data.PaymentMethodType.MapPaymentMethod(),
+                    Value = paymentIntentDefail.Data.GrossAmount,
                     PlatformFee = platformFee,
                     PlatformValue = platformValue,
-                    GatewayValue = 0, // TODO: Implementar cálculo de taxa do PagBank
-                    NetValue = grossAmount,
+                    GatewayValue = paymentIntentDefail.Data.ProcessingFee,
+                    NetValue = paymentIntentDefail.Data.NetAmount,
                     MechanicalNetValue = netAmount - splitFee
                 };
 
@@ -298,7 +292,7 @@ namespace Meca.ApplicationService.Services
                 financialHistoryEntity = await _financialHistoryRepository.CreateReturnAsync(financialHistoryEntity);
 
                 checkoutResponse.Message = DefaultMessages.TransactionSuccess;
-                checkoutResponse.Value = grossAmount;
+                checkoutResponse.Value = paymentIntentDefail.Data.GrossAmount;
 
                 string title = "Orçamento aprovado";
                 StringBuilder messageBuilder = new();
@@ -565,30 +559,6 @@ namespace Meca.ApplicationService.Services
             {
                 throw;
             }
-        }
-
-        private PaymentStatus MapPagBankPaymentStatus(string status)
-        {
-            return status switch
-            {
-                "PAID" => PaymentStatus.Paid,
-                "PENDING" => PaymentStatus.Pending,
-                "CANCELED" => PaymentStatus.Canceled,
-                "DECLINED" => PaymentStatus.Declined,
-                "REFUNDED" => PaymentStatus.Refund,
-                _ => PaymentStatus.Pending
-            };
-        }
-
-        private PaymentMethod MapPagBankPaymentMethod(string paymentMethodType)
-        {
-            return paymentMethodType switch
-            {
-                "CREDIT_CARD" => PaymentMethod.CreditCard,
-                "PIX" => PaymentMethod.Pix,
-                "BOLETO" => PaymentMethod.CreditCard, // Mapear boleto como cartão por enquanto
-                _ => PaymentMethod.CreditCard
-            };
         }
     }
 }

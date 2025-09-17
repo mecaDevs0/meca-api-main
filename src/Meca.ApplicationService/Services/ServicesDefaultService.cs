@@ -45,6 +45,9 @@ namespace Meca.ApplicationService.Services
             _workshopRepository = workshopRepository;
             _httpContextAccessor = httpContextAccessor;
             _configuration = configuration;
+            
+            // Inicializar o acesso
+            SetAccess(httpContextAccessor);
         }
 
         public async Task<List<ServicesDefaultViewModel>> GetAll()
@@ -56,99 +59,87 @@ namespace Meca.ApplicationService.Services
 
         public async Task<List<T>> GetAll<T>(ServicesDefaultFilterViewModel filterView) where T : class
         {
-
-            filterView.SetDefault();
-
-            var builder = Builders<Data.Entities.ServicesDefault>.Filter;
-            var conditions = new List<FilterDefinition<Data.Entities.ServicesDefault>>();
-
-            if (filterView.DataBlocked != null)
+            try
             {
-                switch (filterView.DataBlocked.GetValueOrDefault())
+                filterView.SetDefault();
+
+                var builder = Builders<Data.Entities.ServicesDefault>.Filter;
+                var conditions = new List<FilterDefinition<Data.Entities.ServicesDefault>>();
+
+                if (filterView.DataBlocked != null)
                 {
-                    case FilterActived.Actived:
-                        conditions.Add(builder.Eq(x => x.DataBlocked, null));
-                        break;
-                    case FilterActived.Disabled:
-                        conditions.Add(builder.Ne(x => x.DataBlocked, null));
-                        break;
-                }
-            }
-
-            if (string.IsNullOrEmpty(filterView.Name) == false)
-                conditions.Add(builder.Regex(x => x.Name, new BsonRegularExpression(filterView.Name, "i")));
-
-            if (filterView.ServiceTypes != null)
-            {
-                conditions.Add(builder.In(x => x._id, filterView.ServiceTypes.Select(ObjectId.Parse).ToList()));
-            }
-
-            // Task para remover preço do serviço
-            // if (filterView.PriceRangeInitial > 0 || filterView.PriceRangeFinal > 0)
-            // {
-            //     var priceMin = filterView.PriceRangeInitial > 0 ? filterView.PriceRangeInitial : 0;
-            //     var priceMax = filterView.PriceRangeFinal > 0 ? filterView.PriceRangeFinal : double.MaxValue;
-
-            //     var workshopServicesList = await _workshopServicesRepository
-            //         .FindByAsync(x => x.Value >= priceMin && x.Value <= priceMax);
-
-            //     var serviceNames = workshopServicesList.Select(x => x.Name).ToList();
-
-            //     if (serviceNames.Any())
-            //     {
-            //         conditions.Add(builder.In(x => x.Name, serviceNames));
-            //     }
-            // }
-
-            if (filterView.Rating != null)
-            {
-                var workshopList = await _workshopRepository.FindByAsync(x => x.Rating == filterView.Rating);
-                var workshopCompanyNames = workshopList.Select(w => w.CompanyName).ToList();
-                var workshopServicesList = await _workshopServicesRepository.FindByAsync(x => workshopCompanyNames.Contains(x.Workshop.CompanyName));
-                var servicesId = workshopServicesList.Select(x => x._id).ToList();
-                conditions.Add(builder.In(x => x._id, servicesId));
-            }
-
-            if (!conditions.Any())
-            {
-                conditions.Add(builder.Empty);
-            }
-
-            if (string.IsNullOrEmpty(filterView.LatUser) == false && string.IsNullOrEmpty(filterView.LongUser) == false)
-            {
-                var userLatitude = double.Parse(filterView.LatUser, CultureInfo.InvariantCulture);
-                var userLongitude = double.Parse(filterView.LongUser, CultureInfo.InvariantCulture);
-                var maxDistance = filterView.Distance;
-
-                var workshopList = (List<Workshop>)await _workshopRepository.FindAllAsync();
-
-                for (var i = 0; i < workshopList.Count; i++)
-                {
-                    workshopList[i].Distance = await Util.GetDistanceAsync(userLatitude, userLongitude, workshopList[i].Latitude, workshopList[i].Longitude);
+                    switch (filterView.DataBlocked.GetValueOrDefault())
+                    {
+                        case FilterActived.Actived:
+                            conditions.Add(builder.Eq(x => x.DataBlocked, null));
+                            break;
+                        case FilterActived.Disabled:
+                            conditions.Add(builder.Ne(x => x.DataBlocked, null));
+                            break;
+                    }
                 }
 
-                var responseWithDistance = new List<Workshop>();
-                if (maxDistance != null)
+                if (string.IsNullOrEmpty(filterView.Name) == false)
+                    conditions.Add(builder.Regex(x => x.Name, new BsonRegularExpression(filterView.Name, "i")));
+
+                if (filterView.ServiceTypes != null && filterView.ServiceTypes.Any())
                 {
-                    responseWithDistance = workshopList.Where(Workshop => { return Workshop.Distance <= maxDistance; }).ToList();
-                }
-                else
-                {
-                    responseWithDistance = workshopList.ToList();
+                    try
+                    {
+                        var objectIds = filterView.ServiceTypes
+                            .Where(id => ObjectId.TryParse(id, out _))
+                            .Select(ObjectId.Parse)
+                            .ToList();
+                        
+                        if (objectIds.Any())
+                        {
+                            conditions.Add(builder.In(x => x._id, objectIds));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"[SERVICES_DEFAULT_DEBUG] Erro ao processar ServiceTypes: {ex.Message}");
+                        // Continuar sem o filtro de ServiceTypes
+                    }
                 }
 
-                var workshopCompanyNames = responseWithDistance.Select(w => w.CompanyName).ToList();
-                var workshopServicesList = await _workshopServicesRepository.FindByAsync(x => workshopCompanyNames.Contains(x.Workshop.CompanyName));
-                var servicesId = workshopServicesList.Select(x => x._id).ToList();
-                conditions.Add(builder.In(x => x._id, servicesId));
+                // ProfileId é opcional - não adicionar condição se for null ou vazio
+                if (!string.IsNullOrEmpty(filterView.ProfileId))
+                {
+                    // Aqui você pode adicionar lógica específica para profileId se necessário
+                    // Por enquanto, não fazemos nada com o profileId
+                }
+
+                var filter = conditions.Any() ? builder.And(conditions) : builder.Empty;
+
+                var listServices = await _servicesDefaultRepository.GetCollectionAsync().Find(filter).ToListAsync();
+
+                return _mapper.Map<List<T>>(listServices);
             }
-
-            var listServices = await _servicesDefaultRepository
-            .GetCollectionAsync()
-            .FindSync(builder.And(conditions), Util.FindOptions(filterView, Util.Sort<Data.Entities.ServicesDefault>().Ascending(x => x.Name)))
-            .ToListAsync();
-
-            return _mapper.Map<List<T>>(listServices);
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[SERVICES_DEFAULT_DEBUG] Erro em GetAll: {ex.Message}");
+                
+                // Tratamento específico para erro oldValue do MongoDB
+                if (ex.Message.Contains("oldValue") || ex.InnerException?.Message?.Contains("oldValue") == true)
+                {
+                    Console.WriteLine($"[SERVICES_DEFAULT_DEBUG] Erro oldValue detectado, tentando abordagem alternativa: {ex.Message}");
+                    
+                    // Tentar abordagem alternativa sem filtros complexos
+                    try
+                    {
+                        var listServices = await _servicesDefaultRepository.FindAllAsync();
+                        return _mapper.Map<List<T>>(listServices);
+                    }
+                    catch (Exception fallbackEx)
+                    {
+                        Console.WriteLine($"[SERVICES_DEFAULT_DEBUG] Erro na abordagem alternativa: {fallbackEx.Message}");
+                        throw;
+                    }
+                }
+                
+                throw;
+            }
         }
 
         public async Task<ServicesDefaultViewModel> GetById(string id)

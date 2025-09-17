@@ -30,6 +30,8 @@ namespace Meca.ApplicationService.Services
         private IConfiguration _configuration;
         private readonly IBusinessBaseAsync<Notification> _notificationRepository;
         private readonly IBusinessBaseAsync<Data.Entities.Profile> _profileRepository;
+        private readonly IBusinessBaseAsync<UserAdministrator> _userAdministratorRepository;
+        private readonly IBusinessBaseAsync<Workshop> _workshopRepository;
         private readonly ISenderNotificationService _senderNotificationService;
         private readonly IHostingEnvironment _env;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -40,12 +42,18 @@ namespace Meca.ApplicationService.Services
             IMapper mapper,
             IConfiguration configuration,
             Acesso acesso,
+            IBusinessBaseAsync<Notification> notificationRepository,
+            IBusinessBaseAsync<Data.Entities.Profile> profileRepository,
+            IBusinessBaseAsync<UserAdministrator> userAdministratorRepository,
+            IBusinessBaseAsync<Workshop> workshopRepository,
             string testUnit
             )
         {
             _env = env;
-            _notificationRepository = new BusinessBaseAsync<Notification>(env, configuration);
-            _profileRepository = new BusinessBaseAsync<Data.Entities.Profile>(env, configuration);
+            _notificationRepository = notificationRepository;
+            _profileRepository = profileRepository;
+            _userAdministratorRepository = userAdministratorRepository;
+            _workshopRepository = workshopRepository;
             _mapper = mapper;
             _configuration = configuration;
             _senderNotificationService = new SendService();
@@ -57,6 +65,8 @@ namespace Meca.ApplicationService.Services
             IMapper mapper,
             IBusinessBaseAsync<Notification> notificationRepository,
             IBusinessBaseAsync<Data.Entities.Profile> profileRepository,
+            IBusinessBaseAsync<UserAdministrator> userAdministratorRepository,
+            IBusinessBaseAsync<Workshop> workshopRepository,
             IHttpContextAccessor httpContextAccessor,
             IHostingEnvironment env,
             IConfiguration configuration,
@@ -65,6 +75,8 @@ namespace Meca.ApplicationService.Services
             _mapper = mapper;
             _notificationRepository = notificationRepository;
             _profileRepository = profileRepository;
+            _userAdministratorRepository = userAdministratorRepository;
+            _workshopRepository = workshopRepository;
             _httpContextAccessor = httpContextAccessor;
             _env = env;
             _configuration = configuration;
@@ -198,7 +210,14 @@ namespace Meca.ApplicationService.Services
                 if (ModelIsValid(model, true) == false)
                     return false;
 
-                var indexPush = 0; // Default para clientes
+                // CORREÇÃO: Usar indexKeys correto baseado no tipo de perfil
+                var indexPush = (int)IndexPush.Profile; // Padrão para clientes
+
+                Console.WriteLine($"[NOTIFICATION_DEBUG] Iniciando envio de notificação");
+                Console.WriteLine($"[NOTIFICATION_DEBUG] Tipo de perfil: {model.TypeProfile}");
+                Console.WriteLine($"[NOTIFICATION_DEBUG] Título: {model.Title}");
+                Console.WriteLine($"[NOTIFICATION_DEBUG] Conteúdo: {model.Content}");
+                Console.WriteLine($"[NOTIFICATION_DEBUG] Target IDs: {string.Join(", ", model.TargetId)}");
 
                 switch (model.TypeProfile)
                 {
@@ -212,7 +231,6 @@ namespace Meca.ApplicationService.Services
                         }
                         break;
                     case TypeProfile.Profile:
-                        indexPush = (int)IndexPush.Profile; // 0 = Clientes
 
                         var listProfile = await GetEntitiesForNotification<Data.Entities.Profile>(model.TargetId);
 
@@ -220,10 +238,24 @@ namespace Meca.ApplicationService.Services
                         {
                             listNotification = GenericMap(listProfile, model.Title, model.Content, workshop: workshop);
                             listDeviceId = listProfile.SelectMany(x => x.DeviceId).Where(x => string.IsNullOrEmpty(x) == false).Select(x => x).Distinct().ToList();
+                            
+                            Console.WriteLine($"[NOTIFICATION_DEBUG] Encontrados {listDeviceId.Count} dispositivos para clientes");
+                            Console.WriteLine($"[NOTIFICATION_DEBUG] Device IDs: {string.Join(", ", listDeviceId)}");
+                            
+                            // Log detalhado de cada perfil
+                            foreach (var profileItem in listProfile)
+                            {
+                                Console.WriteLine($"[NOTIFICATION_DEBUG] Perfil ID: {profileItem._id}, Nome: {profileItem.FullName}, DeviceIds: {string.Join(", ", profileItem.DeviceId ?? new List<string>())}");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine($"[NOTIFICATION_DEBUG] Nenhum perfil encontrado para os IDs: {string.Join(", ", model.TargetId)}");
                         }
                         break;
                     case TypeProfile.Workshop:
-                        indexPush = (int)IndexPush.Workshop; // 1 = Oficinas
+
+                        indexPush = (int)IndexPush.Workshop; // Usar index 1 para oficinas
 
                         var listWorkshop = await GetEntitiesForNotification<Workshop>(model.TargetId);
 
@@ -231,6 +263,19 @@ namespace Meca.ApplicationService.Services
                         {
                             listNotification = GenericMap(listWorkshop, model.Title, model.Content, profile: profile);
                             listDeviceId = listWorkshop.SelectMany(x => x.DeviceId).Where(x => string.IsNullOrEmpty(x) == false).Select(x => x).Distinct().ToList();
+                            
+                            Console.WriteLine($"[NOTIFICATION_DEBUG] Encontrados {listDeviceId.Count} dispositivos para oficinas");
+                            Console.WriteLine($"[NOTIFICATION_DEBUG] Device IDs: {string.Join(", ", listDeviceId)}");
+                            
+                            // Log detalhado de cada oficina
+                            foreach (var workshopItem in listWorkshop)
+                            {
+                                Console.WriteLine($"[NOTIFICATION_DEBUG] Oficina ID: {workshopItem._id}, Nome: {workshopItem.FullName}, DeviceIds: {string.Join(", ", workshopItem.DeviceId ?? new List<string>())}");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine($"[NOTIFICATION_DEBUG] Nenhuma oficina encontrada para os IDs: {string.Join(", ", model.TargetId)}");
                         }
                         break;
                     default:
@@ -257,34 +302,39 @@ namespace Meca.ApplicationService.Services
 
                         dynamic settings = Util.GetSettingsPush();
 
-                        // Log para debug
-                        System.Diagnostics.Debug.WriteLine($"[NOTIFICATION DEBUG] Enviando para {listDeviceId.Count} dispositivos");
-                        System.Diagnostics.Debug.WriteLine($"[NOTIFICATION DEBUG] IndexPush: {indexPush}");
-                        System.Diagnostics.Debug.WriteLine($"[NOTIFICATION DEBUG] Título: {model.Title}");
-                        System.Diagnostics.Debug.WriteLine($"[NOTIFICATION DEBUG] Conteúdo: {model.Content}");
-                        System.Diagnostics.Debug.WriteLine($"[NOTIFICATION DEBUG] Device IDs: {string.Join(", ", listDeviceId)}");
+                        Console.WriteLine($"[NOTIFICATION_DEBUG] Enviando push com indexKeys: {indexPush}");
+                        var oneSignalSection = _configuration.GetSection("SERVICES:ONESIGNAL");
+                        var oneSignalConfig = oneSignalSection.Get<List<dynamic>>();
+                        Console.WriteLine($"[NOTIFICATION_DEBUG] App ID será: {oneSignalConfig?[indexPush]?.APPID}");
+                        Console.WriteLine($"[NOTIFICATION_DEBUG] Payload: {payLoad}");
+                        Console.WriteLine($"[NOTIFICATION_DEBUG] Settings: {settings}");
 
                         var result = (OneSignalResponse)await _senderNotificationService.SendPushAsync(model.Title, model.Content, listDeviceId, data: payLoad, settings: settings, priority: 10, indexKeys: indexPush);
 
-                        // Log do resultado
-                        System.Diagnostics.Debug.WriteLine($"[NOTIFICATION DEBUG] Resultado: Success={result.Success}, Erro={result.Erro}, StatusCode={result.StatusCode}");
+                        Console.WriteLine($"[NOTIFICATION_DEBUG] Resultado do envio: Success={result.Success}, Erro={result.Erro}, StatusCode={result.StatusCode}");
+                        Console.WriteLine($"[NOTIFICATION_DEBUG] Resposta do OneSignal: {result}");
 
                         if (_env.EnvironmentName != "Production" && result.Erro)
                             throw new Exception(DefaultMessages.ErrorOnSendPush);
                     }
                     else
                     {
-                        System.Diagnostics.Debug.WriteLine("[NOTIFICATION DEBUG] Nenhum device ID encontrado para envio");
+                        Console.WriteLine($"[NOTIFICATION_DEBUG] Nenhum dispositivo encontrado para envio");
                     }
                 }
+                else
+                {
+                    Console.WriteLine($"[NOTIFICATION_DEBUG] Nenhuma notificação foi criada para salvar");
+                }
 
+                return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine($"[NOTIFICATION_DEBUG] Erro ao enviar notificação: {ex.Message}");
+                Console.WriteLine($"[NOTIFICATION_DEBUG] Stack trace: {ex.StackTrace}");
                 return false;
             }
-
-            return true;
         }
 
         public async Task<bool> Delete(string id)
@@ -308,11 +358,21 @@ namespace Meca.ApplicationService.Services
 
         private async Task<List<T>> GetEntitiesForNotification<T>(List<string> targets) where T : ModelBase
         {
-
             var response = new List<T>();
             try
             {
-                IBusinessBaseAsync<T> _genericRepository = new BusinessBaseAsync<T>(_env, _configuration);
+                Console.WriteLine($"[NOTIFICATION_DEBUG] GetEntitiesForNotification - Tipo: {typeof(T).Name}");
+                Console.WriteLine($"[NOTIFICATION_DEBUG] GetEntitiesForNotification - Targets: {string.Join(", ", targets)}");
+                
+                IBusinessBaseAsync<T> repository = null;
+                if (typeof(T) == typeof(UserAdministrator))
+                    repository = _userAdministratorRepository as IBusinessBaseAsync<T>;
+                else if (typeof(T) == typeof(Data.Entities.Profile))
+                    repository = _profileRepository as IBusinessBaseAsync<T>;
+                else if (typeof(T) == typeof(Workshop))
+                    repository = _workshopRepository as IBusinessBaseAsync<T>;
+                else
+                    throw new InvalidOperationException($"Repositório não injetado para o tipo {typeof(T).Name}");
 
                 var builder = Builders<T>.Filter;
                 var conditions = new List<FilterDefinition<T>>();
@@ -321,15 +381,25 @@ namespace Meca.ApplicationService.Services
                 conditions.Add(builder.Eq(x => x.DataBlocked, null));
 
                 if (targets.Count != 0)
-                    conditions.Add(builder.In(x => x._id, targets.Select(ObjectId.Parse).ToList()));
+                {
+                    var objectIds = targets.Select(ObjectId.Parse).ToList();
+                    conditions.Add(builder.In(x => x._id, objectIds));
+                    Console.WriteLine($"[NOTIFICATION_DEBUG] GetEntitiesForNotification - ObjectIds: {string.Join(", ", objectIds)}");
+                }
 
-                response = await _genericRepository.GetCollectionAsync().Find(builder.And(conditions)).ToListAsync();
+                Console.WriteLine($"[NOTIFICATION_DEBUG] GetEntitiesForNotification - Condições aplicadas: {conditions.Count}");
+
+                response = await repository.GetCollectionAsync().Find(builder.And(conditions)).ToListAsync();
+
+                Console.WriteLine($"[NOTIFICATION_DEBUG] GetEntitiesForNotification - Entidades encontradas: {response.Count}");
 
                 return response;
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine($"[NOTIFICATION_DEBUG] GetEntitiesForNotification - Erro: {ex.Message}");
+                Console.WriteLine($"[NOTIFICATION_DEBUG] GetEntitiesForNotification - Stack trace: {ex.StackTrace}");
                 return response;
             }
         }

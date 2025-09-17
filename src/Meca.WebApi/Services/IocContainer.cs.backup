@@ -80,15 +80,12 @@ namespace Meca.WebApi.Services
         /// <returns></returns>
         public static IServiceCollection AddServicesInjection(this IServiceCollection services)
         {
-            Console.WriteLine($"[IOC_DEBUG] Iniciando registro de serviços de API");
-            
             /*IUGU*/
             services.AddScoped(typeof(IIuguChargeServices), typeof(IuguService));
             services.AddScoped(typeof(IIuguMarketPlaceServices), typeof(IuguService));
             services.AddScoped(typeof(IIuguPaymentMethodService), typeof(IuguService));
             services.AddScoped(typeof(IIuguCustomerServices), typeof(IuguService));
             services.AddScoped(typeof(IIuguService), typeof(IuguService));
-            Console.WriteLine($"[IOC_DEBUG] Serviços IUGU registrados");
 
             /*STRIPE*/
             services.AddScoped(typeof(IStripeCustomerService), typeof(StripeCustomerService));
@@ -96,27 +93,21 @@ namespace Meca.WebApi.Services
             services.AddScoped(typeof(IStripePaymentMethodService), typeof(StripePaymentMethodService));
             services.AddScoped(typeof(IStripePaymentIntentService), typeof(StripePaymentIntentService));
             services.AddScoped(typeof(IStripeTransferService), typeof(StripeTransferService));
-            Console.WriteLine($"[IOC_DEBUG] Serviços Stripe registrados");
+
 
             /* NOTIFICAÇÕES & EMAIL*/
             services.AddScoped(typeof(ISenderMailService), typeof(SendService));
             services.AddScoped(typeof(ISenderNotificationService), typeof(SendService));
-            Console.WriteLine($"[IOC_DEBUG] Serviços de notificação e email registrados");
 
             /*FIREBASE*/
             services.AddScoped(typeof(IFirebaseServices), typeof(FirebaseServices));
-            Console.WriteLine($"[IOC_DEBUG] Serviços Firebase registrados");
 
             /*UTILIDADES */
             services.AddScoped(typeof(IUtilService), typeof(UtilService));
             services.AddScoped(typeof(IHangfireService), typeof(HangfireService));
             services.AddScoped(typeof(IAgoraIOService), typeof(AgoraIOService));
-            Console.WriteLine($"[IOC_DEBUG] Serviços de utilidades registrados");
 
-            Console.WriteLine($"[IOC_DEBUG] Registro de serviços de API finalizado");
             return services;
         }
     }
-
-
 }

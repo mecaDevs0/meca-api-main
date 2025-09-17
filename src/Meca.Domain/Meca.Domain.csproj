@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <CheckEolTargetFramework>false</CheckEolTargetFramework>
         <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
         <LangVersion>latest</LangVersion>
@@ -16,10 +16,10 @@
     </Target>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
         <PackageReference Include="FluentValidation" Version="9.5.3" />
         <PackageReference Include="MimeTypeMap.Core" Version="1.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Localization" Version="5.0.4" />
+        <PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.0" />
         <!-- Referências condicionadas à existência dos arquivos -->
         <ProjectReference Include="..\..\..\megaleios-utilityframework-5af25bfd220b\src\UtilityFramework.Application.Core3\UtilityFramework.Application.Core3.csproj" Condition="Exists('..\..\..\megaleios-utilityframework-5af25bfd220b\src\UtilityFramework.Application.Core3\UtilityFramework.Application.Core3.csproj')" />
         <ProjectReference Include="..\..\..\megaleios-utilityframework-5af25bfd220b\src\UtilityFramework.Services.Core3\UtilityFramework.Services.Core3.csproj" Condition="Exists('..\..\..\megaleios-utilityframework-5af25bfd220b\src\UtilityFramework.Services.Core3\UtilityFramework.Services.Core3.csproj')" />

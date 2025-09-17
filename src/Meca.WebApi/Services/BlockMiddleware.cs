@@ -13,27 +13,18 @@ using UtilityFramework.Application.Core3;
 using UtilityFramework.Application.Core3.JwtMiddleware;
 using UtilityFramework.Infra.Core3.MongoDb.Business;
 using UtilityFramework.Infra.Core3.MongoDb.Data.Modelos;
+using Microsoft.Extensions.DependencyInjection;
+
 
 namespace Meca.WebApi.Services
 {
     public class BlockMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly IBusinessBaseAsync<Data.Entities.Profile> _profileRepository;
-        private readonly IBusinessBaseAsync<UserAdministrator> _userAdministratorRepository;
-        private readonly IHostingEnvironment _env;
 
-        public BlockMiddleware(
-            RequestDelegate next,
-            IBusinessBaseAsync<Data.Entities.Profile> profileRepository,
-            IBusinessBaseAsync<UserAdministrator> userAdministratorRepository,
-            IHostingEnvironment env
-        )
+        public BlockMiddleware(RequestDelegate next)
         {
             _next = next;
-            _profileRepository = profileRepository;
-            _userAdministratorRepository = userAdministratorRepository;
-            _env = env;
         }
 
         public async Task Invoke(HttpContext context)
@@ -47,23 +38,21 @@ namespace Meca.WebApi.Services
 
                 if (context.Request.Path.Value.ToLower().Contains("api/") && string.IsNullOrEmpty(userId) == false)
                 {
-
                     var role = context.Request.GetRole().ToString();
-
                     ModelBase entity = null;
 
                     switch (role)
                     {
                         case nameof(TypeProfile.UserAdministrator):
-                            entity = await GetEntity<UserAdministrator>(userId);
+                            entity = await GetEntity<UserAdministrator>(userId, context.RequestServices);
                             customMessage = DefaultMessages.UserAdministratorNotFound;
                             break;
                         case nameof(TypeProfile.Workshop):
-                            entity = await GetEntity<Workshop>(userId);
+                            entity = await GetEntity<Workshop>(userId, context.RequestServices);
                             customMessage = DefaultMessages.WorkshopNotFound;
                             break;
                         default:
-                            entity = await GetEntity<Data.Entities.Profile>(userId);
+                            entity = await GetEntity<Data.Entities.Profile>(userId, context.RequestServices);
                             customMessage = DefaultMessages.ProfileNotFound;
                             break;
                     }
@@ -112,13 +101,12 @@ namespace Meca.WebApi.Services
             await context.Response.WriteAsync(JsonConvert.SerializeObject(response));
         }
 
-        private async Task<TEntity> GetEntity<TEntity>(string id) where TEntity : ModelBase
+        private async Task<TEntity> GetEntity<TEntity>(string id, IServiceProvider serviceProvider) where TEntity : ModelBase
         {
             try
             {
-                IBusinessBaseAsync<TEntity> _genericRepository = new BusinessBaseAsync<TEntity>(_env);
-
-                return await _genericRepository.FindByIdAsync(id);
+                var repository = serviceProvider.GetRequiredService<IBusinessBaseAsync<TEntity>>();
+                return await repository.FindByIdAsync(id);
             }
             catch (Exception)
             {

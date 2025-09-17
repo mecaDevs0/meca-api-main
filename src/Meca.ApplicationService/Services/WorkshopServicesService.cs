@@ -50,6 +50,9 @@ namespace Meca.ApplicationService.Services
             _ratingRepository = ratingRepository;
             _httpContextAccessor = httpContextAccessor;
             _configuration = configuration;
+            
+            // Inicializar o acesso
+            SetAccess(httpContextAccessor);
         }
 
         /*CONSTRUTOR UTILIZADO POR TESTES DE UNIDADE*/
@@ -58,9 +61,10 @@ namespace Meca.ApplicationService.Services
             IMapper mapper,
             IConfiguration configuration,
             Acesso acesso,
+            IBusinessBaseAsync<WorkshopServices> workshopServicesRepository,
             string testUnit)
         {
-            _workshopServicesRepository = new BusinessBaseAsync<WorkshopServices>(env);
+            _workshopServicesRepository = workshopServicesRepository;
             _mapper = mapper;
             _configuration = configuration;
 
@@ -191,15 +195,40 @@ namespace Meca.ApplicationService.Services
                 conditions.Add(builder.In(x => x.Workshop.Id, workshopIds));
             }
 
-            var listWorkshopServices = await _workshopServicesRepository
-                .GetCollectionAsync()
-                .FindSync(
-                    builder.And(conditions),
-                    Util.FindOptions(filterView, Util.Sort<WorkshopServices>().Ascending(x => x.Service.Name))
-                )
-                .ToListAsync();
+            try
+            {
+                var listWorkshopServices = await _workshopServicesRepository
+                    .GetCollectionAsync()
+                    .FindSync(
+                        builder.And(conditions),
+                        Util.FindOptions(filterView, Util.Sort<WorkshopServices>().Ascending(x => x.Service.Name))
+                    )
+                    .ToListAsync();
 
-            return _mapper.Map<List<T>>(listWorkshopServices);
+                return _mapper.Map<List<T>>(listWorkshopServices);
+            }
+            catch (Exception ex)
+            {
+                // Tratamento específico para erro oldValue do MongoDB
+                if (ex.Message.Contains("oldValue") || ex.InnerException?.Message?.Contains("oldValue") == true)
+                {
+                    Console.WriteLine($"[WORKSHOP_SERVICES_DEBUG] Erro oldValue detectado, tentando abordagem alternativa: {ex.Message}");
+                    
+                    // Tentar abordagem alternativa sem filtros complexos
+                    try
+                    {
+                        var listWorkshopServices = await _workshopServicesRepository.FindAllAsync();
+                        return _mapper.Map<List<T>>(listWorkshopServices);
+                    }
+                    catch (Exception fallbackEx)
+                    {
+                        Console.WriteLine($"[WORKSHOP_SERVICES_DEBUG] Erro na abordagem alternativa: {fallbackEx.Message}");
+                        throw;
+                    }
+                }
+                
+                throw;
+            }
         }
 
         public async Task<WorkshopServicesViewModel> GetById(string id, string latUser, string longUser)

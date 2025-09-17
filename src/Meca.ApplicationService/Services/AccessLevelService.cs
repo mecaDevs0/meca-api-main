@@ -50,11 +50,13 @@ namespace Meca.ApplicationService.Services
             IMapper mapper,
             IConfiguration configuration,
             Acesso acesso,
+            IBusinessBaseAsync<AccessLevel> accessLevelRepository,
+            IBusinessBaseAsync<UserAdministrator> userAdministratorRepository,
             string testUnit)
         {
 
-            _accessLevelRepository = new BusinessBaseAsync<AccessLevel>(env);
-            _userAdministratorRepository = new BusinessBaseAsync<UserAdministrator>(env);
+            _accessLevelRepository = accessLevelRepository;
+            _userAdministratorRepository = userAdministratorRepository;
             _mapper = mapper;
             _configuration = configuration;
 

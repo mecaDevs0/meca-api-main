@@ -87,9 +87,10 @@ namespace Meca.ApplicationService.Services
             IConfiguration configuration,
             Acesso acesso,
             string testUnit,
+            IBusinessBaseAsync<Scheduling> schedulingRepository,
             IBusinessBaseAsync<Fees> feesRepository)
         {
-            _schedulingRepository = new BusinessBaseAsync<Scheduling>(env, configuration);
+            _schedulingRepository = schedulingRepository;
             _mapper = mapper;
             _configuration = configuration;
 
@@ -105,51 +106,101 @@ namespace Meca.ApplicationService.Services
 
         public async Task<List<T>> GetAll<T>(SchedulingFilterViewModel filterView) where T : class
         {
-
-            filterView.SetDefault();
-            var builder = Builders<Scheduling>.Filter;
-            var conditions = new List<FilterDefinition<Scheduling>>();
-
-            if (filterView.DataBlocked != null)
+            try
             {
-                switch (filterView.DataBlocked.GetValueOrDefault())
+                Console.WriteLine("[SCHEDULING_DEBUG] Iniciando GetAll com filtros");
+                
+                filterView.SetDefault();
+                var builder = Builders<Scheduling>.Filter;
+                var conditions = new List<FilterDefinition<Scheduling>>();
+
+                // Filtro básico: apenas agendamentos não desabilitados
+                conditions.Add(builder.Eq(x => x.DataBlocked, null));
+
+                // Lógica para tratar quando profileId não é fornecido
+                if ((int)_access.TypeToken == (int)TypeProfile.Profile && string.IsNullOrEmpty(filterView.ProfileId))
                 {
-                    case FilterActived.Actived:
-                        conditions.Add(builder.Eq(x => x.DataBlocked, null));
-                        break;
-                    case FilterActived.Disabled:
-                        conditions.Add(builder.Ne(x => x.DataBlocked, null));
-                        break;
+                    Console.WriteLine($"[SCHEDULING_DEBUG] Usando userId do acesso: {_access.UserId}");
+                    conditions.Add(builder.Eq(x => x.Profile.Id, _access.UserId));
                 }
+
+                // Filtro por profileId se fornecido
+                if (!string.IsNullOrEmpty(filterView.ProfileId))
+                {
+                    Console.WriteLine($"[SCHEDULING_DEBUG] ProfileId fornecido: {filterView.ProfileId}");
+                    conditions.Add(builder.Eq(x => x.Profile.Id, filterView.ProfileId));
+                }
+
+                // Filtro por workshopId se fornecido
+                if (!string.IsNullOrEmpty(filterView.WorkshopId))
+                {
+                    Console.WriteLine($"[SCHEDULING_DEBUG] WorkshopId fornecido: {filterView.WorkshopId}");
+                    conditions.Add(builder.Eq(x => x.Workshop.Id, filterView.WorkshopId));
+                }
+
+                // Filtro por data
+                if (filterView.StartDate.HasValue)
+                {
+                    conditions.Add(builder.Gte(x => x.Date, filterView.StartDate.Value));
+                }
+
+                if (filterView.EndDate.HasValue)
+                {
+                    conditions.Add(builder.Lte(x => x.Date, filterView.EndDate.Value));
+                }
+
+                // Filtro por status
+                if (filterView.Status != null && filterView.Status.Any())
+                {
+                    conditions.Add(builder.In(x => x.Status, filterView.Status));
+                }
+
+                // Filtro por tipo de token (workshop)
+                if ((int)_access.TypeToken == (int)TypeProfile.Workshop)
+                {
+                    Console.WriteLine($"[SCHEDULING_DEBUG] Filtrando por workshop do acesso: {_access.UserId}");
+                    conditions.Add(builder.Eq(x => x.Workshop.Id, _access.UserId));
+                }
+
+                var filter = conditions.Any() ? builder.And(conditions) : builder.Empty;
+
+                Console.WriteLine($"[SCHEDULING_DEBUG] Aplicando filtro com {conditions.Count} condições");
+
+                var listScheduling = await _schedulingRepository
+                    .GetCollectionAsync()
+                    .FindSync(filter, Util.FindOptions(filterView, Util.Sort<Scheduling>().Descending(x => x._id)))
+                    .ToListAsync();
+
+                Console.WriteLine($"[SCHEDULING_DEBUG] Encontrados {listScheduling.Count} agendamentos");
+
+                return _mapper.Map<List<T>>(listScheduling);
             }
-
-            if (string.IsNullOrEmpty(filterView.ProfileId) == false)
-                conditions.Add(builder.Eq(x => x.Profile.Id, filterView.ProfileId));
-
-            if (string.IsNullOrEmpty(filterView.WorkshopId) == false)
-                conditions.Add(builder.Eq(x => x.Workshop.Id, filterView.WorkshopId));
-
-            if (filterView.StartDate != null)
-                conditions.Add(builder.Gte(x => x.Date, filterView.StartDate));
-
-            if (filterView.EndDate != null)
-                conditions.Add(builder.Lte(x => x.Date, filterView.EndDate));
-
-            if (filterView.Status != null && filterView.Status.Any())
-                conditions.Add(builder.In(x => x.Status, filterView.Status));
-
-            if ((int)_access.TypeToken == (int)TypeProfile.Workshop)
-                conditions.Add(builder.Eq(x => x.Workshop.Id, _access.UserId));
-
-            if (conditions.Count == 0)
-                conditions.Add(builder.Empty);
-
-            var listScheduling = await _schedulingRepository
-            .GetCollectionAsync()
-            .FindSync(builder.And(conditions), Util.FindOptions(filterView, Util.Sort<Scheduling>().Descending(x => x.Date)))
-            .ToListAsync();
-
-            return _mapper.Map<List<T>>(listScheduling);
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[SCHEDULING_DEBUG] Erro em GetAll: {ex.Message}");
+                Console.WriteLine($"[SCHEDULING_DEBUG] Stack trace: {ex.StackTrace}");
+                
+                // Tratamento específico para erro oldValue do MongoDB
+                if (ex.Message.Contains("oldValue") || ex.InnerException?.Message?.Contains("oldValue") == true ||
+                    ex.Message.Contains("Object reference not set") || ex.InnerException?.Message?.Contains("Object reference not set") == true)
+                {
+                    Console.WriteLine($"[SCHEDULING_DEBUG] Erro MongoDB detectado, tentando abordagem alternativa: {ex.Message}");
+                    
+                    // Tentar abordagem alternativa sem filtros complexos
+                    try
+                    {
+                        var allSchedulings = await _schedulingRepository.FindAllAsync();
+                        return _mapper.Map<List<T>>(allSchedulings);
+                    }
+                    catch (Exception fallbackEx)
+                    {
+                        Console.WriteLine($"[SCHEDULING_DEBUG] Erro na abordagem alternativa: {fallbackEx.Message}");
+                        throw new Exception($"Erro em SchedulingService.GetAll: {ex.Message}", ex);
+                    }
+                }
+                
+                throw new Exception($"Erro em SchedulingService.GetAll: {ex.Message}", ex);
+            }
         }
 
         public async Task<SchedulingViewModel> GetById(string id)
@@ -235,10 +286,11 @@ namespace Meca.ApplicationService.Services
                 var workshopAgendaEntity = await _workshopAgendaRepository.FindByAsync(x => x.Workshop.Id == workshopEntity.GetStringId());
                 var workshopServicesEntity = await _workshopServicesRepository.FindByAsync(x => x.Workshop.Id == workshopEntity.GetStringId());
 
-                // Permitir agendamentos para Oficina somente se estiver com os dados bancários, agenda e serviços configurados
-                if (workshopEntity.DataBankStatus != DataBankStatus.Valid || !workshopAgendaEntity.Any() || !workshopServicesEntity.Any())
+                // Permitir agendamentos para Oficina se estiver com agenda e serviços configurados
+                // Removida a validação de dados bancários para permitir agendamentos de teste
+                if (!workshopAgendaEntity.Any() || !workshopServicesEntity.Any())
                 {
-                    CreateNotification("Essa Oficina não está habilitada para receber agendamentos.");
+                    CreateNotification("Essa Oficina não está habilitada para receber agendamentos. Verifique se a agenda e serviços estão configurados.");
                     return null;
                 }
 

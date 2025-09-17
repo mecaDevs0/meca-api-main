@@ -2,25 +2,21 @@
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
+        <EnableDefaultContentItems>false</EnableDefaultContentItems>
         <CheckEolTargetFramework>false</CheckEolTargetFramework>
         <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
         <LangVersion>latest</LangVersion>
         <EnableMSDeployAppOffline>true</EnableMSDeployAppOffline>
         <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
         <NoWarn>CA1416;NU1701;NU1604;1519;1634;0618;1998;1701;1702;1591;1572;1571;1573;1587;1570</NoWarn>
-        <DocumentationFile>$(MSBuildThisFileName).xml</DocumentationFile>
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <DocumentationFile>XmlDocument.xml</DocumentationFile>
     </PropertyGroup>
 
-    <Target Name="CleanBinObj" AfterTargets="AfterPublish">
-        <RemoveDir Directories="$(BaseIntermediateOutputPath)/$(Configuration)/" />
-        <RemoveDir Directories="$(BaseOutputPath)/$(Configuration)/" />
-        <!-- Chamar apenas em projetos locais para evitar erros nos projetos externos -->
-        <MSBuild Projects="@(ProjectReference->'%(FullPath)')"
-                 Targets="CleanReferencedBinObj"
-                 Condition="$([System.String]::Copy('%(FullPath)').Contains('megaleios-utilityframework-5af25bfd220b')) == false"
-                 ContinueOnError="true" />
-    </Target>
+    <ItemGroup>
+        <Content Update="appsettings.*.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
 
     <ItemGroup>
         <Folder Include="Content\" />
@@ -30,10 +26,12 @@
     <ItemGroup>
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0" />
         <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0" />
         <PackageReference Include="MimeTypeMap.Core" Version="1.0.0" />
         <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
+        <PackageReference Include="SkiaSharp" Version="2.88.8" />
     </ItemGroup>
 
     <ItemGroup>
@@ -44,8 +42,20 @@
         <ProjectReference Include="..\Meca.ApplicationService\Meca.ApplicationService.csproj" />
         <ProjectReference Include="..\Meca.Data\Meca.Data.csproj" />
         <ProjectReference Include="..\Meca.Domain\Meca.Domain.csproj" />
+        <ProjectReference Include="..\..\..\megaleios-utilityframework-5af25bfd220b\src\UtilityFramework.Application.Core3\UtilityFramework.Application.Core3.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <Content Include="appsettings.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="appsettings.Production.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Settings/Config.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
     <ItemGroup>
         <None Update="Content\**">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -56,5 +66,9 @@
         <None Update="**.xml">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+    </ItemGroup>
+    <ItemGroup>
+        <!-- Força a versão mais nova para resolver o conflito de downgrade -->
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0" />
     </ItemGroup>
 </Project>

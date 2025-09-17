@@ -7,6 +7,7 @@ using Hangfire.Storage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Http;
 using MongoDB.Driver;
 
 
@@ -19,14 +20,42 @@ namespace Meca.ApplicationService.Services.HangFire
             MongoUrlBuilder mongoUrlBuilder = null;
             MongoClient mongoClient = null;
             MongoStorageOptions storageOptions = null;
+            string dataBaseName = null;
 
             if (useMongoDb)
             {
-                var remoteDatabase = configuration.GetSection("DATABASE:REMOTE").Get<string>();
-                var dataBaseName = configuration.GetSection("DATABASE:NAME").Get<string>();
+                var connectionString = configuration.GetConnectionString("DefaultConnection");
+                dataBaseName = configuration.GetValue<string>("DatabaseName");
 
-                mongoUrlBuilder = new MongoUrlBuilder($"mongodb://{remoteDatabase}/{dataBaseName}");
-                mongoClient = new MongoClient(mongoUrlBuilder.ToMongoUrl());
+                // Add null check and fallback to DATABASE section if needed
+                if (string.IsNullOrEmpty(connectionString))
+                {
+                    connectionString = configuration.GetSection("DATABASE:CONNECTIONSTRING").Value;
+                    dataBaseName = configuration.GetSection("DATABASE:NAME").Value;
+                }
+
+                if (string.IsNullOrEmpty(connectionString))
+                {
+                    throw new InvalidOperationException("MongoDB connection string is not configured. Please check appsettings.json");
+                }
+
+                try
+                {
+                    mongoUrlBuilder = new MongoUrlBuilder(connectionString);
+                    mongoClient = new MongoClient(mongoUrlBuilder.ToMongoUrl());
+                }
+                catch (Exception ex)
+                {
+                    // If MongoUrlBuilder fails, try direct connection string
+                    mongoClient = new MongoClient(connectionString);
+                    // Extract database name from connection string or use configured value
+                    if (string.IsNullOrEmpty(dataBaseName))
+                    {
+                        var mongoUrl = MongoUrl.Create(connectionString);
+                        dataBaseName = mongoUrl.DatabaseName ?? "meca-app-2025";
+                    }
+                    mongoUrlBuilder = new MongoUrlBuilder(connectionString);
+                }
 
                 var migrationOptions = new MongoMigrationOptions
                 {
@@ -56,7 +85,7 @@ namespace Meca.ApplicationService.Services.HangFire
 
                 configuration.UseConsole();
                 if (useMongoDb)
-                    configuration.UseMongoStorage(mongoClient, mongoUrlBuilder.DatabaseName, storageOptions);
+                    configuration.UseMongoStorage(mongoClient, dataBaseName, storageOptions);
                 else
                     configuration.UseMemoryStorage();
             });
@@ -69,7 +98,10 @@ namespace Meca.ApplicationService.Services.HangFire
             app.UseHangfireServer();
             app.UseHangfireDashboard("/jobs", new DashboardOptions
             {
-                Authorization = [new MyAuthorizationFilter()]
+                Authorization = new []
+                {
+                    new MyAuthorizationFilter(app.ApplicationServices.GetRequiredService<IHttpContextAccessor>())
+                }
             });
             return app;
         }

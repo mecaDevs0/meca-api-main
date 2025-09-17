@@ -55,9 +55,10 @@ namespace Meca.ApplicationService.Services
             IMapper mapper,
             IConfiguration configuration,
             Acesso acesso,
+            IBusinessBaseAsync<Rating> ratingRepository,
             string testUnit)
         {
-            _ratingRepository = new BusinessBaseAsync<Rating>(env);
+            _ratingRepository = ratingRepository;
             _mapper = mapper;
             _configuration = configuration;
 

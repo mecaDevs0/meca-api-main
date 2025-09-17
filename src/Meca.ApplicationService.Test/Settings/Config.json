@@ -15,7 +15,7 @@
     "password": ""
   },
   "allowAccess": ["127.0.0.1","::1"], /*LISTA DE IP LIBERADO PARA VISUALIZAR DASHBORAD HANGFIRE CASO ATIVO*/
-  "suportEmail": [ "suporte@megaleios.com" ],
+  "suportEmail": [ "suporte@mecabr.com" ],
   "contactEmail": "contato@mecabr.com",
   "FirebaseSettings": {
     "urlDataBase": "", /* URL DO BANCO DE DADOS*/
@@ -41,7 +41,7 @@
       "HOST": "smtp.gmail.com",
       "PORT": 587,
       "SSL": false,
-      "EMAIL": "suporte@megaleios.com",
+      "EMAIL": "suporte@mecabr.com",
       "NAME": "Meca",
       "PASSWORD": "@@#Mega2020#@@!"
     }

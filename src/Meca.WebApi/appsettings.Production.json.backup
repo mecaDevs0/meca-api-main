@@ -32,5 +32,19 @@
     "SecretKey": "sk_test_51234567890abcdefghijklmnopqrstuvwxyz",
     "PublishableKey": "pk_test_51234567890abcdefghijklmnopqrstuvwxyz",
     "WebhookSecret": "whsec_1234567890abcdefghijklmnopqrstuvwxyz"
-  }
+  },
+  "SMTP": {
+    "Host": "smtp.gmail.com",
+    "Port": 587,
+    "EnableSsl": true,
+    "Username": "noreply@mecabr.com",
+    "Password": "your_app_password_here",
+    "FromEmail": "noreply@mecabr.com",
+    "FromName": "Meca"
+  },
+  "OneSignal": {
+    "AppId": "your_onesignal_app_id",
+    "ApiKey": "your_onesignal_api_key"
+  },
+  "AllowedHosts": "*"
 }

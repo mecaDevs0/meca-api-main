@@ -480,7 +480,7 @@ namespace Meca.WebApi.Controllers
 
                 if (userAdministratorEntity == null)
                 {
-                    var rootEmail = "megaleios@megaleios.com";
+                    var rootEmail = "contato@mecabr.com";
                     var rootPassword = "megaleios";
 
                     if (Equals(model.Email, rootEmail) &&
@@ -493,7 +493,7 @@ namespace Meca.WebApi.Controllers
                         {
                             Email = rootEmail,
                             Password = Utilities.GerarHashMd5(rootPassword),
-                            Name = "Megaleios",
+                            Name = "Mecaleios",
                             AccessLevel = new BaseReferenceAux()
                             {
                                 Id = accessLevelServiceDefaultEntity.Id,

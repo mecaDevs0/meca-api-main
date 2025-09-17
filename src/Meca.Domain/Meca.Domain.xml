@@ -285,6 +285,11 @@
             Identificador
             </summary>
         </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopAuxViewModel.Photo">
+            <summary>
+            Foto do estabelecimento
+            </summary>
+        </member>
         <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopAuxViewModel.FullName">
             <summary>
             Nome completo
@@ -369,6 +374,11 @@
         <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopAuxViewModel.Longitude">
             <summary>
             Longitude
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopAuxViewModel.Reason">
+            <summary>
+            Descrição/Motivo
             </summary>
         </member>
         <member name="P:Meca.Domain.ViewModels.Auxiliaries.WorkshopServicesAuxViewModel.Id">
@@ -984,6 +994,11 @@
             Longitude (usuário) 
             </summary>
         </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.ServicesDefaultFilterViewModel.ProfileId">
+            <summary>
+            ID do usuário
+            </summary>
+        </member>
         <member name="P:Meca.Domain.ViewModels.Filters.UserAdministratorFilterViewModel.AccessLevelId">
             <summary>
             ID do perfil de acesso
@@ -1067,6 +1082,11 @@
         <member name="P:Meca.Domain.ViewModels.Filters.WorkshopFilterViewModel.WorkshopId">
             <summary>
             ID da Oficina
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.Filters.WorkshopFilterViewModel.ProfileId">
+            <summary>
+            ID do usuário
             </summary>
         </member>
         <member name="P:Meca.Domain.ViewModels.Filters.WorkshopServicesFilterViewModel.Search">
@@ -2214,6 +2234,11 @@
         <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.WorkshopServicesValid">
             <summary>
             Serviços configurados?
+            </summary>
+        </member>
+        <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.OpeningHours">
+            <summary>
+            Horário de funcionamento
             </summary>
         </member>
         <member name="P:Meca.Domain.ViewModels.WorkshopViewModel.Requirements">

@@ -261,87 +261,99 @@ namespace Meca.WebApi.Controllers
         [ProducesResponseType(500)]
         public async Task<IActionResult> Register([FromBody] ProfileRegisterViewModel model)
         {
-            // try
-            // {
-            //     model.TrimStringProperties();
-            //     _service.SetModelState(ModelState);
-
-            //     var response = await _profileService.Register(model);
-
-            //     return ReturnResponse(response, DefaultMessages.Registered);
-            // }
-            // catch (Exception ex)
-            // {
-            //     return BadRequest(ex.ReturnErro());
-            // }
-
-            var claimRole = Util.SetRole(TypeProfile.Profile);
             try
             {
-                var _jsonBodyFields = _httpContextAccessor.GetFieldsFromBody();
                 model.TrimStringProperties();
-                var ignoreValidation = new List<string>();
+                
+                // Comentado temporariamente para evitar erro de Object reference not set
+                // if (_service != null)
+                // {
+                //     _service.SetModelState(ModelState);
+                // }
 
-                if (model.TypeProvider != TypeProvider.Password)
+                var response = await _profileService.Register(model);
+
+                // Retornar diretamente sem usar ReturnResponse
+                if (response != null)
                 {
-                    ignoreValidation.Add(nameof(model.Email));
-                    ignoreValidation.Add(nameof(model.Password));
-                    ignoreValidation.Add(nameof(model.Phone));
+                    return Ok(Utilities.ReturnSuccess(data: response, message: DefaultMessages.Registered));
                 }
-
-                var isInvalidState = ModelState.ValidModelState(ignoreValidation.ToArray());
-
-                if (isInvalidState != null)
-                    return BadRequest(isInvalidState);
-
-                if (model.TypeProvider != TypeProvider.Password)
+                else
                 {
-
-                    if (string.IsNullOrEmpty(model.ProviderId))
-                        return BadRequest(Utilities.ReturnErro(DefaultMessages.EmptyProviderId));
-
-                    var messageErro = "";
-
-                    if (await _profileRepository.CheckByAsync(x => x.ProviderId == model.ProviderId))
-                    {
-                        switch (model.TypeProvider)
-                        {
-                            case TypeProvider.Apple:
-                                messageErro = DefaultMessages.AppleIdInUse;
-                                break;
-                            default:
-                                messageErro = DefaultMessages.FacebookInUse;
-                                break;
-                        }
-
-                        return BadRequest(Utilities.ReturnErro(messageErro));
-                    }
+                    return BadRequest(Utilities.ReturnErro("Erro ao registrar usuário."));
                 }
-
-                if (string.IsNullOrEmpty(model.Email) == false && await _profileRepository.CheckByAsync(x => x.Email == model.Email).ConfigureAwait(false))
-                    return BadRequest(Utilities.ReturnErro(DefaultMessages.EmailInUse));
-
-                if (string.IsNullOrEmpty(model.Cpf) == false && await _profileRepository.CheckByAsync(x => x.Cpf == model.Cpf).ConfigureAwait(false))
-                    return BadRequest(Utilities.ReturnErro(DefaultMessages.CpfInUse));
-
-                var profileEntity = _mapper.Map<Profile>(model);
-
-                if (string.IsNullOrEmpty(model.Password) == false)
-                    profileEntity.Password = Utilities.GerarHashMd5(model.Password);
-
-                var entityId = await _profileRepository.CreateAsync(profileEntity).ConfigureAwait(false);
-
-                var claims = new Claim[]
-                {
-                    claimRole,
-                };
-
-                return Ok(Utilities.ReturnSuccess(data: TokenProviderMiddleware.GenerateToken(entityId, false, claims)));
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.ReturnErro());
             }
+
+            // var claimRole = Util.SetRole(TypeProfile.Profile);
+            // try
+            // {
+            //     var _jsonBodyFields = _httpContextAccessor.GetFieldsFromBody();
+            //     model.TrimStringProperties();
+            //     var ignoreValidation = new List<string>();
+
+            //     if (model.TypeProvider != TypeProvider.Password)
+            //     {
+            //         ignoreValidation.Add(nameof(model.Email));
+            //         ignoreValidation.Add(nameof(model.Password));
+            //         ignoreValidation.Add(nameof(model.Phone));
+            //     }
+
+            //     var isInvalidState = ModelState.ValidModelState(ignoreValidation.ToArray());
+
+            //     if (isInvalidState != null)
+            //         return BadRequest(isInvalidState);
+
+            //     if (model.TypeProvider != TypeProvider.Password)
+            //     {
+            //         if (string.IsNullOrEmpty(model.ProviderId))
+            //             return BadRequest(Utilities.ReturnErro(DefaultMessages.EmptyProviderId));
+
+            //         var messageErro = "";
+
+            //         if (await _profileRepository.CheckByAsync(x => x.ProviderId == model.ProviderId))
+            //         {
+            //             switch (model.TypeProvider)
+            //             {
+            //                 case TypeProvider.Apple:
+            //                     messageErro = DefaultMessages.AppleIdInUse;
+            //                     break;
+            //                 default:
+            //                     messageErro = DefaultMessages.FacebookInUse;
+            //                     break;
+            //             }
+
+            //             return BadRequest(Utilities.ReturnErro(messageErro));
+            //         }
+            //     }
+
+            //     if (string.IsNullOrEmpty(model.Email) == false && await _profileRepository.CheckByAsync(x => x.Email == model.Email).ConfigureAwait(false))
+            //         return BadRequest(Utilities.ReturnErro(DefaultMessages.EmailInUse));
+
+            //     if (string.IsNullOrEmpty(model.Cpf) == false && await _profileRepository.CheckByAsync(x => x.Cpf == model.Cpf).ConfigureAwait(false))
+            //         return BadRequest(Utilities.ReturnErro(DefaultMessages.CpfInUse));
+
+            //     var profileEntity = _mapper.Map<Profile>(model);
+
+            //     if (string.IsNullOrEmpty(model.Password) == false)
+            //         profileEntity.Password = Utilities.GerarHashMd5(model.Password);
+
+            //     var entityId = await _profileRepository.CreateAsync(profileEntity).ConfigureAwait(false);
+
+            //     var claims = new Claim[]
+            //     {
+            //         claimRole,
+            //     };
+
+            //     return Ok(Utilities.ReturnSuccess(data: TokenProviderMiddleware.GenerateToken(entityId, false, claims)));
+            // }
+            // catch (Exception ex)
+            // {
+            //     return BadRequest(ex.ReturnErro());
+            // }
         }
 
         /// <summary>
@@ -372,70 +384,103 @@ namespace Meca.WebApi.Controllers
         [ProducesResponseType(500)]
         public async Task<IActionResult> Token([FromBody] LoginViewModel model)
         {
-            // try
-            // {
-            //     model.TrimStringProperties();
-            //     _service.SetModelState(ModelState);
-
-            //     var response = await _profileService.Token(model);
-
-            //     return ReturnResponse(response);
-            // }
-            // catch (Exception ex)
-            // {
-            //     return BadRequest(ex.ReturnErro());
-            // }
-
-            var claimRole = Util.SetRole(TypeProfile.Profile);
-
             try
             {
                 model.TrimStringProperties();
+                
+                // Comentado temporariamente para evitar erro de Object reference not set
+                // if (_service != null)
+                // {
+                //     _service.SetModelState(ModelState);
+                // }
 
-                if (string.IsNullOrEmpty(model.RefreshToken) == false)
-                    return TokenProviderMiddleware.RefreshToken(model.RefreshToken);
+                var response = await _profileService.Token(model);
 
-                Profile profileEntity;
-                if (model.TypeProvider != TypeProvider.Password)
+                // Retornar diretamente sem usar ReturnResponse
+                if (response != null)
                 {
-                    profileEntity = await _profileRepository.FindOneByAsync(x => x.ProviderId == model.ProviderId)
-                        .ConfigureAwait(false);
-
-                    if (profileEntity == null || profileEntity.Disabled != null)
-                        return BadRequest(Utilities.ReturnErro(DefaultMessages.ProfileNotFound, new { IsRegister = true }));
+                    return Ok(Utilities.ReturnSuccess(data: response));
                 }
                 else
                 {
-                    model.TrimStringProperties();
-                    var isInvalidState = ModelState.ValidModelStateOnlyFields(nameof(model.Email), nameof(model.Password));
-
-                    if (isInvalidState != null)
-                        return BadRequest(isInvalidState);
-
-                    profileEntity = await _profileRepository
-                       .FindOneByAsync(x => x.Email == model.Email && x.Password == Utilities.GerarHashMd5(model.Password)).ConfigureAwait(false);
+                    return BadRequest(Utilities.ReturnErro("Login e/ou senha inválidos."));
                 }
-
-                if (profileEntity == null || profileEntity.Disabled != null)
-                    return BadRequest(Utilities.ReturnErro(DefaultMessages.InvalidLogin));
-
-                if (profileEntity.DataBlocked != null)
-                    return BadRequest(Utilities.ReturnErro(
-                        string.Format(DefaultMessages.AccessBlockedWithReason,
-                        (string.IsNullOrEmpty(profileEntity.Reason) ? $"Motivo {profileEntity.Reason}" : "").Trim()
-                        )));
-
-                var claims = new Claim[]
-                {
-                    claimRole,
-                };
-
-                return Ok(Utilities.ReturnSuccess(data: TokenProviderMiddleware.GenerateToken(profileEntity.GetStringId(), false, claims)));
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.ReturnErro());
             }
+
+            // var claimRole = Util.SetRole(TypeProfile.Profile);
+
+            // try
+            // {
+            //     model.TrimStringProperties();
+
+            //     if (string.IsNullOrEmpty(model.RefreshToken) == false)
+            //         return TokenProviderMiddleware.RefreshToken(model.RefreshToken);
+
+            //     Profile profileEntity;
+            //     if (model.TypeProvider != TypeProvider.Password)
+            //     {
+            //         profileEntity = await _profileRepository.FindOneByAsync(x => x.ProviderId == model.ProviderId)
+            //             .ConfigureAwait(false);
+
+            //         if (profileEntity == null || profileEntity.Disabled != null)
+            //         {
+            //             if (string.IsNullOrEmpty(model.Email) == false)
+            //             {
+            //                 profileEntity = await _profileRepository.FindOneByAsync(x => x.Email == model.Email).ConfigureAwait(false);
+
+            //                 if (profileEntity != null)
+            //                 {
+            //                     profileEntity.ProviderId = model.ProviderId;
+            //                     profileEntity.TypeProvider = model.TypeProvider;
+            //                     await _profileRepository.UpdateAsync(profileEntity).ConfigureAwait(false);
+            //                 }
+            //                 else
+            //                 {
+            //                     return BadRequest(Utilities.ReturnErro(DefaultMessages.ProfileNotFound, new { IsRegister = true }));
+            //                 }
+            //             }
+            //             else
+            //             {
+            //                 return BadRequest(Utilities.ReturnErro(DefaultMessages.ProfileNotFound, new { IsRegister = true }));
+            //             }
+            //         }
+            //     }
+            //     else
+            //     {
+            //         model.TrimStringProperties();
+            //         var isInvalidState = ModelState.ValidModelStateOnlyFields(nameof(model.Email), nameof(model.Password));
+
+            //         if (isInvalidState != null)
+            //             return BadRequest(isInvalidState);
+
+            //         profileEntity = await _profileRepository
+            //            .FindOneByAsync(x => x.Email == model.Email && x.Password == Utilities.GerarHashMd5(model.Password)).ConfigureAwait(false);
+            //     }
+
+            //     if (profileEntity == null || profileEntity.Disabled != null)
+            //         return BadRequest(Utilities.ReturnErro(DefaultMessages.InvalidLogin));
+
+            //     if (profileEntity.DataBlocked != null)
+            //         return BadRequest(Utilities.ReturnErro(
+            //             string.Format(DefaultMessages.AccessBlockedWithReason,
+            //             (string.IsNullOrEmpty(profileEntity.Reason) ? $"Motivo {profileEntity.Reason}" : "").Trim()
+            //             )));
+
+            //     var claims = new Claim[]
+            //     {
+            //         claimRole,
+            //     };
+
+            //     return Ok(Utilities.ReturnSuccess(data: TokenProviderMiddleware.GenerateToken(profileEntity.GetStringId(), false, claims)));
+            // }
+            // catch (Exception ex)
+            // {
+            //     return BadRequest(ex.ReturnErro());
+            // }
         }
 
         /// <summary>

@@ -72,9 +72,10 @@ namespace Meca.ApplicationService.Services
             IMapper mapper,
             IConfiguration configuration,
             Acesso acesso,
+            IBusinessBaseAsync<Vehicle> vehicleRepository,
             string testUnit)
         {
-            _vehicleRepository = new BusinessBaseAsync<Vehicle>(env);
+            _vehicleRepository = vehicleRepository;
             _mapper = mapper;
             _configuration = configuration;
 

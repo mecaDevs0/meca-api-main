@@ -18,7 +18,7 @@
     "127.0.0.1",
     "::1"
   ] /*LISTA DE IP LIBERADO PARA VISUALIZAR DASHBORAD HANGFIRE CASO ATIVO*/,
-  "suportEmail": ["suporte@megaleios.com"],
+  "suportEmail": ["suporte@mecabr.com"],
   "contactEmail": "contato@mecabr.com",
   "hereApi": {
     "apiKey": "9eJrn_D6-TJzQOnTi1IuA9U7hcqM-xy4JwAMOlFFqM4"
@@ -30,7 +30,7 @@
     "urlDataBase": "https://console.firebase.google.com/" /* URL DO BANCO DE DADOS*/,
     "apiKey": "AIzaSyAghycKw5EdhmYeYFRYgLpggKTU7uVHFL4" /*CHAVE DA CONTA DO FIREBASE*/,
     "socialKey": "" /*CHAVE DA CONTA DA REDE SOCIAL*/,
-    "email": "services@megaleios.com" /*EMAIL DE ACESSO*/,
+    "email": "contato@mecabr.com" /*EMAIL DE ACESSO*/,
     "password": "ru@4kUWhjbp@" /*SENHA DE ACESSO*/,
     "useAuth": true /*INFORMA SE DESEJA UTILIZAR AUTENTICAÇÃO*/,
     "typeAuth": 2 /*TIPO DE AUTENTICAÇÃO [0=None,1=Social,2=EmailPassword]*/,
@@ -58,7 +58,7 @@
       "HOST": "smtp.gmail.com",
       "PORT": 587,
       "SSL": false,
-      "EMAIL": "suporte@megaleios.com",
+      "EMAIL": "suporte@mecabr.com",
       "NAME": "Meca",
       "PASSWORD": "yqgt ctvh jppd idnd"
     }

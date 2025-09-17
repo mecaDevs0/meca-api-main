@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using System.Text;
 using Hangfire;
 using Meca.ApplicationService.Interface;
 using Meca.ApplicationService.Services;
@@ -19,7 +18,6 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 using UtilityFramework.Application.Core3;
 using UtilityFramework.Infra.Core3.MongoDb.Business;
 using System.Linq;
@@ -48,7 +46,7 @@ namespace Meca.WebApi
             Console.WriteLine($"[DEBUG_STARTUP] Database Name: {databaseName}");
             
             BaseConfig.ApplicationName = ApplicationName =
-                configuration.GetSection("ApplicationName").Get<string>() ?? Assembly.GetEntryAssembly().GetName().Name?.Split('.')[0];
+                configuration.GetSection("ApplicationName").Get<string>() ?? Assembly.GetEntryAssembly().GetName().Name?.Split(.)[0];
             
             Console.WriteLine($"[DEBUG_STARTUP] Application Name: {ApplicationName}");
             
@@ -59,6 +57,15 @@ namespace Meca.WebApi
             Console.WriteLine($"[DEBUG_STARTUP] EnableService: {EnableService}");
             Console.WriteLine($"[DEBUG_STARTUP] Startup finalizado");
         }
+        {
+            Configuration = configuration;
+            
+            BaseConfig.ApplicationName = ApplicationName =
+                configuration.GetSection("ApplicationName").Get<string>() ?? Assembly.GetEntryAssembly().GetName().Name?.Split('.')[0];
+            
+            EnableSwagger = configuration.GetSection("EnableSwagger").Get<bool>();
+            EnableService = configuration.GetSection("EnableService").Get<bool>();
+        }
         
         public static string ApplicationName { get; set; }
         public static bool EnableSwagger { get; set; }
@@ -66,8 +73,6 @@ namespace Meca.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            Console.WriteLine($"[DEBUG_STARTUP] Iniciando ConfigureServices");
-            
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowAllOrigin", builder =>
@@ -80,8 +85,7 @@ namespace Meca.WebApi
 
             services.AddResponseCompression();
 
-            services.AddControllers()
-                .AddNewtonsoftJson();
+            services.AddControllers();
 
             services.AddSignalR();
 
@@ -101,22 +105,11 @@ namespace Meca.WebApi
 
             services.AddScoped(typeof(IBusinessBaseAsync<>), typeof(BusinessBaseAsync<>));
 
-            Console.WriteLine($"[DEBUG_STARTUP] Registrando serviços de injeção");
             services.AddServicesInjection();
             
-            Console.WriteLine($"[DEBUG_STARTUP] Registrando serviços de aplicação");
             services.AddAplicationServicesInjection();
 
-            // CORREÇÃO: Adicionar configuração do Hangfire
-            if (EnableService)
-            {
-                Console.WriteLine($"[DEBUG_STARTUP] Configurando Hangfire");
-                services.AddHangfireMongoDb(Configuration);
-            }
-
             services.AddOptions();
-            
-            Console.WriteLine($"[DEBUG_STARTUP] ConfigureServices finalizado");
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, IHttpContextAccessor httpContextAccessor, IServiceProvider serviceProvider)
@@ -139,6 +132,7 @@ namespace Meca.WebApi
             app.UseCors("AllowAllOrigin");
 
             app.UseJwtTokenApiAuth((IConfigurationRoot)Configuration);
+            app.UseAuthentication();
             app.UseAuthorization();
 
             if (EnableService)
@@ -157,27 +151,6 @@ namespace Meca.WebApi
                 RequestPath = new PathString("/content")
             });
 
-            // TESTE: Middleware personalizado para interceptar requisições PATCH
-            app.Use(async (context, next) =>
-            {
-                if (context.Request.Method == "PATCH")
-                {
-                    Console.WriteLine($"[PATCH_INTERCEPTOR] ===== PATCH INTERCEPTADO =====");
-                    Console.WriteLine($"[PATCH_INTERCEPTOR] Path: {context.Request.Path}");
-                    Console.WriteLine($"[PATCH_INTERCEPTOR] Headers: {string.Join(", ", context.Request.Headers.Select(h => $"{h.Key}={h.Value}"))}");
-                    Console.WriteLine($"[PATCH_INTERCEPTOR] ContentType: {context.Request.ContentType}");
-                    Console.WriteLine($"[PATCH_INTERCEPTOR] ContentLength: {context.Request.ContentLength}");
-                }
-                
-                await next();
-                
-                if (context.Request.Method == "PATCH")
-                {
-                    Console.WriteLine($"[PATCH_INTERCEPTOR] ===== PATCH FINALIZADO =====");
-                    Console.WriteLine($"[PATCH_INTERCEPTOR] StatusCode: {context.Response.StatusCode}");
-                }
-            });
-            
             app.UseRequestResponseLoggingLite();
             app.UseBlockMiddleware();
             app.UseResponseCompression();
@@ -202,3 +175,4 @@ namespace Meca.WebApi
         }
     }
 }
+// DEBUG: Verificar se a configuração está sendo lida corretamente

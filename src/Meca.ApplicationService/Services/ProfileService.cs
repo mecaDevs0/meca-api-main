@@ -40,9 +40,9 @@ namespace Meca.ApplicationService.Services
         private readonly IMapper _mapper;
 
         /*Construtor utilizado por testes de unidade*/
-        public ProfileService(IHostingEnvironment env, IMapper mapper, IConfiguration configuration, Acesso acesso, string testUnit)
+        public ProfileService(IHostingEnvironment env, IMapper mapper, IConfiguration configuration, Acesso acesso, IBusinessBaseAsync<Data.Entities.Profile> profileRepository, string testUnit)
         {
-            _profileRepository = new BusinessBaseAsync<Data.Entities.Profile>(env);
+            _profileRepository = profileRepository;
             _mapper = mapper;
             _configuration = configuration;
             SetAccessTest(acesso);
@@ -315,6 +315,13 @@ namespace Meca.ApplicationService.Services
         {
             try
             {
+                // Debug: Verificar se model não é null
+                if (model == null)
+                {
+                    CreateNotification("Model is null");
+                    return null;
+                }
+
                 if (string.IsNullOrEmpty(model.RefreshToken) == false)
                     return TokenProviderMiddleware.RefreshToken(model.RefreshToken);
 
@@ -332,6 +339,13 @@ namespace Meca.ApplicationService.Services
                     ignoreFields.Add(nameof(model.Password));
                 }
 
+                // Debug: Verificar se _profileRepository não é null
+                if (_profileRepository == null)
+                {
+                    CreateNotification("_profileRepository is null");
+                    return null;
+                }
+
                 if (ModelIsValid(model, ignoredFields: [.. ignoreFields]) == false)
                     return null;
 
@@ -345,6 +359,19 @@ namespace Meca.ApplicationService.Services
                 }
                 else
                 {
+                    // Debug: Verificar se Email e Password não são null
+                    if (string.IsNullOrEmpty(model.Email))
+                    {
+                        CreateNotification("Email is null or empty");
+                        return null;
+                    }
+
+                    if (string.IsNullOrEmpty(model.Password))
+                    {
+                        CreateNotification("Password is null or empty");
+                        return null;
+                    }
+
                     profileEntity = await _profileRepository
                       .FindOneByAsync(x => x.Email == model.Email && x.Password == Utilities.GerarHashMd5(model.Password)).ConfigureAwait(false);
                 }
@@ -369,8 +396,10 @@ namespace Meca.ApplicationService.Services
 
                 return TokenProviderMiddleware.GenerateToken(profileEntity._id.ToString(), false, claims);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                // Debug: Log da exceção
+                CreateNotification($"Exception in Token: {ex.Message}");
                 throw;
             }
         }
@@ -478,13 +507,22 @@ namespace Meca.ApplicationService.Services
         {
             try
             {
+                Console.WriteLine($"[DEVICE_REGISTRATION_DEBUG] Iniciando registro/remoção de dispositivo");
+                Console.WriteLine($"[DEVICE_REGISTRATION_DEBUG] DeviceId: {model.DeviceId}");
+                Console.WriteLine($"[DEVICE_REGISTRATION_DEBUG] IsRegister: {model.IsRegister}");
+                
                 if (ModelIsValid(model, true) == false)
+                {
+                    Console.WriteLine($"[DEVICE_REGISTRATION_DEBUG] Modelo inválido");
                     return false;
+                }
 
                 var userId = _access.UserId;
+                Console.WriteLine($"[DEVICE_REGISTRATION_DEBUG] UserId: {userId}");
 
                 if (string.IsNullOrEmpty(userId))
                 {
+                    Console.WriteLine($"[DEVICE_REGISTRATION_DEBUG] UserId está vazio");
                     CreateNotification(DefaultMessages.ProfileNotFound);
                     return false;
                 }
@@ -493,23 +531,34 @@ namespace Meca.ApplicationService.Services
                {
                    if (string.IsNullOrEmpty(model.DeviceId) == false)
                    {
+                       Console.WriteLine($"[DEVICE_REGISTRATION_DEBUG] Executando operação no banco de dados");
                        if (model.IsRegister)
                        {
+                           Console.WriteLine($"[DEVICE_REGISTRATION_DEBUG] Registrando dispositivo {model.DeviceId} para usuário {userId}");
                            _profileRepository.UpdateMultiple(Query<Data.Entities.Profile>.Where(x => x._id == ObjectId.Parse(userId)),
                            new UpdateBuilder<Data.Entities.Profile>().AddToSet(x => x.DeviceId, model.DeviceId), UpdateFlags.None);
                        }
                        else
                        {
+                           Console.WriteLine($"[DEVICE_REGISTRATION_DEBUG] Removendo dispositivo {model.DeviceId} do usuário {userId}");
                            _profileRepository.UpdateMultiple(Query<Data.Entities.Profile>.Where(x => x._id == ObjectId.Parse(userId)),
                            new UpdateBuilder<Data.Entities.Profile>().Pull(x => x.DeviceId, model.DeviceId), UpdateFlags.None);
                        }
+                       Console.WriteLine($"[DEVICE_REGISTRATION_DEBUG] Operação concluída com sucesso");
+                   }
+                   else
+                   {
+                       Console.WriteLine($"[DEVICE_REGISTRATION_DEBUG] DeviceId está vazio, operação ignorada");
                    }
                });
 
+                Console.WriteLine($"[DEVICE_REGISTRATION_DEBUG] Método concluído com sucesso");
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine($"[DEVICE_REGISTRATION_DEBUG] Erro: {ex.Message}");
+                Console.WriteLine($"[DEVICE_REGISTRATION_DEBUG] Stack trace: {ex.StackTrace}");
                 throw;
             }
         }

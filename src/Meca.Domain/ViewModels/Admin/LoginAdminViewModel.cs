@@ -12,6 +12,7 @@ namespace Meca.Domain.ViewModels.Admin
         [Display(Name = "Senha")]
         [Required(ErrorMessage = DefaultMessages.FieldRequired)]
 
+        [JsonProperty("password")]
         public string Password { get; set; }
         /// <summary>
         /// E-mail
@@ -21,6 +22,7 @@ namespace Meca.Domain.ViewModels.Admin
         [EmailAddress(ErrorMessage = DefaultMessages.EmailInvalid)]
         [JsonConverter(typeof(ToLowerCase))]
 
+        [JsonProperty("email")]
         public string Email { get; set; }
         /// <summary>
         /// Token de renovação
