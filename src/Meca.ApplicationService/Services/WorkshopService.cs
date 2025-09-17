@@ -1663,7 +1663,7 @@ namespace Meca.ApplicationService.Services
                 // Mapeamento manual para evitar problemas com AutoMapper
                 var response = new DataBankViewModel
                 {
-                    Id = workshopEntity._id?.ToString(),
+                    Id = workshopEntity._id.ToString(),
                     AccountableName = workshopEntity.AccountableName,
                     AccountableCpf = workshopEntity.AccountableCpf,
                     BankAccount = workshopEntity.BankAccount,
