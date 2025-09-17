@@ -592,45 +592,7 @@ namespace Meca.WebApi.Controllers
             }
         }
 
-        /// <summary>
-        /// USUÁRIO - REGISTRAR E REMOVER DEVICE ID ONESIGNAL OU FCM | CHAMAR APOS LOGIN E LOGOUT
-        /// </summary>
-        /// <remarks>
-        /// OBJ DE ENVIO
-        ///
-        ///         POST
-        ///             {
-        ///              "deviceId":"string",
-        ///              "isRegister":true  // true => registrar  | false => remover
-        ///             }
-        /// </remarks>
-        /// <response code="200">Returns success</response>
-        /// <response code="400">Custom Error</response>
-        /// <response code="401">Unauthorize Error</response>
-        /// <response code="500">Exception Error</response>
-        /// <returns></returns>
-        [HttpPost("RegisterUnRegisterDeviceId")]
-        [Produces("application/json")]
-        [ProducesResponseType(typeof(ReturnViewModel), 200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(401)]
-        [ProducesResponseType(500)]
-        public async Task<IActionResult> RegisterUnRegisterDeviceId([FromBody] PushViewModel model)
-        {
-            try
-            {
-                model.TrimStringProperties();
-                _service.SetModelState(ModelState);
-
-                await _profileService.RegisterUnRegisterDeviceId(model);
-
-                return Ok(Utilities.ReturnSuccess());
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.ReturnErro());
-            }
-        }
+        // REMOVIDO: Endpoint duplicado - RegisterUnRegisterDeviceId está no WorkshopController
 
         /// <summary>
         /// USUÁRIO - ATUALIZAR DADOS

@@ -1627,6 +1627,20 @@ namespace Meca.ApplicationService.Services
                 Console.WriteLine($"[GET_DATA_BANK_DEBUG] Verificando _workshopRepository: {_workshopRepository != null}");
                 Console.WriteLine($"[GET_DATA_BANK_DEBUG] Verificando _mapper: {_mapper != null}");
                 
+                if (_workshopRepository == null)
+                {
+                    Console.WriteLine("[GET_DATA_BANK_DEBUG] ERRO: _workshopRepository é null");
+                    CreateNotification(DefaultMessages.DefaultError);
+                    return null;
+                }
+                
+                if (_mapper == null)
+                {
+                    Console.WriteLine("[GET_DATA_BANK_DEBUG] ERRO: _mapper é null");
+                    CreateNotification(DefaultMessages.DefaultError);
+                    return null;
+                }
+                
                 var workshopEntity = await _workshopRepository.FindByIdAsync(id);
                 Console.WriteLine($"[GET_DATA_BANK_DEBUG] Workshop encontrado: {workshopEntity != null}");
 
