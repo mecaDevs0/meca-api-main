@@ -1,11 +1,11 @@
 ﻿<!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{ appName }} - {{ title }}</title>
-    <style>
+        <style>
         /* Reset e configurações básicas */
         * {
             margin: 0;
@@ -216,9 +216,9 @@
                 align-items: flex-start;
                 gap: 8px;
             }
-        }
-    </style>
-</head>
+      }
+        </style>
+    </head>
 <body>
     <div class="email-container">
         <!-- Header -->
@@ -227,13 +227,13 @@
                 <img src="{{ baseUrl }}/logo.png" alt="{{ appName }}" />
             </div>
             <h1 class="title">{{ title }}</h1>
-        </div>
+                    </div>
         
         <!-- Content -->
         <div class="content">
             <div class="message">
-                {{ message }}
-            </div>
+                        {{ message }}
+                    </div>
         </div>
         
         <!-- Footer -->
@@ -241,9 +241,9 @@
             <div class="footer-brand">{{ appName }}</div>
             <div class="footer-text">Todos os direitos reservados 2025</div>
             <div class="footer-contact">
-                <a href="mailto:{{ contact }}">{{ contact }}</a>
+                        <a href="mailto:{{ contact }}">{{ contact }}</a>
             </div>
         </div>
     </div>
-</body>
+    </body>
 </html>
