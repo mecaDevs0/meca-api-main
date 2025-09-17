@@ -592,7 +592,53 @@ namespace Meca.WebApi.Controllers
             }
         }
 
-        // REMOVIDO: Endpoint duplicado - RegisterUnRegisterDeviceId está no WorkshopController
+        /// <summary>
+        /// USUÁRIO - REGISTRAR E REMOVER DEVICE ID ONESIGNAL OU FCM | CHAMAR APÓS LOGIN E LOGOUT
+        /// </summary>
+        /// <remarks>
+        /// OBJ DE ENVIO
+        ///
+        ///         POST
+        ///         {
+        ///          "deviceId":"string",
+        ///          "isRegister":true  // true => registrar  | false => remover
+        ///         }
+        /// </remarks>
+        /// <response code="200">Returns success</response>
+        /// <response code="400">Custom Error</response>
+        /// <response code="401">Unauthorize Error</response>
+        /// <response code="500">Exception Error</response>
+        /// <returns></returns>
+        [HttpPost("RegisterUnRegisterDeviceId")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ReturnViewModel), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> RegisterUnRegisterDeviceId([FromBody] PushViewModel model)
+        {
+            try
+            {
+                Console.WriteLine($"[PROFILE_REGISTER_DEVICE_DEBUG] Endpoint chamado com sucesso!");
+                Console.WriteLine($"[PROFILE_REGISTER_DEVICE_DEBUG] DeviceId: {model?.DeviceId}");
+                
+                if (model == null)
+                {
+                    Console.WriteLine("[PROFILE_REGISTER_DEVICE_DEBUG] ERRO: Model é null");
+                    return BadRequest("Model é null");
+                }
+
+                model.TrimStringProperties();
+                await _profileService.RegisterUnRegisterDeviceId(model);
+
+                return Ok(Utilities.ReturnSuccess());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[PROFILE_REGISTER_DEVICE_DEBUG] ERRO: {ex.Message}");
+                return BadRequest(ex.ReturnErro());
+            }
+        }
 
         /// <summary>
         /// USUÁRIO - ATUALIZAR DADOS
