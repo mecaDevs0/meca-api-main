@@ -40,18 +40,28 @@ namespace Meca.ApplicationService.Services
             _agendaRepository = agendaRepository;
             _httpContextAccessor = httpContextAccessor;
             _configuration = configuration;
+            
+            // Inicializar o acesso
+            SetAccess(httpContextAccessor);
         }
 
         public async Task<WorkshopAgendaViewModel> GetWorkshopAgenda(string id = null)
         {
             try
             {
+                // Verificar se _access foi inicializado
+                if (_access == null)
+                {
+                    CreateNotification("Acesso não autorizado");
+                    return new WorkshopAgendaViewModel();
+                }
+
                 if ((int)_access.TypeToken != (int)TypeProfile.Workshop)
                 {
                     if (string.IsNullOrEmpty(id) == true)
                     {
                         CreateNotification(DefaultMessages.InvalidIdentifier);
-                        return null;
+                        return new WorkshopAgendaViewModel();
                     }
                 }
                 else
@@ -63,16 +73,34 @@ namespace Meca.ApplicationService.Services
                 if (workshopEntity == null)
                 {
                     CreateNotification(DefaultMessages.WorkshopNotFound);
-                    return null;
+                    return new WorkshopAgendaViewModel();
                 }
 
                 var workshopAgendaEntity = await _workshopAgendaRepository.FindOneByAsync(x => x.Workshop.Id == workshopEntity.GetStringId());
 
+                if (workshopAgendaEntity == null)
+                {
+                    // Retornar agenda padrão se não existir
+                    return new WorkshopAgendaViewModel
+                    {
+                        Monday = new WorkshopAgendaAuxViewModel { Open = false },
+                        Tuesday = new WorkshopAgendaAuxViewModel { Open = false },
+                        Wednesday = new WorkshopAgendaAuxViewModel { Open = false },
+                        Thursday = new WorkshopAgendaAuxViewModel { Open = false },
+                        Friday = new WorkshopAgendaAuxViewModel { Open = false },
+                        Saturday = new WorkshopAgendaAuxViewModel { Open = false },
+                        Sunday = new WorkshopAgendaAuxViewModel { Open = false }
+                    };
+                }
+
                 return _mapper.Map<WorkshopAgendaViewModel>(workshopAgendaEntity);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                Console.WriteLine($"[GetWorkshopAgenda] Erro: {ex.Message}");
+                Console.WriteLine($"[GetWorkshopAgenda] StackTrace: {ex.StackTrace}");
+                CreateNotification($"Erro ao obter agenda: {ex.Message}");
+                return new WorkshopAgendaViewModel();
             }
         }
 

@@ -266,6 +266,8 @@ namespace Meca.ApplicationService.Services
         {
             try
             {
+                Console.WriteLine($"[Register] Iniciando registro de agendamento - Date: {model.Date}, WorkshopId: {model.Workshop?.Id}");
+                
                 if (ModelIsValid(model, false) == false)
                     return null;
 
@@ -282,9 +284,14 @@ namespace Meca.ApplicationService.Services
                     CreateNotification(DefaultMessages.WorkshopNotFound);
                     return null;
                 }
+                
+                Console.WriteLine($"[Register] Profile: {profileEntity.GetStringId()}, Workshop: {workshopEntity.GetStringId()}");
 
                 var workshopAgendaEntity = await _workshopAgendaRepository.FindByAsync(x => x.Workshop.Id == workshopEntity.GetStringId());
                 var workshopServicesEntity = await _workshopServicesRepository.FindByAsync(x => x.Workshop.Id == workshopEntity.GetStringId());
+
+                Console.WriteLine($"[Register] WorkshopAgenda encontrada: {workshopAgendaEntity.Count()}");
+                Console.WriteLine($"[Register] WorkshopServices encontrados: {workshopServicesEntity.Count()}");
 
                 // Permitir agendamentos para Oficina se estiver com agenda e serviços configurados
                 // Removida a validação de dados bancários para permitir agendamentos de teste
@@ -297,6 +304,7 @@ namespace Meca.ApplicationService.Services
                 var schedulingExist = await _schedulingRepository.FindOneByAsync(x => x.Date == model.Date && (int)x.Status <= (int)SchedulingStatus.Scheduled && x.Workshop.Id == model.Workshop.Id);
                 if (schedulingExist != null)
                 {
+                    Console.WriteLine($"[Register] Agendamento já existe para esta data/hora");
                     CreateNotification(DefaultMessages.SchedulingInUse);
                     return null;
                 }
@@ -312,15 +320,21 @@ namespace Meca.ApplicationService.Services
 
                 // Pegando data atual
                 DateTime todayDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, gmtMinus3);
+                
+                Console.WriteLine($"[Register] Data do agendamento: {schedulingDate:yyyy-MM-dd HH:mm:ss}");
+                Console.WriteLine($"[Register] Data atual: {todayDate:yyyy-MM-dd HH:mm:ss}");
+                Console.WriteLine($"[Register] MinTimeSpan: {minTimeSpan}");
 
                 if (schedulingDate.Date == todayDate.Date && schedulingDate.TimeOfDay < todayDate.TimeOfDay.Add(minTimeSpan))
                 {
+                    Console.WriteLine($"[Register] Horário muito próximo - agendamento: {schedulingDate.TimeOfDay}, atual: {todayDate.TimeOfDay}, min: {minTimeSpan}");
                     CreateNotification("Horário inválido! Por favor, selecione um horário que respeite o horário mínimo para agendamento.");
                     return null;
                 }
 
                 if (schedulingDate.Date < todayDate.Date)
                 {
+                    Console.WriteLine($"[Register] Data no passado - agendamento: {schedulingDate.Date}, atual: {todayDate.Date}");
                     CreateNotification("Data inválida! Por favor, selecione uma data válida.");
                     return null;
                 }
@@ -329,9 +343,25 @@ namespace Meca.ApplicationService.Services
                 var res = await GetAvailableScheduling(filterScheduling);
                 var hourModelDate = schedulingDate.ToString("HH:mm");
 
-                if (res != null && !res.Hours.Any(x => x == hourModelDate))
+                Console.WriteLine($"[Register] Validando horário: {hourModelDate}");
+                Console.WriteLine($"[Register] WorkshopAgenda disponível: {res?.WorkshopAgenda?.Count ?? 0} horários");
+                
+                if (res != null && res.WorkshopAgenda != null)
                 {
-                    CreateNotification("Horário inválido! Por favor, selecione um horário dentro do horário de funcionamento da oficina.");
+                    var availableHours = res.WorkshopAgenda.Where(x => x.Available).Select(x => x.Hour).ToList();
+                    Console.WriteLine($"[Register] Horários disponíveis: {string.Join(", ", availableHours)}");
+                    
+                    if (!res.WorkshopAgenda.Any(x => x.Hour == hourModelDate && x.Available))
+                    {
+                        Console.WriteLine($"[Register] Horário {hourModelDate} não está disponível");
+                        CreateNotification("Horário inválido! Por favor, selecione um horário dentro do horário de funcionamento da oficina.");
+                        return null;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"[Register] Resposta ou WorkshopAgenda é null");
+                    CreateNotification("Não foi possível verificar a disponibilidade de horários. Tente novamente.");
                     return null;
                 }
 
@@ -343,6 +373,8 @@ namespace Meca.ApplicationService.Services
                 var vehicleEntity = await _vehicleRepository.FindByIdAsync(model.Vehicle.Id);
 
                 schedulingEntity.Vehicle = _mapper.Map<VehicleAux>(vehicleEntity);
+                
+                Console.WriteLine($"[Register] Agendamento criado com sucesso - ID: {schedulingEntity.GetStringId()}");
 
                 string title = "Novo agendamento";
                 StringBuilder message = new StringBuilder();
@@ -362,10 +394,14 @@ namespace Meca.ApplicationService.Services
 
                 await RegisterSchedulingHistory(schedulingEntity);
 
+                Console.WriteLine($"[Register] Agendamento salvo no banco com sucesso - ID: {schedulingEntity.GetStringId()}");
+                
                 return _mapper.Map<SchedulingViewModel>(schedulingEntity);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine($"[Register] Erro no registro: {ex.Message}");
+                Console.WriteLine($"[Register] StackTrace: {ex.StackTrace}");
                 throw;
             }
         }
@@ -1430,6 +1466,8 @@ namespace Meca.ApplicationService.Services
         {
             try
             {
+                Console.WriteLine($"[GetAvailableScheduling] Iniciando - WorkshopId: {filterModel?.WorkshopId}, Date: {filterModel?.Date}");
+                
                 var workshopId = "";
 
                 if (ModelIsValid(filterModel, false) == false)
@@ -1475,6 +1513,8 @@ namespace Meca.ApplicationService.Services
                 // Define o fuso horário GMT-3
                 TimeZoneInfo gmtMinus3 = TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time");
                 DateTime date = TimeZoneInfo.ConvertTimeFromUtc(dateUtc, gmtMinus3);
+                
+                Console.WriteLine($"[GetAvailableScheduling] Data convertida: {date:yyyy-MM-dd HH:mm:ss}, WorkshopId: {workshopId}");
 
                 // Busca dados do banco
                 var schedulingList = (List<Scheduling>)await _schedulingRepository.FindByAsync(x =>
@@ -1493,8 +1533,16 @@ namespace Meca.ApplicationService.Services
                 var workshopAgendaEntity = await _workshopAgendaRepository.FindOneByAsync(x => x.Workshop.Id == workshopId);
                 if (workshopAgendaEntity == null)
                 {
-                    CreateNotification("Agenda não configurada para esta oficina.");
-                    return null;
+                    Console.WriteLine($"[GetAvailableScheduling] Agenda não configurada para oficina: {workshopId}");
+                    // Retornar agenda vazia em vez de null para evitar erro no app
+                    return new CalendarAvailableViewModel()
+                    {
+                        Date = date.Date,
+                        DayOfWeek = date.DayOfWeek,
+                        Available = false,
+                        Hours = new List<string>(),
+                        WorkshopAgenda = new List<string>()
+                    };
                 }
 
                 // Calcula o tempo mínimo de agendamento
@@ -1510,10 +1558,14 @@ namespace Meca.ApplicationService.Services
 
                 calendarAvailable = await ApplySchedulingFilters(calendarAvailable, schedulingList, minTimeScheduling, gmtMinus3, _access.TypeToken, workshopId);
 
+                Console.WriteLine($"[GetAvailableScheduling] Resultado - Available: {calendarAvailable.Available}, Hours: {calendarAvailable.Hours.Count}");
+                
                 return calendarAvailable;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine($"[GetAvailableScheduling] Erro: {ex.Message}");
+                Console.WriteLine($"[GetAvailableScheduling] StackTrace: {ex.StackTrace}");
                 throw;
             }
         }
@@ -1545,14 +1597,26 @@ namespace Meca.ApplicationService.Services
 
         private async Task<CalendarAvailableViewModel> UpdateCalendarWithWorkshopAgenda(CalendarAvailableViewModel day, WorkshopAgenda workshopAgenda)
         {
-            var agenda = GetAgendaForDay(workshopAgenda, day.DayOfWeek);
-            if (agenda.Open)
+            try
             {
-                day.Available = true;
-                day.Hours = GenerateSchedule(agenda.StartTime, agenda.ClosingTime, agenda.StartOfBreak, agenda.EndOfBreak);
+                var agenda = GetAgendaForDay(workshopAgenda, day.DayOfWeek);
+                if (agenda != null && agenda.Open && !string.IsNullOrEmpty(agenda.StartTime) && !string.IsNullOrEmpty(agenda.ClosingTime))
+                {
+                    day.Available = true;
+                    day.Hours = GenerateSchedule(agenda.StartTime, agenda.ClosingTime, agenda.StartOfBreak, agenda.EndOfBreak);
+                    Console.WriteLine($"[UpdateCalendarWithWorkshopAgenda] Agenda configurada para {day.DayOfWeek} - {day.Hours.Count} horários disponíveis");
+                }
+                else
+                {
+                    day.Available = false;
+                    day.Hours.Clear();
+                    day.WorkshopAgenda.Clear();
+                    Console.WriteLine($"[UpdateCalendarWithWorkshopAgenda] Agenda não configurada para {day.DayOfWeek}");
+                }
             }
-            else
+            catch (Exception ex)
             {
+                Console.WriteLine($"[UpdateCalendarWithWorkshopAgenda] Erro: {ex.Message}");
                 day.Available = false;
                 day.Hours.Clear();
                 day.WorkshopAgenda.Clear();
@@ -1561,8 +1625,12 @@ namespace Meca.ApplicationService.Services
             return day;
         }
 
-        private WorkshopAgendaAux GetAgendaForDay(WorkshopAgenda workshopAgenda, DayOfWeek dayOfWeek) =>
-            dayOfWeek switch
+        private WorkshopAgendaAux GetAgendaForDay(WorkshopAgenda workshopAgenda, DayOfWeek dayOfWeek)
+        {
+            if (workshopAgenda == null)
+                return null;
+
+            return dayOfWeek switch
             {
                 DayOfWeek.Sunday => workshopAgenda.Sunday,
                 DayOfWeek.Monday => workshopAgenda.Monday,
@@ -1571,35 +1639,55 @@ namespace Meca.ApplicationService.Services
                 DayOfWeek.Thursday => workshopAgenda.Thursday,
                 DayOfWeek.Friday => workshopAgenda.Friday,
                 DayOfWeek.Saturday => workshopAgenda.Saturday,
-                _ => throw new ArgumentOutOfRangeException()
+                _ => null
             };
+        }
 
         static List<string> GenerateSchedule(string startTime, string closingTime, string startOfBreak, string endOfBreak)
         {
             var schedule = new List<string>();
 
-            if (startTime == null)
+            if (string.IsNullOrEmpty(startTime) || string.IsNullOrEmpty(closingTime))
             {
+                Console.WriteLine($"[GenerateSchedule] Horários vazios - startTime: '{startTime}', closingTime: '{closingTime}'");
                 return schedule;
             }
 
-            // Converter strings de tempo para DateTime
-            DateTime start = DateTime.Parse(startTime);
-            DateTime close = DateTime.Parse(closingTime);
-            DateTime breakStart = DateTime.Parse(startOfBreak);
-            DateTime breakEnd = DateTime.Parse(endOfBreak);
-
-            // Iterar de 30 em 30 minutos
-            var time = 30;
-            for (DateTime current = start; current < close; current = current.AddMinutes(time))
+            try
             {
-                // Ignorar o intervalo de pausa
-                if (current >= breakStart && current < breakEnd)
-                {
-                    continue;
-                }
+                // Converter strings de tempo para DateTime
+                DateTime start = DateTime.Parse(startTime);
+                DateTime close = DateTime.Parse(closingTime);
+                
+                // Verificar se há intervalo de pausa configurado
+                bool hasBreak = !string.IsNullOrEmpty(startOfBreak) && !string.IsNullOrEmpty(endOfBreak);
+                DateTime breakStart = hasBreak ? DateTime.Parse(startOfBreak) : DateTime.MinValue;
+                DateTime breakEnd = hasBreak ? DateTime.Parse(endOfBreak) : DateTime.MinValue;
 
-                schedule.Add(current.ToString("HH:mm"));
+                // Iterar de 30 em 30 minutos
+                var time = 30;
+                for (DateTime current = start; current < close; current = current.AddMinutes(time))
+                {
+                    // Ignorar o intervalo de pausa apenas se estiver configurado
+                    if (hasBreak && current >= breakStart && current < breakEnd)
+                    {
+                        continue;
+                    }
+
+                    var timeString = current.ToString("HH:mm");
+                    if (!string.IsNullOrEmpty(timeString))
+                    {
+                        schedule.Add(timeString);
+                    }
+                }
+                
+                Console.WriteLine($"[GenerateSchedule] Agenda gerada com {schedule.Count} horários");
+            }
+            catch (Exception ex)
+            {
+                // Log do erro para debug
+                Console.WriteLine($"[GenerateSchedule] Erro ao gerar agenda: {ex.Message}");
+                Console.WriteLine($"[GenerateSchedule] startTime: '{startTime}', closingTime: '{closingTime}', startOfBreak: '{startOfBreak}', endOfBreak: '{endOfBreak}'");
             }
 
             return schedule;
@@ -1607,8 +1695,12 @@ namespace Meca.ApplicationService.Services
 
         private async Task<CalendarAvailableViewModel> ApplySchedulingFilters(CalendarAvailableViewModel day, IEnumerable<Scheduling> schedulingList, TimeSpan minTimeScheduling, TimeZoneInfo timeZone, int typeToken, string workshopId = null)
         {
-            // Verifica bloqueios extras do `AgendaAux`
-            var agendaAuxList = await _agendaAuxRepository.FindByAsync(x => x.WorkshopId == workshopId);
+            try
+            {
+                Console.WriteLine($"[ApplySchedulingFilters] Iniciando - Date: {day.Date:yyyy-MM-dd}, Hours: {day.Hours.Count}, TypeToken: {typeToken}");
+                
+                // Verifica bloqueios extras do `AgendaAux`
+                var agendaAuxList = await _agendaAuxRepository.FindByAsync(x => x.WorkshopId == workshopId);
             var blockedTimes = agendaAuxList
                 .Select(a =>
                 {
@@ -1631,7 +1723,7 @@ namespace Meca.ApplicationService.Services
                 if (day.Date == currentDate.Date)
                 {
                     day.Hours = day.Hours
-                                   .Where(hour => TimeSpan.Parse(hour) >= currentDate.TimeOfDay.Add(minTimeScheduling))
+                                   .Where(hour => !string.IsNullOrEmpty(hour) && TimeSpan.TryParse(hour, out var hourSpan) && hourSpan >= currentDate.TimeOfDay.Add(minTimeScheduling))
                                    .ToList();
                 }
 
@@ -1646,12 +1738,15 @@ namespace Meca.ApplicationService.Services
                     .ToHashSet(); // Melhora a performance na busca
 
                 day.Hours = day.Hours
-                    .Where(hour => !scheduledHours.Contains(TimeSpan.Parse(hour)) && !blockedTimes.Contains(TimeSpan.Parse(hour)))
+                    .Where(hour => !string.IsNullOrEmpty(hour) && 
+                                   TimeSpan.TryParse(hour, out var hourSpan) && 
+                                   !scheduledHours.Contains(hourSpan) && 
+                                   !blockedTimes.Contains(hourSpan))
                     .ToList();
 
                 if (day.Date < currentDate.Date)
                 {
-                    day.Hours = [];
+                    day.Hours.Clear();
                 }
             }
 
@@ -1659,10 +1754,11 @@ namespace Meca.ApplicationService.Services
             {
                 // Criação da agenda inicial
                 day.WorkshopAgenda = day.Hours
+                    .Where(hour => !string.IsNullOrEmpty(hour))
                     .Select(hour => new WorkshopAgendaHoursViewModel
                     {
                         Hour = hour,
-                        Available = day.Date == currentDate.Date && TimeSpan.Parse(hour) >= currentDate.TimeOfDay ? true : day.Date > currentDate.Date ? true : false
+                        Available = day.Date == currentDate.Date && TimeSpan.TryParse(hour, out var hourSpan) && hourSpan >= currentDate.TimeOfDay ? true : day.Date > currentDate.Date ? true : false
                     })
                     .ToList();
 
@@ -1685,24 +1781,42 @@ namespace Meca.ApplicationService.Services
 
                 for (var y = 0; y < day.WorkshopAgenda.Count; y++)
                 {
-                    var match = scheduledWorkshops.FirstOrDefault(s => s.Time == TimeSpan.Parse(day.WorkshopAgenda[y].Hour));
-                    if (match != null)
+                    if (TimeSpan.TryParse(day.WorkshopAgenda[y].Hour, out var hourSpan))
                     {
-                        day.WorkshopAgenda[y].Available = false;
-                        day.WorkshopAgenda[y].Profile = _mapper.Map<ProfileAuxViewModel>(match.Profile);
-                        day.WorkshopAgenda[y].Vehicle = _mapper.Map<VehicleAuxViewModel>(match.Vehicle);
-                    }
+                        var match = scheduledWorkshops.FirstOrDefault(s => s.Time == hourSpan);
+                        if (match != null)
+                        {
+                            day.WorkshopAgenda[y].Available = false;
+                            day.WorkshopAgenda[y].Profile = _mapper.Map<ProfileAuxViewModel>(match.Profile);
+                            day.WorkshopAgenda[y].Vehicle = _mapper.Map<VehicleAuxViewModel>(match.Vehicle);
+                        }
 
-                    if (blockedTimes.Contains(TimeSpan.Parse(day.WorkshopAgenda[y].Hour)))
-                    {
-                        day.WorkshopAgenda[y].Available = false;
+                        if (blockedTimes.Contains(hourSpan))
+                        {
+                            day.WorkshopAgenda[y].Available = false;
+                        }
                     }
                 }
 
-                day.Hours = [];
+                // Manter os horários disponíveis na lista Hours
+                day.Hours = day.WorkshopAgenda
+                    .Where(x => x.Available)
+                    .Select(x => x.Hour)
+                    .ToList();
+                
+                Console.WriteLine($"[ApplySchedulingFilters] Finalizado - WorkshopAgenda: {day.WorkshopAgenda.Count} horários, Hours: {day.Hours.Count}");
             }
 
             return day;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[ApplySchedulingFilters] Erro: {ex.Message}");
+                day.Available = false;
+                day.Hours.Clear();
+                day.WorkshopAgenda.Clear();
+                return day;
+            }
         }
 
         // Agenda completa
