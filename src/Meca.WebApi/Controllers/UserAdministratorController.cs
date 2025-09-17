@@ -575,6 +575,11 @@ namespace Meca.WebApi.Controllers
 
                 var body = _senderMailService.GerateBody("custom", dataBody);
 
+                // Salvar a nova senha primeiro
+                userAdministratorEntity.Password = Utilities.GerarHashMd5(newPassword);
+                await _userAdministratorRepository.UpdateAsync(userAdministratorEntity);
+
+                // Enviar email de forma assíncrona
                 var unused = Task.Run(async () =>
                 {
                     await _senderMailService.SendMessageEmailAsync(
@@ -582,10 +587,6 @@ namespace Meca.WebApi.Controllers
                         userAdministratorEntity.Email,
                         body,
                         title);
-
-                    userAdministratorEntity.Password = Utilities.GerarHashMd5(newPassword);
-                    await _userAdministratorRepository.UpdateAsync(userAdministratorEntity);
-
                 });
 
                 return Ok(Utilities.ReturnSuccess(DefaultMessages.VerifyYourEmail));
