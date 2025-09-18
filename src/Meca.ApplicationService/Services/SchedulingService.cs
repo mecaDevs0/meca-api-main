@@ -1602,9 +1602,20 @@ namespace Meca.ApplicationService.Services
                 var agenda = GetAgendaForDay(workshopAgenda, day.DayOfWeek);
                 if (agenda != null && agenda.Open && !string.IsNullOrEmpty(agenda.StartTime) && !string.IsNullOrEmpty(agenda.ClosingTime))
                 {
-                    day.Available = true;
-                    day.Hours = GenerateSchedule(agenda.StartTime, agenda.ClosingTime, agenda.StartOfBreak, agenda.EndOfBreak);
-                    Console.WriteLine($"[UpdateCalendarWithWorkshopAgenda] Agenda configurada para {day.DayOfWeek} - {day.Hours.Count} horários disponíveis");
+                    // Validar se os horários são válidos antes de gerar a agenda
+                    if (TimeSpan.TryParse(agenda.StartTime, out _) && TimeSpan.TryParse(agenda.ClosingTime, out _))
+                    {
+                        day.Available = true;
+                        day.Hours = GenerateSchedule(agenda.StartTime, agenda.ClosingTime, agenda.StartOfBreak, agenda.EndOfBreak);
+                        Console.WriteLine($"[UpdateCalendarWithWorkshopAgenda] Agenda configurada para {day.DayOfWeek} - {day.Hours.Count} horários disponíveis");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"[UpdateCalendarWithWorkshopAgenda] Horários inválidos para {day.DayOfWeek} - StartTime: '{agenda.StartTime}', ClosingTime: '{agenda.ClosingTime}'");
+                        day.Available = false;
+                        day.Hours.Clear();
+                        day.WorkshopAgenda.Clear();
+                    }
                 }
                 else
                 {
@@ -1617,6 +1628,7 @@ namespace Meca.ApplicationService.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"[UpdateCalendarWithWorkshopAgenda] Erro: {ex.Message}");
+                Console.WriteLine($"[UpdateCalendarWithWorkshopAgenda] StackTrace: {ex.StackTrace}");
                 day.Available = false;
                 day.Hours.Clear();
                 day.WorkshopAgenda.Clear();
@@ -1662,9 +1674,18 @@ namespace Meca.ApplicationService.Services
                     return schedule;
                 }
                 
-                // Converter strings de tempo para DateTime
-                DateTime start = DateTime.Parse(startTime);
-                DateTime close = DateTime.Parse(closingTime);
+                // Converter strings de tempo para DateTime com validação adicional
+                if (!DateTime.TryParseExact(startTime, "HH:mm", null, System.Globalization.DateTimeStyles.None, out DateTime start))
+                {
+                    Console.WriteLine($"[GenerateSchedule] Formato de startTime inválido: '{startTime}'");
+                    return schedule;
+                }
+                
+                if (!DateTime.TryParseExact(closingTime, "HH:mm", null, System.Globalization.DateTimeStyles.None, out DateTime close))
+                {
+                    Console.WriteLine($"[GenerateSchedule] Formato de closingTime inválido: '{closingTime}'");
+                    return schedule;
+                }
                 
                 // Verificar se há intervalo de pausa configurado
                 bool hasBreak = !string.IsNullOrEmpty(startOfBreak) && !string.IsNullOrEmpty(endOfBreak);
@@ -1681,8 +1702,16 @@ namespace Meca.ApplicationService.Services
                     }
                     else
                     {
-                        breakStart = DateTime.Parse(startOfBreak);
-                        breakEnd = DateTime.Parse(endOfBreak);
+                        if (!DateTime.TryParseExact(startOfBreak, "HH:mm", null, System.Globalization.DateTimeStyles.None, out breakStart))
+                        {
+                            Console.WriteLine($"[GenerateSchedule] Formato de startOfBreak inválido: '{startOfBreak}'");
+                            hasBreak = false;
+                        }
+                        else if (!DateTime.TryParseExact(endOfBreak, "HH:mm", null, System.Globalization.DateTimeStyles.None, out breakEnd))
+                        {
+                            Console.WriteLine($"[GenerateSchedule] Formato de endOfBreak inválido: '{endOfBreak}'");
+                            hasBreak = false;
+                        }
                     }
                 }
 
