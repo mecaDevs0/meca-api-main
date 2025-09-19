@@ -23,6 +23,7 @@ using Microsoft.IdentityModel.Tokens;
 using UtilityFramework.Application.Core3;
 using UtilityFramework.Infra.Core3.MongoDb.Business;
 using System.Linq;
+using MongoDB.Driver;
 
 namespace Meca.WebApi
 {
@@ -99,6 +100,34 @@ namespace Meca.WebApi
 
             services.AddHttpContextAccessor();
 
+            // Configurar MongoDB para o UtilityFramework
+            var connectionString = Configuration.GetSection("DATABASE:CONNECTIONSTRING").Value;
+            var databaseName = Configuration.GetSection("DATABASE:NAME").Value;
+            
+            Console.WriteLine($"[DEBUG_STARTUP] Configurando MongoDB - ConnectionString: {connectionString}");
+            Console.WriteLine($"[DEBUG_STARTUP] Configurando MongoDB - DatabaseName: {databaseName}");
+            
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new InvalidOperationException("MongoDB connection string is not configured. Please check appsettings.json");
+            }
+            
+            if (string.IsNullOrEmpty(databaseName))
+            {
+                throw new InvalidOperationException("MongoDB database name is not configured. Please check appsettings.json");
+            }
+
+            // Configurar MongoDB explicitamente para o UtilityFramework
+            services.AddSingleton<MongoClient>(provider => 
+            {
+                var connectionString = Configuration.GetSection("DATABASE:CONNECTIONSTRING").Value;
+                if (string.IsNullOrEmpty(connectionString))
+                {
+                    throw new InvalidOperationException("MongoDB connection string is not configured");
+                }
+                return new MongoClient(connectionString);
+            });
+            
             services.AddScoped(typeof(IBusinessBaseAsync<>), typeof(BusinessBaseAsync<>));
 
             Console.WriteLine($"[DEBUG_STARTUP] Registrando serviços de injeção");

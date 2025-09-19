@@ -1,0 +1,66 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "IUGU": {
+    "SandBox": false,
+    "LiveKey": "B478350DE1FA4AFCF9AE9741794D59C9686EBF5D69E6AFBA84A6009F668792BA",
+    "TestKey": "1D644ABDD9C84A0A242F30CBD694DC6A4CC83E9BB29979E28AA46E1144DE7BFB",
+    "AccoundId": "97B9BC2219844ED2B03083A7583A16E8",
+    "ShowContent": false,
+    "Client": {
+      "Name": "",
+      "AccountKey": "",
+      "LiveKey": "",
+      "TestKey": "",
+      "UserApiKey": "",
+      "Tax": 0,
+      "EnableAdvance": false
+    }
+  },
+  "EnableSwagger": false,
+  "EnableService": false,
+  "DATABASE": {
+    "CONNECTIONSTRING": "mongodb+srv://pedrosantana:qsmEphWv3dQ2wSGk@cluster0.ccsupmg.mongodb.net/meca-app-2025?retryWrites=true&w=majority&connectTimeoutMS=120000&serverSelectionTimeoutMS=120000&maxPoolSize=20&minPoolSize=5&maxIdleTimeMS=30000&waitQueueTimeoutMS=30000&heartbeatFrequencyMS=10000&retryReads=true",
+    "NAME": "meca-app-2025"
+  },
+  "Config": {
+    "BaseUrl": "https://api.mecabr.com/content/upload",
+    "DefaultUrl": "https://api.mecabr.com/content/images/default.png",
+    "CustomUrls": [
+      "https://api.mecabr.com"
+    ]
+  },
+  "Language": "pt-BR",
+  "Stripe": {
+    "SecretKey": "sk_test_51234567890abcdefghijklmnopqrstuvwxyz",
+    "PublishableKey": "pk_test_51234567890abcdefghijklmnopqrstuvwxyz",
+    "WebhookSecret": "whsec_1234567890abcdefghijklmnopqrstuvwxyz"
+  },
+  "Jwt": {
+    "ProjectFirebaseId": "",
+    "Issuer": "Meca",
+    "Audience": "Meca",
+    "SecretKey": "278c491bdd8a53618c149c4ac790da34",
+    "TokenFrom": "fromhours",
+    "TokenValue": 1
+  },
+  "SMTP": {
+    "Host": "smtp.gmail.com",
+    "Port": 587,
+    "EnableSsl": true,
+    "Username": "noreply@mecabr.com",
+    "Password": "your_app_password_here",
+    "FromEmail": "noreply@mecabr.com",
+    "FromName": "Meca"
+  },
+  "OneSignal": {
+    "AppId": "your_onesignal_app_id",
+    "ApiKey": "your_onesignal_api_key"
+  },
+  "AllowedHosts": "*"
+}

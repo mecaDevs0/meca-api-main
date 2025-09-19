@@ -62,9 +62,9 @@ namespace Meca.ApplicationService.Services
                     return new WorkshopAgendaViewModel();
                 }
 
-                Console.WriteLine($"[GetWorkshopAgenda] DEBUG: _access.TypeToken = {_access.TypeToken}, id recebido = {id}");
+                Console.WriteLine($"[GetWorkshopAgenda] DEBUG: _access.TypeToken = {_access?.TypeToken}, id recebido = {id}");
 
-                if ((int)_access.TypeToken != (int)TypeProfile.Workshop)
+                if (_access?.TypeToken == null || (int)_access.TypeToken != (int)TypeProfile.Workshop)
                 {
                     if (string.IsNullOrEmpty(id) == true)
                     {
@@ -74,7 +74,7 @@ namespace Meca.ApplicationService.Services
                 }
                 else
                 {
-                    id = _access.UserId;
+                    id = _access?.UserId;
                     Console.WriteLine($"[GetWorkshopAgenda] DEBUG: Usando workshopId do token: {id}");
                 }
 
@@ -142,7 +142,7 @@ namespace Meca.ApplicationService.Services
                     return null;
                 }
 
-                Console.WriteLine($"[RegisterOrUpdate] DEBUG: _access.UserId = {_access.UserId}, model.Id = {model?.Id}");
+                Console.WriteLine($"[RegisterOrUpdate] DEBUG: _access.UserId = {_access?.UserId}, model.Id = {model?.Id}");
 
                 if (model == null)
                 {
@@ -161,17 +161,17 @@ namespace Meca.ApplicationService.Services
 
                 WorkshopAgenda workshopAgendaEntity = null;
 
-                if (string.IsNullOrEmpty(_access.UserId))
+                if (string.IsNullOrEmpty(_access?.UserId))
                 {
                     Console.WriteLine("[RegisterOrUpdate] ERRO: _access.UserId é null ou vazio");
                     CreateNotification("ID do usuário não encontrado no token");
                     return null;
                 }
 
-                var workshopEntity = await _workshopRepository.FindByIdAsync(_access.UserId);
+                var workshopEntity = await _workshopRepository.FindByIdAsync(_access?.UserId);
                 if (workshopEntity == null)
                 {
-                    Console.WriteLine($"[RegisterOrUpdate] ERRO: Workshop não encontrado para userId: {_access.UserId}");
+                    Console.WriteLine($"[RegisterOrUpdate] ERRO: Workshop não encontrado para userId: {_access?.UserId}");
                     CreateNotification(DefaultMessages.WorkshopNotFound);
                     return null;
                 }
@@ -223,13 +223,13 @@ namespace Meca.ApplicationService.Services
                     return false;
                 }
 
-                if ((int)_access.TypeToken != (int)TypeProfile.Workshop)
+                if (_access?.TypeToken == null || (int)_access.TypeToken != (int)TypeProfile.Workshop)
                 {
                     CreateNotification(DefaultMessages.NotPermission);
                     return false;
                 }
 
-                var userId = _access.UserId;
+                var userId = _access?.UserId;
 
                 var agendaList = await _agendaRepository.FindByAsync(x => x.WorkshopId == userId);
                 var hasSame = agendaList.Where(x => x.Date == long.Parse(date)).ToList();

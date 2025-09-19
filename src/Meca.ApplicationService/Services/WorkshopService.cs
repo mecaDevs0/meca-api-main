@@ -47,7 +47,8 @@ namespace Meca.ApplicationService.Services
         private readonly IBusinessBaseAsync<WorkshopAgenda> _workshopAgendaRepository;
         private readonly IBusinessBaseAsync<Notification> _notificationRepository;
         private readonly IBusinessBaseAsync<Scheduling> _schedulingRepository;
-        private readonly IStripeMarketPlaceService _stripeMarketPlaceService;
+        private readonly IPagBankService _pagBankService;
+        private readonly PagBankPaymentService _pagBankPaymentService;
         private readonly INotificationService _notificationService;
         private readonly ISenderMailService _senderMailService;
         private readonly IIuguMarketPlaceServices _iuguMarketPlaceServices;
@@ -68,7 +69,8 @@ namespace Meca.ApplicationService.Services
             IIuguMarketPlaceServices iuguMarketPlaceServices,
             IHostingEnvironment env,
             IHttpContextAccessor httpContextAccessor,
-            IStripeMarketPlaceService stripeMarketPlaceService = null)  // Tornar opcional
+            IPagBankService pagBankService = null,
+            PagBankPaymentService pagBankPaymentService = null)  // Tornar opcional
         {
             try
             {
@@ -88,7 +90,8 @@ namespace Meca.ApplicationService.Services
                 _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
                 
                 // DependÃªncias opcionais
-                _stripeMarketPlaceService = stripeMarketPlaceService;  // Pode ser null
+                _pagBankService = pagBankService;  // Pode ser null
+                _pagBankPaymentService = pagBankPaymentService;  // Pode ser null
                 
                 // Verificar se env nÃ£o Ã© null
                 if (env == null)
@@ -594,8 +597,9 @@ namespace Meca.ApplicationService.Services
                     return false;
                 }
 
-                if (!string.IsNullOrEmpty(workshopEntity.ExternalId))
-                    await _stripeMarketPlaceService.DeleteAsync(workshopEntity.ExternalId);
+                // TODO: Migrar para PagBank
+                // if (!string.IsNullOrEmpty(workshopEntity.ExternalId))
+                //     await _pagBankService.DeleteAccountAsync(workshopEntity.ExternalId);
 
                 await _workshopRepository.DeleteOneAsync(id).ConfigureAwait(false);
 
@@ -1186,23 +1190,17 @@ namespace Meca.ApplicationService.Services
 
                 workshopEntity = await _workshopRepository.UpdateAsync(workshopEntity).ConfigureAwait(false);
 
-                if (_access.IsAdmin == false && !string.IsNullOrEmpty(workshopEntity.ExternalId))
-                {
-                    var remoteIp = Utilities.GetClientIp();
-                    var userAgent = _httpContextAccessor.HttpContext.Request.Headers["User-Agent"].ToString();
-
-                    var stripeMarketPlaceRequest = workshopEntity.MapAccount(remoteIp, userAgent);
-
-                    var account = await _stripeMarketPlaceService.GetByIdAsync(workshopEntity.ExternalId);
-
-                    account = await _stripeMarketPlaceService.UpdateAsync(workshopEntity.ExternalId, stripeMarketPlaceRequest);
-
-                    if (account.Success == false)
-                    {
-                        CreateNotification(account.ErrorMessage);
-                        return null;
-                    }
-                }
+                // TODO: Migrar para PagBank
+                // if (_access.IsAdmin == false && !string.IsNullOrEmpty(workshopEntity.ExternalId))
+                // {
+                //     var account = await _pagBankService.GetAccountByIdAsync(workshopEntity.ExternalId);
+                //     
+                //     if (account.Success == false)
+                //     {
+                //         CreateNotification(account.ErrorMessage);
+                //         return null;
+                //     }
+                // }
 
                 return _mapper.Map<WorkshopViewModel>(workshopEntity);
             }
@@ -1556,6 +1554,79 @@ namespace Meca.ApplicationService.Services
                 await _workshopRepository.UpdateAsync(workshopEntity);
                 Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Workshop salvo com sucesso no MongoDB");
 
+                // INTEGRAÇÃO COM PAGBANK: Criar conta no PagBank
+                if (_pagBankService != null && workshopEntity.HasDataBank)
+                {
+                    try
+                    {
+                        Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Criando conta no PagBank...");
+                        
+                        var pagBankRequest = new PagBankAccountRequest
+                        {
+                            Name = workshopEntity.CompanyName ?? workshopEntity.FullName,
+                            Email = workshopEntity.Email,
+                            Document = workshopEntity.Cnpj ?? workshopEntity.AccountableCpf,
+                            Type = !string.IsNullOrEmpty(workshopEntity.Cnpj) ? "company" : "individual",
+                            Address = new PagBankAddressRequest
+                            {
+                                Street = workshopEntity.StreetAddress,
+                                Number = workshopEntity.Number,
+                                Complement = workshopEntity.Complement,
+                                Neighborhood = workshopEntity.Neighborhood,
+                                City = workshopEntity.CityName,
+                                State = workshopEntity.StateName,
+                                ZipCode = workshopEntity.ZipCode,
+                                Country = "BR"
+                            },
+                            Phone = new PagBankPhoneRequest
+                            {
+                                Country = "55",
+                                Area = workshopEntity.Phone?.Substring(0, 2),
+                                Number = workshopEntity.Phone?.Substring(2)
+                            }
+                        };
+
+                        var pagBankResult = await _pagBankService.CreateAccountAsync(pagBankRequest);
+                        
+                        if (pagBankResult.Success)
+                        {
+                            Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Conta PagBank criada com sucesso: {pagBankResult.Data?.Id}");
+                            
+                            // Criar conta bancária no PagBank
+                            var bankAccountRequest = new PagBankBankAccountRequest
+                            {
+                                AccountNumber = workshopEntity.BankAccount,
+                                BankCode = workshopEntity.Bank,
+                                AgencyNumber = workshopEntity.BankAgency,
+                                HolderName = workshopEntity.AccountableName,
+                                HolderType = workshopEntity.PersonType == 0 ? "individual" : "company"
+                            };
+
+                            var bankAccountResult = await _pagBankService.CreateBankAccountAsync(pagBankResult.Data.Id, bankAccountRequest);
+                            
+                            if (bankAccountResult.Success)
+                            {
+                                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Conta bancária PagBank criada com sucesso: {bankAccountResult.Data?.Id}");
+                                workshopEntity.ExternalId = pagBankResult.Data.Id; // Salvar ID da conta PagBank
+                                await _workshopRepository.UpdateAsync(workshopEntity);
+                            }
+                            else
+                            {
+                                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] ERRO ao criar conta bancária PagBank: {bankAccountResult.ErrorMessage}");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] ERRO ao criar conta PagBank: {pagBankResult.ErrorMessage}");
+                        }
+                    }
+                    catch (Exception pagBankEx)
+                    {
+                        Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] ERRO na integração PagBank: {pagBankEx.Message}");
+                        // Não falhar o processo por causa do PagBank
+                    }
+                }
+
                 Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] ===== UPDATE DATA BANK CONCLUÍDO COM SUCESSO =====");
                 return "Dados bancários atualizados com sucesso";
             }
@@ -1598,10 +1669,10 @@ namespace Meca.ApplicationService.Services
                     return null;
                 }
                 
-                Console.WriteLine($"[GET_DATA_BANK_DEBUG] _access.UserId: '{_access.UserId}'");
-                Console.WriteLine($"[GET_DATA_BANK_DEBUG] _access.TypeToken: {_access.TypeToken}");
+                Console.WriteLine($"[GET_DATA_BANK_DEBUG] _access.UserId: '{_access?.UserId}'");
+                Console.WriteLine($"[GET_DATA_BANK_DEBUG] _access.TypeToken: {_access?.TypeToken}");
                 
-                id = string.IsNullOrEmpty(id) ? _access.UserId : id;
+                id = string.IsNullOrEmpty(id) ? _access?.UserId : id;
                 Console.WriteLine($"[GET_DATA_BANK_DEBUG] ID final para busca: '{id}'");
 
                 if (string.IsNullOrEmpty(id))
@@ -1611,9 +1682,9 @@ namespace Meca.ApplicationService.Services
                     return null;
                 }
 
-                if (_access.TypeToken != (int)TypeProfile.Workshop && _access.TypeToken != (int)TypeProfile.UserAdministrator)
+                if (_access?.TypeToken == null || (_access.TypeToken != (int)TypeProfile.Workshop && _access.TypeToken != (int)TypeProfile.UserAdministrator))
                 {
-                    Console.WriteLine($"[GET_DATA_BANK_DEBUG] ERRO: Tipo de token inválido: {_access.TypeToken}");
+                    Console.WriteLine($"[GET_DATA_BANK_DEBUG] ERRO: Tipo de token inválido: {_access?.TypeToken}");
                     CreateNotification(DefaultMessages.NotPermission);
                     return null;
                 }
@@ -1689,7 +1760,8 @@ namespace Meca.ApplicationService.Services
 
         public async Task DeleteStripe(string id)
         {
-            await _stripeMarketPlaceService.DeleteAsync(id);
+            // TODO: Migrar para PagBank
+            // await _pagBankService.DeleteAccountAsync(id);
         }
 
         public async Task<DtResult<WorkshopViewModel>> LoadDataGrid(DtParameters model, WorkshopFilterViewModel filterView)

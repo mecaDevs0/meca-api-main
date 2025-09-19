@@ -30,12 +30,6 @@
     "TokenFrom": "fromhours",
     "TokenValue": 1
   },
-  "PagBank": {
-    "AccessToken": "987fa5bc-900b-4903-8172-20f83def1c8b7192a70d4be7bbdd8d2763bff311c2fd93ae-8354-4998-84e6-b5262574d9bd",
-    "BaseUrl": "https://api.pagseguro.com",
-    "SandboxBaseUrl": "https://sandbox.api.pagseguro.com",
-    "Environment": "sandbox"
-  },
   "Stripe": {
     "SecretKey": "sk_test_51234567890abcdefghijklmnopqrstuvwxyz",
     "PublishableKey": "pk_test_51234567890abcdefghijklmnopqrstuvwxyz",

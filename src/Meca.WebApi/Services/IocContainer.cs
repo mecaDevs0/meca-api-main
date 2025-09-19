@@ -90,13 +90,18 @@ namespace Meca.WebApi.Services
             services.AddScoped(typeof(IIuguService), typeof(IuguService));
             Console.WriteLine($"[IOC_DEBUG] Serviços IUGU registrados");
 
-            /*STRIPE*/
-            services.AddScoped(typeof(IStripeCustomerService), typeof(StripeCustomerService));
-            services.AddScoped(typeof(IStripeMarketPlaceService), typeof(StripeMarketPlaceService));
-            services.AddScoped(typeof(IStripePaymentMethodService), typeof(StripePaymentMethodService));
-            services.AddScoped(typeof(IStripePaymentIntentService), typeof(StripePaymentIntentService));
-            services.AddScoped(typeof(IStripeTransferService), typeof(StripeTransferService));
-            Console.WriteLine($"[IOC_DEBUG] Serviços Stripe registrados");
+            /*PAGBANK*/
+            services.AddScoped(typeof(IPagBankService), typeof(PagBankService));
+            services.AddScoped(typeof(PagBankPaymentService), typeof(PagBankPaymentService));
+            Console.WriteLine($"[IOC_DEBUG] Serviços PagBank registrados");
+            
+            /*STRIPE - DESABILITADO PARA MIGRAÇÃO*/
+            // services.AddScoped(typeof(IStripeCustomerService), typeof(StripeCustomerService));
+            // services.AddScoped(typeof(IStripeMarketPlaceService), typeof(StripeMarketPlaceService));
+            // services.AddScoped(typeof(IStripePaymentMethodService), typeof(StripePaymentMethodService));
+            // services.AddScoped(typeof(IStripePaymentIntentService), typeof(StripePaymentIntentService));
+            // services.AddScoped(typeof(IStripeTransferService), typeof(StripeTransferService));
+            Console.WriteLine($"[IOC_DEBUG] Serviços Stripe desabilitados para migração");
 
             /* NOTIFICAÇÕES & EMAIL*/
             services.AddScoped(typeof(ISenderMailService), typeof(SendService));
@@ -112,6 +117,14 @@ namespace Meca.WebApi.Services
             services.AddScoped(typeof(IHangfireService), typeof(HangfireService));
             services.AddScoped(typeof(IAgoraIOService), typeof(AgoraIOService));
             Console.WriteLine($"[IOC_DEBUG] Serviços de utilidades registrados");
+
+            /*FINANCIAL HISTORY */
+            services.AddScoped(typeof(IFinancialHistoryService), typeof(FinancialHistoryService));
+            Console.WriteLine($"[IOC_DEBUG] Serviços FinancialHistory registrados");
+
+            /*WORKSHOP SERVICES */
+            services.AddScoped(typeof(IWorkshopServicesService), typeof(WorkshopServicesService));
+            Console.WriteLine($"[IOC_DEBUG] Serviços WorkshopServices registrados");
 
             Console.WriteLine($"[IOC_DEBUG] Registro de serviços de API finalizado");
             return services;

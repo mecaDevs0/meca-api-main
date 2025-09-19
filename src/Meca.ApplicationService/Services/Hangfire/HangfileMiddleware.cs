@@ -41,12 +41,22 @@ namespace Meca.ApplicationService.Services.HangFire
 
                 try
                 {
+                    if (string.IsNullOrEmpty(connectionString))
+                    {
+                        throw new InvalidOperationException("MongoDB connection string is null or empty");
+                    }
+                    
                     mongoUrlBuilder = new MongoUrlBuilder(connectionString);
                     mongoClient = new MongoClient(mongoUrlBuilder.ToMongoUrl());
                 }
                 catch (Exception ex)
                 {
                     // If MongoUrlBuilder fails, try direct connection string
+                    if (string.IsNullOrEmpty(connectionString))
+                    {
+                        throw new InvalidOperationException("MongoDB connection string is null or empty", ex);
+                    }
+                    
                     mongoClient = new MongoClient(connectionString);
                     // Extract database name from connection string or use configured value
                     if (string.IsNullOrEmpty(dataBaseName))
