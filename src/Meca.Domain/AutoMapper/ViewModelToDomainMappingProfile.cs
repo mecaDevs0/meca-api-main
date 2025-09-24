@@ -64,8 +64,8 @@ namespace Meca.Domain.AutoMapper
                 .ForMember(dest => dest.ReferenceName, opt => opt.MapFrom(src => src.Name));
             CreateMap<WorkshopServicesViewModel, Data.Entities.WorkshopServices>()
                 .ForMember(dest => dest._id, opt => opt.MapFrom(src => ObjectId.Parse(src.Id)));
-            CreateMap<ServicesDefaultViewModel, Data.Entities.ServicesDefault>()
-                .ForMember(dest => dest._id, opt => opt.MapFrom(src => ObjectId.Parse(src.Id)));
+            // CreateMap<ServicesDefaultViewModel, Data.Entities.ServicesDefault>()
+            //     .ForMember(dest => dest._id, opt => opt.MapFrom(src => ObjectId.Parse(src.Id)));
             CreateMap<FeesViewModel, Fees>()
                 .ForMember(dest => dest._id, opt => opt.MapFrom(src => ObjectId.Parse(src.Id)));
             CreateMap<WorkshopViewModel, Workshop>()

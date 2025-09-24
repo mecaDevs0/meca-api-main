@@ -1642,6 +1642,22 @@ namespace Meca.ApplicationService.Services
         {
             try
             {
+                Console.WriteLine($"[GET_DATA_BANK_DEBUG] ===== INICIANDO GET DATA BANK =====");
+                Console.WriteLine($"[GET_DATA_BANK_DEBUG] ID recebido: '{id}'");
+                
+                // VALIDAÇÃO CRÍTICA: Verificar se o repositório está inicializado
+                if (_workshopRepository == null)
+                {
+                    Console.WriteLine("[GET_DATA_BANK_DEBUG] ERRO CRÍTICO: _workshopRepository é null");
+                    throw new InvalidOperationException("WorkshopRepository não inicializado");
+                }
+                
+                // VALIDAÇÃO CRÍTICA: Verificar se o httpContextAccessor está inicializado
+                if (_httpContextAccessor == null)
+                {
+                    Console.WriteLine("[GET_DATA_BANK_DEBUG] ERRO CRÍTICO: _httpContextAccessor é null");
+                    throw new InvalidOperationException("HttpContextAccessor não inicializado");
+                }
                 Console.WriteLine($"[GET_DATA_BANK_DEBUG] Iniciando GetDataBank para ID: '{id}'");
                 
                 // Se _access é null, tentar redefinir o acesso
@@ -1731,6 +1747,15 @@ namespace Meca.ApplicationService.Services
                 workshopEntity.DataBankStatus = DataBankStatus.Uninformed;
 
                 Console.WriteLine("[GET_DATA_BANK_DEBUG] Fazendo mapeamento manual...");
+                
+                // Verificar se o ID é válido
+                if (workshopEntity._id == null)
+                {
+                    Console.WriteLine("[GET_DATA_BANK_DEBUG] ERRO: Workshop ID é null");
+                    CreateNotification("ID da oficina inválido");
+                    return null;
+                }
+                
                 // Mapeamento manual para evitar problemas com AutoMapper
                 var response = new DataBankViewModel
                 {

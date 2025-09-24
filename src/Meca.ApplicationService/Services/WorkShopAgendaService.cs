@@ -64,7 +64,15 @@ namespace Meca.ApplicationService.Services
 
                 Console.WriteLine($"[GetWorkshopAgenda] DEBUG: _access.TypeToken = {_access?.TypeToken}, id recebido = {id}");
 
-                if (_access?.TypeToken == null || (int)_access.TypeToken != (int)TypeProfile.Workshop)
+                // Verificar se o tipo de token é válido
+                if (_access?.TypeToken == null)
+                {
+                    Console.WriteLine("[GetWorkshopAgenda] ERRO: TypeToken é null");
+                    CreateNotification("Tipo de token inválido");
+                    return new WorkshopAgendaViewModel();
+                }
+
+                if ((int)_access.TypeToken != (int)TypeProfile.Workshop)
                 {
                     if (string.IsNullOrEmpty(id) == true)
                     {
@@ -76,6 +84,14 @@ namespace Meca.ApplicationService.Services
                 {
                     id = _access?.UserId;
                     Console.WriteLine($"[GetWorkshopAgenda] DEBUG: Usando workshopId do token: {id}");
+                    
+                    // Verificar se o UserId do token é válido
+                    if (string.IsNullOrEmpty(id))
+                    {
+                        Console.WriteLine("[GetWorkshopAgenda] ERRO: UserId do token é null ou vazio");
+                        CreateNotification("ID da oficina não encontrado no token");
+                        return new WorkshopAgendaViewModel();
+                    }
                 }
 
                 if (string.IsNullOrEmpty(id))
@@ -168,7 +184,7 @@ namespace Meca.ApplicationService.Services
                     return null;
                 }
 
-                var workshopEntity = await _workshopRepository.FindByIdAsync(_access?.UserId);
+                var workshopEntity = await _workshopRepository.FindByIdAsync(_access.UserId);
                 if (workshopEntity == null)
                 {
                     Console.WriteLine($"[RegisterOrUpdate] ERRO: Workshop não encontrado para userId: {_access?.UserId}");
@@ -182,7 +198,25 @@ namespace Meca.ApplicationService.Services
                 {
                     Console.WriteLine("[RegisterOrUpdate] DEBUG: Criando nova agenda");
                     workshopAgendaEntity = _mapper.Map<WorkshopAgenda>(model);
-                    workshopAgendaEntity.Workshop = _mapper.Map<WorkshopAux>(workshopEntity);
+                    
+                    // Verificar se o mapeamento foi bem-sucedido
+                    if (workshopAgendaEntity == null)
+                    {
+                        Console.WriteLine("[RegisterOrUpdate] ERRO: Falha ao mapear WorkshopAgenda");
+                        CreateNotification("Erro ao processar dados da agenda");
+                        return null;
+                    }
+                    
+                    // Mapear o workshop de forma segura
+                    var workshopAux = _mapper.Map<WorkshopAux>(workshopEntity);
+                    if (workshopAux == null)
+                    {
+                        Console.WriteLine("[RegisterOrUpdate] ERRO: Falha ao mapear WorkshopAux");
+                        CreateNotification("Erro ao processar dados da oficina");
+                        return null;
+                    }
+                    
+                    workshopAgendaEntity.Workshop = workshopAux;
                     workshopAgendaEntity = await _workshopAgendaRepository.CreateReturnAsync(workshopAgendaEntity);
                 }
                 else

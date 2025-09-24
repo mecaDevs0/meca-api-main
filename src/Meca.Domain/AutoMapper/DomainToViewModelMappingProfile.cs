@@ -69,8 +69,8 @@ namespace Meca.Domain.AutoMapper
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src._id.ToString()));
             CreateMap<Data.Entities.WorkshopServices, WorkshopServicesViewModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src._id.ToString()));
-            CreateMap<Data.Entities.ServicesDefault, ServicesDefaultViewModel>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src._id.ToString()));
+            // CreateMap<Data.Entities.ServicesDefault, ServicesDefaultViewModel>()
+            //     .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.GetStringId()));
             CreateMap<Fees, FeesViewModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src._id.ToString()));
             CreateMap<Workshop, WorkshopViewModel>()
@@ -150,11 +150,11 @@ namespace Meca.Domain.AutoMapper
                 .ForMember(dest => dest.Reason, opt => opt.MapFrom(src => src.Reason));
             CreateMap<WorkshopAgendaAux, WorkshopAgendaAuxViewModel>().ReverseMap();
             CreateMap<WorkshopAgenda, WorkshopAgendaViewModel>()
-              .ForMember(dest => dest.Id, opt => opt.MapFrom(src => ObjectId.Parse(src._id.ToString())));
+              .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src._id.ToString()));
             CreateMap<Workshop, Meca.Domain.ViewModels.DataBankViewModel>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => ObjectId.Parse(src._id.ToString())));
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src._id.ToString()));
             CreateMap<Vehicle, VehicleViewModel>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => ObjectId.Parse(src._id.ToString())));
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src._id.ToString()));
             CreateMap<ProfileAux, ProfileAuxViewModel>().ReverseMap();
             CreateMap<ProfileAux, Profile>().ReverseMap()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src._id.ToString()));

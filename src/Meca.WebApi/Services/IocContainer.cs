@@ -113,7 +113,7 @@ namespace Meca.WebApi.Services
             Console.WriteLine($"[IOC_DEBUG] Serviços Firebase registrados");
 
             /*UTILIDADES */
-            services.AddScoped(typeof(IUtilService), typeof(UtilService));
+            // services.AddScoped(typeof(IUtilService), typeof(UtilService)); // Comentado - UtilService não existe
             services.AddScoped(typeof(IHangfireService), typeof(HangfireService));
             services.AddScoped(typeof(IAgoraIOService), typeof(AgoraIOService));
             Console.WriteLine($"[IOC_DEBUG] Serviços de utilidades registrados");
