@@ -47,7 +47,7 @@ namespace Meca.ApplicationService.Services
             _configuration = configuration;
             
             // Inicializar o acesso
-            SetAccess(httpContextAccessor);
+            _access = SetAccess(httpContextAccessor);
         }
 
         public async Task<List<ServicesDefaultViewModel>> GetAll()

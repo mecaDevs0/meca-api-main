@@ -316,31 +316,17 @@ namespace Meca.WebApi.Controllers
         {
             try
             {
-                Console.WriteLine("[WORKSHOP_CONTROLLER_DEBUG] Iniciando GetInfo no controller");
-                
                 var response = await _workshopService.GetInfo();
                 
-                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Response do GetInfo: {(response == null ? "NULL" : "NOT NULL")}");
-                if (response != null)
-                {
-                    Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Response ID: {response.Id}");
-                    Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Response CompanyName: {response.CompanyName}");
-                }
-
-                // Verificar se o response é null e retornar erro apropriado
                 if (response == null)
                 {
-                    Console.WriteLine("[WORKSHOP_CONTROLLER_DEBUG] Response é NULL - retornando erro");
                     return BadRequest(Utilities.ReturnErro("Workshop não encontrado ou dados inválidos"));
                 }
 
-                Console.WriteLine("[WORKSHOP_CONTROLLER_DEBUG] Retornando resposta com sucesso");
                 return Ok(Utilities.ReturnSuccess(data: response));
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] ERRO no controller: {ex.Message}");
-                Console.WriteLine($"[WORKSHOP_CONTROLLER_DEBUG] Stack trace: {ex.StackTrace}");
                 return BadRequest(ex.ReturnErro());
             }
         }
@@ -530,73 +516,41 @@ namespace Meca.WebApi.Controllers
         {
             try
             {
-                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Iniciando método Token");
-                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Model recebido: {System.Text.Json.JsonSerializer.Serialize(model)}");
-                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] _workshopService é null: {_workshopService == null}");
-
-                // VALIDAÇÃO DEFINITIVA: Verificar se o model não é null
                 if (model == null)
                 {
-                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] ERRO: Model é null");
                     return BadRequest(Utilities.ReturnErro("Dados de login inválidos"));
                 }
 
-                // VALIDAÇÃO DEFINITIVA: Verificar se o WorkshopService está inicializado
                 if (_workshopService == null)
                 {
-                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] ERRO CRÍTICO: _workshopService é null");
-                    return StatusCode(500, Utilities.ReturnErro("Erro interno do servidor: WorkshopService não inicializado"));
+                    return StatusCode(500, Utilities.ReturnErro("Erro interno do servidor"));
                 }
 
-                // VALIDAÇÃO DEFINITIVA: Verificar se todas as dependências estão funcionando
-                if (_mapper == null)
-                {
-                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] ERRO CRÍTICO: _mapper é null");
-                    return StatusCode(500, Utilities.ReturnErro("Erro interno do servidor: AutoMapper não inicializado"));
-                }
-
-                // PROCESSAMENTO SEGURO: Limpar e validar dados de entrada
                 model.TrimStringProperties();
-                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Model após TrimStringProperties: {System.Text.Json.JsonSerializer.Serialize(model)}");
 
-                // VALIDAÇÃO DEFINITIVA: Verificar se os dados obrigatórios estão presentes
                 if (string.IsNullOrEmpty(model.Email) && string.IsNullOrEmpty(model.ProviderId))
                 {
-                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] ERRO: Email e ProviderId estão vazios");
                     return BadRequest(Utilities.ReturnErro("Email ou ProviderId é obrigatório"));
                 }
 
                 if (model.TypeProvider == TypeProvider.Password && string.IsNullOrEmpty(model.Password))
                 {
-                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] ERRO: Senha está vazia para login com senha");
                     return BadRequest(Utilities.ReturnErro("Senha é obrigatória para login com senha"));
                 }
 
-                // EXECUÇÃO DEFINITIVA: Chamar o WorkshopService com tratamento robusto
-                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Chamando _workshopService.Token");
                 var result = await _workshopService.Token(model);
                 
                 if (result != null)
                 {
-                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Token gerado com sucesso via WorkshopService");
                     return Ok(Utilities.ReturnSuccess(data: result));
                 }
                 else
                 {
-                    Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Falha na autenticação via WorkshopService");
                     return BadRequest(Utilities.ReturnErro(DefaultMessages.InvalidLogin));
                 }
             }
-            catch (ArgumentNullException ex)
-            {
-                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] ERRO DE INJEÇÃO DE DEPENDÊNCIA: {ex.Message}");
-                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Stack trace: {ex.StackTrace}");
-                return StatusCode(500, Utilities.ReturnErro("Erro interno do servidor: Dependência não inicializada"));
-            }
             catch (Exception ex)
             {
-                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] ERRO GERAL: {ex.Message}");
-                Console.WriteLine($"[WORKSHOP_TOKEN_DEBUG] Stack trace: {ex.StackTrace}");
                 return StatusCode(500, Utilities.ReturnErro("Erro interno do servidor. Tente novamente."));
             }
         }
@@ -997,39 +951,21 @@ namespace Meca.WebApi.Controllers
         [ProducesResponseType(500)]
         public async Task<IActionResult> UpdateDataBank([FromRoute] string id, [FromBody] DataBankViewModel model)
         {
-            Console.WriteLine($"[CONTROLLER_DEBUG] ===== UpdateDataBank INICIADO =====");
-            Console.WriteLine($"[CONTROLLER_DEBUG] UpdateDataBank chamado - ID: {id}");
-            Console.WriteLine($"[CONTROLLER_DEBUG] Request Path: {Request.Path}");
-            Console.WriteLine($"[CONTROLLER_DEBUG] Request Method: {Request.Method}");
-            Console.WriteLine($"[CONTROLLER_DEBUG] Request Headers: {string.Join(", ", Request.Headers.Select(h => $"{h.Key}={h.Value}"))}");
-            Console.WriteLine($"[CONTROLLER_DEBUG] Request Body: {Request.Body}");
-            Console.WriteLine($"[CONTROLLER_DEBUG] Request ContentType: {Request.ContentType}");
-            Console.WriteLine($"[CONTROLLER_DEBUG] Request ContentLength: {Request.ContentLength}");
-            
             try
             {
-                Console.WriteLine($"[CONTROLLER_DEBUG] Model recebido: {System.Text.Json.JsonSerializer.Serialize(model)}");
-                Console.WriteLine($"[CONTROLLER_DEBUG] Model é null: {model == null}");
-                
                 if (model == null)
                 {
-                    Console.WriteLine("[CONTROLLER_DEBUG] Model é null - retornando erro");
                     return BadRequest(Utilities.ReturnErro("Dados bancários inválidos"));
                 }
 
                 model.TrimStringProperties();
-                Console.WriteLine($"[CONTROLLER_DEBUG] Model após TrimStringProperties: {System.Text.Json.JsonSerializer.Serialize(model)}");
 
-                Console.WriteLine("[CONTROLLER_DEBUG] Chamando _workshopService.UpdateDataBank...");
                 var response = await _workshopService.UpdateDataBank(model, id);
-                Console.WriteLine($"[CONTROLLER_DEBUG] Response do UpdateDataBank: {response}");
 
                 return Ok(Utilities.ReturnSuccess(data: response, message: DefaultMessages.Updated));
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[CONTROLLER_DEBUG] ERRO no UpdateDataBank: {ex.Message}");
-                Console.WriteLine($"[CONTROLLER_DEBUG] StackTrace: {ex.StackTrace}");
                 return BadRequest(ex.ReturnErro());
             }
         }

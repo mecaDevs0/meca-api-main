@@ -42,7 +42,7 @@ namespace Meca.ApplicationService.Services
             _configuration = configuration;
             
             // Inicializar o acesso
-            SetAccess(httpContextAccessor);
+            _access = SetAccess(httpContextAccessor);
         }
 
         public async Task<WorkshopAgendaViewModel> GetWorkshopAgenda(string id = null)
@@ -52,7 +52,7 @@ namespace Meca.ApplicationService.Services
                 // Garantir que o acesso seja inicializado
                 if (_access == null)
                 {
-                    SetAccess(_httpContextAccessor);
+                    _access = SetAccess(_httpContextAccessor);
                 }
                 
                 if (_access == null)
@@ -148,7 +148,7 @@ namespace Meca.ApplicationService.Services
                 // Garantir que o acesso seja inicializado
                 if (_access == null)
                 {
-                    SetAccess(_httpContextAccessor);
+                    _access = SetAccess(_httpContextAccessor);
                 }
                 
                 if (_access == null)

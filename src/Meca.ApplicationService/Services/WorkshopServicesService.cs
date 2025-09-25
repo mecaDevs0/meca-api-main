@@ -52,7 +52,7 @@ namespace Meca.ApplicationService.Services
             _configuration = configuration;
             
             // Inicializar o acesso
-            SetAccess(httpContextAccessor);
+            _access = SetAccess(httpContextAccessor);
         }
 
         /*CONSTRUTOR UTILIZADO POR TESTES DE UNIDADE*/

@@ -105,7 +105,7 @@ namespace Meca.ApplicationService.Services
                 }
                 
                 // Inicializar o acesso
-                SetAccess(httpContextAccessor);
+                _access = SetAccess(httpContextAccessor);
                 
                 Console.WriteLine("[WORKSHOP_DEBUG] Construtor do WorkshopService concluÃ­do com sucesso");
             }
@@ -491,28 +491,23 @@ namespace Meca.ApplicationService.Services
         {
             try
             {
-                Console.WriteLine("[GET_INFO_DEBUG] Iniciando GetInfo - verificando acesso...");
-                
+                // Verificar se o acesso está inicializado
                 if (_access == null)
                 {
-                    Console.WriteLine("[GET_INFO_DEBUG] ERRO: _access é null");
                     CreateNotification(DefaultMessages.DefaultError);
                     return null;
                 }
                 
                 var userId = _access.UserId;
-                Console.WriteLine($"[GET_INFO_DEBUG] UserId obtido: '{userId}'");
 
                 if (string.IsNullOrEmpty(userId))
                 {
-                    Console.WriteLine("[GET_INFO_DEBUG] ERRO: UserId é null ou vazio");
                     CreateNotification(DefaultMessages.InvalidIdentifier);
                     return null;
                 }
 
                 if (ObjectId.TryParse(userId, out var _id) == false)
                 {
-                    Console.WriteLine($"[GET_INFO_DEBUG] ERRO: UserId inválido: '{userId}'");
                     CreateNotification(DefaultMessages.InvalidIdentifier);
                     return null;
                 }
@@ -521,53 +516,30 @@ namespace Meca.ApplicationService.Services
                 
                 if (workshopEntity == null)
                 {
-                    Console.WriteLine($"[GET_INFO_DEBUG] Workshop NÃO encontrado no banco para ID: {userId}");
                     CreateNotification(DefaultMessages.WorkshopNotFound);
                     return null;
                 }
 
-                Console.WriteLine($"[GET_INFO_DEBUG] Workshop encontrado: {workshopEntity.GetStringId()}");
-                Console.WriteLine($"[GET_INFO_DEBUG] Workshop CompanyName: {workshopEntity.CompanyName}");
-                Console.WriteLine($"[GET_INFO_DEBUG] Workshop Email: {workshopEntity.Email}");
-                Console.WriteLine($"[GET_INFO_DEBUG] Workshop Status: {workshopEntity.Status}");
-
-                Console.WriteLine("[GET_INFO_DEBUG] Iniciando mapeamento para WorkshopViewModel...");
+                // Mapear para ViewModel
                 var responseVm = _mapper.Map<WorkshopViewModel>(workshopEntity);
                 
                 if (responseVm == null)
                 {
-                    Console.WriteLine("[GET_INFO_DEBUG] ERRO: WorkshopViewModel mapeado é NULL");
+                    CreateNotification(DefaultMessages.DefaultError);
                     return null;
                 }
 
-                Console.WriteLine($"[GET_INFO_DEBUG] WorkshopViewModel mapeado com sucesso");
-                Console.WriteLine($"[GET_INFO_DEBUG] WorkshopViewModel ID: {responseVm.Id}");
-                Console.WriteLine($"[GET_INFO_DEBUG] WorkshopViewModel CompanyName: {responseVm.CompanyName}");
-
-                Console.WriteLine("[GET_INFO_DEBUG] Verificando agenda...");
+                // Verificar agenda e serviços
                 responseVm.WorkshopAgendaValid = await _workshopAgendaRepository.CheckByAsync(x => x.Workshop.Id == userId);
-                Console.WriteLine($"[GET_INFO_DEBUG] WorkshopAgendaValid: {responseVm.WorkshopAgendaValid}");
-
-                Console.WriteLine("[GET_INFO_DEBUG] Verificando serviços...");
                 responseVm.WorkshopServicesValid = await _workshopServicesRepository.CheckByAsync(x => x.Workshop.Id == userId);
-                Console.WriteLine($"[GET_INFO_DEBUG] WorkshopServicesValid: {responseVm.WorkshopServicesValid}");
-
-                Console.WriteLine("[GET_INFO_DEBUG] Verificando dados bancários...");
-                // CORREÇÃO: Usar o campo HasDataBank que é atualizado no UpdateDataBank
+                
+                // Verificar dados bancários
                 responseVm.DataBankValid = workshopEntity.HasDataBank;
-                Console.WriteLine($"[GET_INFO_DEBUG] DataBankValid: {responseVm.DataBankValid}");
-                Console.WriteLine($"[GET_INFO_DEBUG] HasDataBank: {workshopEntity.HasDataBank}");
-                Console.WriteLine($"[GET_INFO_DEBUG] AccountableName: {workshopEntity.AccountableName}");
-                Console.WriteLine($"[GET_INFO_DEBUG] BankAccount: {workshopEntity.BankAccount}");
-                Console.WriteLine($"[GET_INFO_DEBUG] BankAgency: {workshopEntity.BankAgency}");
 
-                Console.WriteLine("[GET_INFO_DEBUG] GetInfo concluído com sucesso - retornando dados");
                 return responseVm;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[GET_INFO_DEBUG] ERRO no GetInfo: {ex.Message}");
-                Console.WriteLine($"[GET_INFO_DEBUG] StackTrace: {ex.StackTrace}");
                 CreateNotification(DefaultMessages.DefaultError);
                 return null;
             }
@@ -783,48 +755,24 @@ namespace Meca.ApplicationService.Services
         {
             try
             {
-                Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] Iniciando método Token no WorkshopService");
-                Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] Model recebido: {System.Text.Json.JsonSerializer.Serialize(model)}");
-                Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] _workshopRepository é null: {_workshopRepository == null}");
-
-                // VALIDAÇÃO DEFINITIVA: Verificar se o model não é null
                 if (model == null)
                 {
-                    Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] ERRO: Model é null");
                     CreateNotification("Dados de login inválidos");
                     return null;
                 }
 
-                // VALIDAÇÃO DEFINITIVA: Verificar se o repositório está inicializado
-                if (_workshopRepository == null)
+                // Processar Refresh Token
+                if (!string.IsNullOrEmpty(model.RefreshToken))
                 {
-                    Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] ERRO CRÍTICO: _workshopRepository é null");
-                    throw new InvalidOperationException("WorkshopRepository não inicializado");
-                }
-
-                // VALIDAÇÃO DEFINITIVA: Verificar se o mapper está inicializado
-                if (_mapper == null)
-                {
-                    Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] ERRO CRÍTICO: _mapper é null");
-                    throw new InvalidOperationException("AutoMapper não inicializado");
-                }
-
-                // PROCESSAMENTO DE REFRESH TOKEN
-                if (string.IsNullOrEmpty(model.RefreshToken) == false)
-                {
-                    Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] Processando RefreshToken");
                     return TokenProviderMiddleware.RefreshToken(model.RefreshToken);
                 }
 
                 var ignoreFields = new List<string>();
 
-                // VALIDAÇÃO DEFINITIVA: Verificar tipo de provider
                 if (model.TypeProvider != TypeProvider.Password)
                 {
-                    Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] Login via Provider: {model.TypeProvider}");
                     if (string.IsNullOrEmpty(model.ProviderId))
                     {
-                        Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] ERRO: ProviderId está vazio");
                         CreateNotification(DefaultMessages.EmptyProviderId);
                         return null;
                     }
@@ -834,116 +782,82 @@ namespace Meca.ApplicationService.Services
                 }
                 else
                 {
-                    Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] Login via Password");
-                    // VALIDAÇÃO DEFINITIVA: Verificar se os dados obrigatórios estão presentes
                     if (string.IsNullOrEmpty(model.Email))
                     {
-                        Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] ERRO: Email está vazio");
                         CreateNotification("Email é obrigatório");
                         return null;
                     }
 
                     if (string.IsNullOrEmpty(model.Password))
                     {
-                        Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] ERRO: Senha está vazia");
                         CreateNotification("Senha é obrigatória");
                         return null;
                     }
                 }
 
-                // VALIDAÇÃO DEFINITIVA: Verificar se o model é válido
                 if (ModelIsValid(model, ignoredFields: [.. ignoreFields]) == false)
                 {
-                    Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] ERRO: Model não é válido");
                     return null;
                 }
 
-                Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] Model validado com sucesso");
-
                 var claimRole = Util.SetRole(TypeProfile.Workshop);
-                Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] ClaimRole definido: {claimRole.Type} = {claimRole.Value}");
 
                 Workshop workshopEntity;
                 
-                // BUSCA DEFINITIVA: Buscar workshop no banco de dados
                 if (model.TypeProvider != TypeProvider.Password)
                 {
-                    Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] Buscando workshop por ProviderId: {model.ProviderId}");
                     workshopEntity = await _workshopRepository.FindOneByAsync(x => x.ProviderId == model.ProviderId)
                         .ConfigureAwait(false);
                 }
                 else
                 {
-                    Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] Buscando workshop por Email: {model.Email}");
                     var hashedPassword = Utilities.GerarHashMd5(model.Password);
-                    Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] Senha hash gerada: {hashedPassword}");
-                    
                     workshopEntity = await _workshopRepository
                       .FindOneByAsync(x => x.Email == model.Email && x.Password == hashedPassword).ConfigureAwait(false);
                 }
 
-                Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] Workshop encontrado: {(workshopEntity == null ? "NULL" : "NOT NULL")}");
-
-                // VALIDAÇÃO DEFINITIVA: Verificar se o workshop foi encontrado
                 if (workshopEntity == null)
                 {
-                    Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] ERRO: Workshop não encontrado");
                     CreateNotification(DefaultMessages.WorkshopNotFound);
                     return null;
                 }
 
-                Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] Workshop ID: {workshopEntity._id}");
-                Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] Workshop CompanyName: {workshopEntity.CompanyName}");
-                Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] Workshop Email: {workshopEntity.Email}");
-                Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] Workshop Disabled: {workshopEntity.Disabled}");
-                Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] Workshop DataBlocked: {workshopEntity.DataBlocked}");
-                Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] Workshop Status: {workshopEntity.Status}");
-
-                // VALIDAÇÃO DEFINITIVA: Verificar se o workshop está desabilitado
+                // Verificar se o workshop está desabilitado
                 if (workshopEntity.Disabled != null)
                 {
-                    Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] ERRO: Workshop está desabilitado");
                     CreateNotification(DefaultMessages.WorkshopNotFound);
                     return null;
                 }
 
-                // VALIDAÇÃO DEFINITIVA: Verificar se o workshop está bloqueado
+                // Verificar se o workshop está bloqueado
                 if (workshopEntity.DataBlocked != null)
                 {
-                    Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] ERRO: Workshop está bloqueado");
                     var reason = string.IsNullOrEmpty(workshopEntity.Reason) ? "Motivo não informado" : workshopEntity.Reason;
                     CreateNotification(string.Format(DefaultMessages.AccessBlockedWithReason, reason));
                     return null;
                 }
 
-                // VALIDAÇÃO DEFINITIVA: Verificar status do workshop
+                // Verificar status do workshop
                 if (workshopEntity.Status != WorkshopStatus.Approved)
                 {
-                    Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] ERRO: Workshop não está aprovado. Status: {workshopEntity.Status}");
                     var message = workshopEntity.Status == WorkshopStatus.AwaitingApproval ? 
                         DefaultMessages.AwaitApproval : DefaultMessages.UserAdministratorBlocked;
                     CreateNotification(message);
                     return null;
                 }
 
-                Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] Workshop validado com sucesso");
-
-                // GERAÇÃO DEFINITIVA: Gerar token JWT
+                // Gerar token JWT
                 var claims = new Claim[]
                 {
                     claimRole,
                 };
 
-                Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] Gerando token JWT para ID: {workshopEntity._id}");
                 var token = TokenProviderMiddleware.GenerateToken(workshopEntity._id.ToString(), false, claims);
                 
-                Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] Token gerado com sucesso");
                 return token;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] ERRO GERAL: {ex.Message}");
-                Console.WriteLine($"[WORKSHOP_SERVICE_TOKEN_DEBUG] Stack trace: {ex.StackTrace}");
                 throw;
             }
         }
@@ -1373,153 +1287,82 @@ namespace Meca.ApplicationService.Services
         {
             try
             {
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] ===== INICIANDO UPDATE DATA BANK =====");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] ID recebido: '{id}'");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Model recebido: {System.Text.Json.JsonSerializer.Serialize(model)}");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Model é null: {model == null}");
-
-                // VALIDAÇÃO DEFINITIVA: Verificar se o model não é null
                 if (model == null)
                 {
-                    Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] ERRO CRÍTICO: Model é null");
                     CreateNotification("Dados bancários inválidos");
                     return null;
                 }
 
-                // VALIDAÇÃO DEFINITIVA: Verificar se o repositório está inicializado
-                if (_workshopRepository == null)
-                {
-                    Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] ERRO CRÍTICO: _workshopRepository é null");
-                    throw new InvalidOperationException("WorkshopRepository não inicializado");
-                }
-
-                // VALIDAÇÃO DEFINITIVA: Verificar se o access está inicializado
-                if (_access == null)
-                {
-                    Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] ERRO CRÍTICO: _access é null");
-                    throw new InvalidOperationException("Access não inicializado");
-                }
-
-                // LOGS DETALHADOS DOS DADOS RECEBIDOS
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Dados do model:");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - AccountableName: '{model.AccountableName}'");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - AccountableCpf: '{model.AccountableCpf}'");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - BankAccount: '{model.BankAccount}'");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - BankAgency: '{model.BankAgency}'");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - Bank: '{model.Bank}'");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - BankName: '{model.BankName}'");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - BankCnpj: '{model.BankCnpj}'");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - TypeAccount: {model.TypeAccount}");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - PersonType: {model.PersonType}");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - HasDataBank: {model.HasDataBank}");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - DataBankStatus: {model.DataBankStatus}");
-
-                // VALIDAÇÃO DEFINITIVA: Verificar campos obrigatórios
+                // Verificar campos obrigatórios
                 if (string.IsNullOrEmpty(model.AccountableName))
                 {
-                    Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] ERRO: AccountableName está vazio");
                     CreateNotification("Nome do titular é obrigatório");
                     return null;
                 }
 
                 if (string.IsNullOrEmpty(model.BankAccount))
                 {
-                    Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] ERRO: BankAccount está vazio");
                     CreateNotification("Conta bancária é obrigatória");
                     return null;
                 }
 
                 if (string.IsNullOrEmpty(model.BankAgency))
                 {
-                    Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] ERRO: BankAgency está vazio");
                     CreateNotification("Agência bancária é obrigatória");
                     return null;
                 }
 
                 if (string.IsNullOrEmpty(model.Bank))
                 {
-                    Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] ERRO: Bank está vazio");
                     CreateNotification("Código do banco é obrigatório");
                     return null;
                 }
 
-                // VALIDAÇÃO DEFINITIVA: Verificar tipo de pessoa
+                // Verificar tipo de pessoa
                 var ignoreField = new List<string>();
                 if (model.PersonType == TypePersonBank.PhysicalPerson)
                 {
-                    Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Pessoa física - ignorando BankCnpj");
                     ignoreField.Add(nameof(model.BankCnpj));
                     
                     if (string.IsNullOrEmpty(model.AccountableCpf))
                     {
-                        Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] ERRO: AccountableCpf está vazio para pessoa física");
                         CreateNotification("CPF é obrigatório para pessoa física");
                         return null;
                     }
                 }
                 else
                 {
-                    Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Pessoa jurídica - validando BankCnpj");
                     if (string.IsNullOrEmpty(model.BankCnpj))
                     {
-                        Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] ERRO: BankCnpj está vazio para pessoa jurídica");
                         CreateNotification("CNPJ é obrigatório para pessoa jurídica");
                         return null;
                     }
                 }
 
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Campos ignorados na validação: {string.Join(", ", ignoreField)}");
-
-                // VALIDAÇÃO DEFINITIVA: Verificar se o model é válido
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Validando modelo...");
+                // Validar modelo
                 if (ModelIsValid(model, true, ignoredFields: ignoreField.ToArray()) == false)
                 {
-                    Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] ERRO: ModelIsValid retornou false");
                     return null;
                 }
-                
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Model validado com sucesso");
 
-                // VALIDAÇÃO DEFINITIVA: Verificar tipo de token
+                // Verificar tipo de token
                 var userId = id;
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] UserId: '{userId}'");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] _access.TypeToken: {_access.TypeToken}");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] TypeProfile.Workshop: {(int)TypeProfile.Workshop}");
 
                 if (_access.TypeToken != (int)TypeProfile.Workshop)
                 {
-                    Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] ERRO: Tipo de token inválido: {_access.TypeToken}");
                     CreateNotification(DefaultMessages.InvalidCredentials);
                     return null;
                 }
 
-                // BUSCA DEFINITIVA: Buscar workshop no banco de dados
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Buscando workshop no banco...");
+                // Buscar workshop no banco de dados
                 var workshopEntity = await _workshopRepository.FindByIdAsync(userId);
                 if (workshopEntity == null)
                 {
-                    Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] ERRO: Workshop não encontrado para ID: {userId}");
                     CreateNotification(DefaultMessages.WorkshopNotFound);
                     return null;
                 }
 
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Workshop encontrado: {workshopEntity.GetStringId()}");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] ExternalId atual: {workshopEntity.ExternalId}");
-
-                // CORREÇÃO: Remover toda a lógica do Stripe que está causando problemas
-                // O Stripe não é mais usado, então vamos pular essas operações
-                Console.WriteLine("[UPDATE_DATA_BANK_DEBUG] Pulando operações Stripe (Stripe removido)...");
-
-                // SALVAMENTO DEFINITIVO: Salvar dados no MongoDB
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Salvando dados no MongoDB...");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Dados antes do salvamento:");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - AccountableName: {workshopEntity.AccountableName}");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - BankAccount: {workshopEntity.BankAccount}");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - BankAgency: {workshopEntity.BankAgency}");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - Bank: {workshopEntity.Bank}");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - BankName: {workshopEntity.BankName}");
-
-                // MAPEAMENTO DEFINITIVO: Mapear dados do model para a entidade
+                // Mapear dados do model para a entidade
                 workshopEntity.AccountableName = model.AccountableName;
                 workshopEntity.AccountableCpf = model.AccountableCpf;
                 workshopEntity.BankAccount = model.BankAccount;
@@ -1531,109 +1374,21 @@ namespace Meca.ApplicationService.Services
                 workshopEntity.PersonType = model.PersonType;
                 workshopEntity.DataBankStatus = model.DataBankStatus;
 
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Dados após o mapeamento:");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - AccountableName: {workshopEntity.AccountableName}");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - BankAccount: {workshopEntity.BankAccount}");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - BankAgency: {workshopEntity.BankAgency}");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - Bank: {workshopEntity.Bank}");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] - BankName: {workshopEntity.BankName}");
-
-                // DEFINIÇÃO DEFINITIVA: Definir HasDataBank baseado nos dados salvos
+                // Definir HasDataBank baseado nos dados salvos
                 workshopEntity.HasDataBank = !string.IsNullOrEmpty(workshopEntity.AccountableName) && 
                                            !string.IsNullOrEmpty(workshopEntity.BankAccount) && 
                                            !string.IsNullOrEmpty(workshopEntity.BankAgency);
 
-                // CORREÇÃO: Definir DataBankStatus padrão (Stripe removido)
+                // Definir DataBankStatus padrão
                 workshopEntity.DataBankStatus = DataBankStatus.Uninformed;
 
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] HasDataBank definido como: {workshopEntity.HasDataBank}");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] DataBankStatus definido como: {workshopEntity.DataBankStatus}");
-
-                // SALVAMENTO DEFINITIVO: Salvar workshop no MongoDB
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Salvando workshop no MongoDB...");
+                // Salvar workshop no MongoDB
                 await _workshopRepository.UpdateAsync(workshopEntity);
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Workshop salvo com sucesso no MongoDB");
 
-                // INTEGRAÇÃO COM PAGBANK: Criar conta no PagBank
-                if (_pagBankService != null && workshopEntity.HasDataBank)
-                {
-                    try
-                    {
-                        Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Criando conta no PagBank...");
-                        
-                        var pagBankRequest = new PagBankAccountRequest
-                        {
-                            Name = workshopEntity.CompanyName ?? workshopEntity.FullName,
-                            Email = workshopEntity.Email,
-                            Document = workshopEntity.Cnpj ?? workshopEntity.AccountableCpf,
-                            Type = !string.IsNullOrEmpty(workshopEntity.Cnpj) ? "company" : "individual",
-                            Address = new PagBankAddressRequest
-                            {
-                                Street = workshopEntity.StreetAddress,
-                                Number = workshopEntity.Number,
-                                Complement = workshopEntity.Complement,
-                                Neighborhood = workshopEntity.Neighborhood,
-                                City = workshopEntity.CityName,
-                                State = workshopEntity.StateName,
-                                ZipCode = workshopEntity.ZipCode,
-                                Country = "BR"
-                            },
-                            Phone = new PagBankPhoneRequest
-                            {
-                                Country = "55",
-                                Area = workshopEntity.Phone?.Substring(0, 2),
-                                Number = workshopEntity.Phone?.Substring(2)
-                            }
-                        };
-
-                        var pagBankResult = await _pagBankService.CreateAccountAsync(pagBankRequest);
-                        
-                        if (pagBankResult.Success)
-                        {
-                            Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Conta PagBank criada com sucesso: {pagBankResult.Data?.Id}");
-                            
-                            // Criar conta bancária no PagBank
-                            var bankAccountRequest = new PagBankBankAccountRequest
-                            {
-                                AccountNumber = workshopEntity.BankAccount,
-                                BankCode = workshopEntity.Bank,
-                                AgencyNumber = workshopEntity.BankAgency,
-                                HolderName = workshopEntity.AccountableName,
-                                HolderType = workshopEntity.PersonType == 0 ? "individual" : "company"
-                            };
-
-                            var bankAccountResult = await _pagBankService.CreateBankAccountAsync(pagBankResult.Data.Id, bankAccountRequest);
-                            
-                            if (bankAccountResult.Success)
-                            {
-                                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] Conta bancária PagBank criada com sucesso: {bankAccountResult.Data?.Id}");
-                                workshopEntity.ExternalId = pagBankResult.Data.Id; // Salvar ID da conta PagBank
-                                await _workshopRepository.UpdateAsync(workshopEntity);
-                            }
-                            else
-                            {
-                                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] ERRO ao criar conta bancária PagBank: {bankAccountResult.ErrorMessage}");
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] ERRO ao criar conta PagBank: {pagBankResult.ErrorMessage}");
-                        }
-                    }
-                    catch (Exception pagBankEx)
-                    {
-                        Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] ERRO na integração PagBank: {pagBankEx.Message}");
-                        // Não falhar o processo por causa do PagBank
-                    }
-                }
-
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] ===== UPDATE DATA BANK CONCLUÍDO COM SUCESSO =====");
                 return "Dados bancários atualizados com sucesso";
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] ERRO CRÍTICO no UpdateDataBank: {ex.Message}");
-                Console.WriteLine($"[UPDATE_DATA_BANK_DEBUG] StackTrace: {ex.StackTrace}");
                 throw;
             }
         }
@@ -1642,36 +1397,15 @@ namespace Meca.ApplicationService.Services
         {
             try
             {
-                Console.WriteLine($"[GET_DATA_BANK_DEBUG] ===== INICIANDO GET DATA BANK =====");
-                Console.WriteLine($"[GET_DATA_BANK_DEBUG] ID recebido: '{id}'");
-                
-                // VALIDAÇÃO CRÍTICA: Verificar se o repositório está inicializado
-                if (_workshopRepository == null)
-                {
-                    Console.WriteLine("[GET_DATA_BANK_DEBUG] ERRO CRÍTICO: _workshopRepository é null");
-                    throw new InvalidOperationException("WorkshopRepository não inicializado");
-                }
-                
-                // VALIDAÇÃO CRÍTICA: Verificar se o httpContextAccessor está inicializado
-                if (_httpContextAccessor == null)
-                {
-                    Console.WriteLine("[GET_DATA_BANK_DEBUG] ERRO CRÍTICO: _httpContextAccessor é null");
-                    throw new InvalidOperationException("HttpContextAccessor não inicializado");
-                }
-                Console.WriteLine($"[GET_DATA_BANK_DEBUG] Iniciando GetDataBank para ID: '{id}'");
-                
                 // Se _access é null, tentar redefinir o acesso
                 if (_access == null)
                 {
-                    Console.WriteLine("[GET_DATA_BANK_DEBUG] _access é null, tentando redefinir...");
                     if (_httpContextAccessor != null && _httpContextAccessor.HttpContext != null)
                     {
-                        SetAccess(_httpContextAccessor);
-                        Console.WriteLine($"[GET_DATA_BANK_DEBUG] _access redefinido. UserId: '{_access?.UserId}', TypeToken: {_access?.TypeToken}");
+                        _access = SetAccess(_httpContextAccessor);
                     }
                     else
                     {
-                        Console.WriteLine("[GET_DATA_BANK_DEBUG] ERRO: _httpContextAccessor ou HttpContext é null");
                         CreateNotification(DefaultMessages.DefaultError);
                         return null;
                     }
@@ -1680,27 +1414,20 @@ namespace Meca.ApplicationService.Services
                 // Se ainda é null após tentar redefinir
                 if (_access == null)
                 {
-                    Console.WriteLine("[GET_DATA_BANK_DEBUG] ERRO: _access ainda é null após redefinir");
                     CreateNotification(DefaultMessages.DefaultError);
                     return null;
                 }
                 
-                Console.WriteLine($"[GET_DATA_BANK_DEBUG] _access.UserId: '{_access?.UserId}'");
-                Console.WriteLine($"[GET_DATA_BANK_DEBUG] _access.TypeToken: {_access?.TypeToken}");
-                
                 id = string.IsNullOrEmpty(id) ? _access?.UserId : id;
-                Console.WriteLine($"[GET_DATA_BANK_DEBUG] ID final para busca: '{id}'");
 
                 if (string.IsNullOrEmpty(id))
                 {
-                    Console.WriteLine("[GET_DATA_BANK_DEBUG] ERRO: ID é null ou vazio após determinação");
                     CreateNotification(DefaultMessages.InvalidIdentifier);
                     return null;
                 }
 
                 if (_access?.TypeToken == null || (_access.TypeToken != (int)TypeProfile.Workshop && _access.TypeToken != (int)TypeProfile.UserAdministrator))
                 {
-                    Console.WriteLine($"[GET_DATA_BANK_DEBUG] ERRO: Tipo de token inválido: {_access?.TypeToken}");
                     CreateNotification(DefaultMessages.NotPermission);
                     return null;
                 }
@@ -1710,51 +1437,17 @@ namespace Meca.ApplicationService.Services
                     CreateNotification(DefaultMessages.InvalidIdentifier);
                     return null;
                 }
-
-                Console.WriteLine($"[GET_DATA_BANK_DEBUG] Verificando _workshopRepository: {_workshopRepository != null}");
-                Console.WriteLine($"[GET_DATA_BANK_DEBUG] Verificando _mapper: {_mapper != null}");
-                
-                if (_workshopRepository == null)
-                {
-                    Console.WriteLine("[GET_DATA_BANK_DEBUG] ERRO: _workshopRepository é null");
-                    CreateNotification(DefaultMessages.DefaultError);
-                    return null;
-                }
-                
-                if (_mapper == null)
-                {
-                    Console.WriteLine("[GET_DATA_BANK_DEBUG] ERRO: _mapper é null");
-                    CreateNotification(DefaultMessages.DefaultError);
-                    return null;
-                }
                 
                 var workshopEntity = await _workshopRepository.FindByIdAsync(id);
-                Console.WriteLine($"[GET_DATA_BANK_DEBUG] Workshop encontrado: {workshopEntity != null}");
 
                 if (workshopEntity == null)
                 {
-                    Console.WriteLine("[GET_DATA_BANK_DEBUG] Workshop não encontrado");
                     CreateNotification(DefaultMessages.WorkshopNotFound);
                     return null;
                 }
 
-                Console.WriteLine($"[GET_DATA_BANK_DEBUG] Workshop ID: {workshopEntity._id}");
-                Console.WriteLine($"[GET_DATA_BANK_DEBUG] Workshop CompanyName: {workshopEntity.CompanyName}");
-
-                // CORREÇÃO: Remover verificação do Stripe que está causando null reference
-                // O Stripe não é mais usado, então vamos definir um status padrão
-                Console.WriteLine("[GET_DATA_BANK_DEBUG] Definindo DataBankStatus padrão (Stripe removido)...");
+                // Definir DataBankStatus padrão
                 workshopEntity.DataBankStatus = DataBankStatus.Uninformed;
-
-                Console.WriteLine("[GET_DATA_BANK_DEBUG] Fazendo mapeamento manual...");
-                
-                // Verificar se o ID é válido
-                if (workshopEntity._id == null)
-                {
-                    Console.WriteLine("[GET_DATA_BANK_DEBUG] ERRO: Workshop ID é null");
-                    CreateNotification("ID da oficina inválido");
-                    return null;
-                }
                 
                 // Mapeamento manual para evitar problemas com AutoMapper
                 var response = new DataBankViewModel
@@ -1771,14 +1464,11 @@ namespace Meca.ApplicationService.Services
                     DataBankStatus = workshopEntity.DataBankStatus,
                     HasDataBank = workshopEntity.HasDataBank
                 };
-                Console.WriteLine($"[GET_DATA_BANK_DEBUG] Mapeamento manual concluído: {response != null}");
 
                 return response;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[GET_DATA_BANK_DEBUG] ERRO no GetDataBank: {ex.Message}");
-                Console.WriteLine($"[GET_DATA_BANK_DEBUG] StackTrace: {ex.StackTrace}");
                 throw;
             }
         }
