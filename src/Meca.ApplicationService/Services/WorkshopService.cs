@@ -1469,7 +1469,9 @@ namespace Meca.ApplicationService.Services
             }
             catch (Exception ex)
             {
-                throw;
+                Console.WriteLine($"[GET_DATA_BANK_ERROR] Erro ao buscar dados bancários: {ex.Message}");
+                CreateNotification("Erro ao buscar dados bancários");
+                return null;
             }
         }
 
