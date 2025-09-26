@@ -111,7 +111,7 @@ namespace Meca.ApplicationService.Services
 
                 Console.WriteLine($"[GetWorkshopAgenda] DEBUG: Workshop encontrado: {workshopEntity.GetStringId()}");
 
-                var workshopAgendaEntity = await _workshopAgendaRepository.FindOneByAsync(x => x.Workshop.Id == workshopEntity.GetStringId());
+                var workshopAgendaEntity = await _workshopAgendaRepository.FindOneByAsync(x => x.Workshop.Id == workshopEntity._id.ToString());
 
                 if (workshopAgendaEntity == null)
                 {
