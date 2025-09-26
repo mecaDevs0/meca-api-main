@@ -135,7 +135,15 @@ namespace Meca.ApplicationService.Services
                 if (!string.IsNullOrEmpty(filterView.WorkshopId))
                 {
                     Console.WriteLine($"[SCHEDULING_DEBUG] WorkshopId fornecido: {filterView.WorkshopId}");
-                    conditions.Add(builder.Eq(x => x.Workshop.Id, filterView.WorkshopId));
+                    if (ObjectId.TryParse(filterView.WorkshopId, out ObjectId workshopObjectId))
+                    {
+                        conditions.Add(builder.Eq(x => x.Workshop.Id, workshopObjectId));
+                    }
+                    else
+                    {
+                        CreateNotification(DefaultMessages.InvalidIdentifier);
+                        return new List<T>();
+                    }
                 }
 
                 // Filtro por data

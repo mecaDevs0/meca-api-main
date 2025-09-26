@@ -155,7 +155,15 @@ namespace Meca.ApplicationService.Services
 
             if (string.IsNullOrEmpty(filterView.WorkshopId) == false)
             {
-                conditions.Add(builder.Eq(x => x.Workshop.Id, filterView.WorkshopId));
+                if (ObjectId.TryParse(filterView.WorkshopId, out ObjectId workshopObjectId))
+                {
+                    conditions.Add(builder.Eq(x => x.Workshop.Id, workshopObjectId));
+                }
+                else
+                {
+                    CreateNotification(DefaultMessages.InvalidIdentifier);
+                    return new List<T>();
+                }
             }
 
             if (string.IsNullOrEmpty(filterView.WorkshopId) == true && (int)_access.TypeToken == (int)TypeProfile.Workshop)
