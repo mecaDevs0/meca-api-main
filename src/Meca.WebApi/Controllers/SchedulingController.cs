@@ -436,6 +436,116 @@ namespace Meca.WebApi.Controllers
         }
 
         /// <summary>
+        /// AGENDAMENTO - BUSCAR AGENDAMENTOS POR OFICINA (MECA-APP-CLIENTE)
+        /// </summary>
+        /// <response code="200">Returns success</response>
+        /// <response code="400">Custom Error</response>
+        /// <response code="401">Unauthorize Error</response>
+        /// <response code="500">Exception Error</response>
+        /// <returns></returns>
+        [HttpGet("GetByWorkshop/{workshopId}")]
+        [AllowAnonymous]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ReturnGenericViewModel<List<SchedulingViewModel>>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetByWorkshop([FromRoute] string workshopId)
+        {
+            try
+            {
+                Console.WriteLine($"[SCHEDULING_DEBUG] Buscando agendamentos para oficina: {workshopId}");
+                
+                if (string.IsNullOrEmpty(workshopId))
+                {
+                    return BadRequest(Utilities.ReturnErro("ID da oficina não informado"));
+                }
+
+                if (ObjectId.TryParse(workshopId, out var _id) == false)
+                {
+                    return BadRequest(Utilities.ReturnErro("ID da oficina inválido"));
+                }
+
+                var builder = Builders<Scheduling>.Filter;
+                var filter = builder.Eq(x => x.Workshop.Id, workshopId);
+                
+                var schedulings = await _schedulingRepository.FindByAsync(filter, 
+                    Builders<Scheduling>.Sort.Descending(nameof(Scheduling.Created)));
+                
+                Console.WriteLine($"[SCHEDULING_DEBUG] Encontrados {schedulings.Count()} agendamentos");
+                
+                var response = _mapper.Map<List<SchedulingViewModel>>(schedulings);
+                
+                return Ok(Utilities.ReturnSuccess(data: response));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[SCHEDULING_ERROR] Erro ao buscar agendamentos: {ex.Message}");
+                return BadRequest(ex.ReturnErro());
+            }
+        }
+
+        /// <summary>
+        /// AGENDAMENTO - BUSCAR HORÁRIOS DISPONÍVEIS POR OFICINA (MECA-APP-CLIENTE)
+        /// </summary>
+        /// <response code="200">Returns success</response>
+        /// <response code="400">Custom Error</response>
+        /// <response code="401">Unauthorize Error</response>
+        /// <response code="500">Exception Error</response>
+        /// <returns></returns>
+        [HttpGet("GetAvailableTimes/{workshopId}")]
+        [AllowAnonymous]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ReturnGenericViewModel<List<AvailableTimeViewModel>>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetAvailableTimes([FromRoute] string workshopId, [FromQuery] DateTime? date = null)
+        {
+            try
+            {
+                Console.WriteLine($"[SCHEDULING_DEBUG] Buscando horários disponíveis para oficina: {workshopId}, data: {date}");
+                
+                if (string.IsNullOrEmpty(workshopId))
+                {
+                    return BadRequest(Utilities.ReturnErro("ID da oficina não informado"));
+                }
+
+                if (ObjectId.TryParse(workshopId, out var _id) == false)
+                {
+                    return BadRequest(Utilities.ReturnErro("ID da oficina inválido"));
+                }
+
+                // Se não foi informada data, usar hoje
+                var targetDate = date ?? DateTime.Today;
+                
+                // Gerar horários disponíveis (8h às 18h, de hora em hora)
+                var availableTimes = new List<AvailableTimeViewModel>();
+                
+                for (int hour = 8; hour <= 18; hour++)
+                {
+                    var timeSlot = new DateTime(targetDate.Year, targetDate.Month, targetDate.Day, hour, 0, 0);
+                    
+                    availableTimes.Add(new AvailableTimeViewModel
+                    {
+                        Time = timeSlot,
+                        Available = true,
+                        FormattedTime = timeSlot.ToString("HH:mm")
+                    });
+                }
+                
+                Console.WriteLine($"[SCHEDULING_DEBUG] Gerados {availableTimes.Count} horários disponíveis");
+                
+                return Ok(Utilities.ReturnSuccess(data: availableTimes));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[SCHEDULING_ERROR] Erro ao buscar horários disponíveis: {ex.Message}");
+                return BadRequest(ex.ReturnErro());
+            }
+        }
+
+        /// <summary>
         /// AGENDAMENTO - METODO PARA APROVAR/REPROVAR ORÇAMENTO (USUÁRIO)
         /// </summary>
         /// <response code="200">Returns success</response>
