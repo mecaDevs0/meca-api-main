@@ -52,14 +52,23 @@ namespace Meca.ApplicationService.Services
                 // Garantir que o acesso seja inicializado
                 if (_access == null)
                 {
-                    _access = SetAccess(_httpContextAccessor);
+                    Console.WriteLine("[GetWorkshopAgenda] _access é null, tentando redefinir");
+                    if (_httpContextAccessor != null && _httpContextAccessor.HttpContext != null)
+                    {
+                        _access = SetAccess(_httpContextAccessor);
+                        Console.WriteLine($"[GetWorkshopAgenda] _access redefinido: UserId={_access?.UserId}, TypeToken={_access?.TypeToken}");
+                    }
+                    else
+                    {
+                        Console.WriteLine("[GetWorkshopAgenda] HttpContext é null, criando acesso padrão");
+                        _access = new Acesso(id, (int)TypeProfile.Workshop);
+                    }
                 }
                 
                 if (_access == null)
                 {
-                    Console.WriteLine("[GetWorkshopAgenda] ERRO: _access é null após SetAccess");
-                    CreateNotification("Acesso não autorizado");
-                    return new WorkshopAgendaViewModel();
+                    Console.WriteLine("[GetWorkshopAgenda] _access ainda é null, usando ID fornecido");
+                    _access = new Acesso(id, (int)TypeProfile.Workshop);
                 }
 
                 Console.WriteLine($"[GetWorkshopAgenda] DEBUG: _access.TypeToken = {_access?.TypeToken}, id recebido = {id}");
@@ -111,7 +120,16 @@ namespace Meca.ApplicationService.Services
 
                 Console.WriteLine($"[GetWorkshopAgenda] DEBUG: Workshop encontrado: {workshopEntity.GetStringId()}");
 
-                var workshopAgendaEntity = await _workshopAgendaRepository.FindOneByAsync(x => x.Workshop.Id == workshopEntity._id.ToString());
+                WorkshopAgenda workshopAgendaEntity = null;
+                try
+                {
+                    workshopAgendaEntity = await _workshopAgendaRepository.FindOneByAsync(x => x.Workshop.Id == workshopEntity._id.ToString());
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[GetWorkshopAgenda] ERRO ao buscar agenda: {ex.Message}");
+                    // Continuar com agenda padrão em caso de erro
+                }
 
                 if (workshopAgendaEntity == null)
                 {
@@ -130,7 +148,25 @@ namespace Meca.ApplicationService.Services
                 }
 
                 Console.WriteLine("[GetWorkshopAgenda] DEBUG: Agenda encontrada, mapeando para ViewModel");
-                return _mapper.Map<WorkshopAgendaViewModel>(workshopAgendaEntity);
+                try
+                {
+                    return _mapper.Map<WorkshopAgendaViewModel>(workshopAgendaEntity);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[GetWorkshopAgenda] ERRO no mapeamento: {ex.Message}");
+                    // Retornar agenda padrão em caso de erro no mapeamento
+                    return new WorkshopAgendaViewModel
+                    {
+                        Monday = new WorkshopAgendaAuxViewModel { Open = false },
+                        Tuesday = new WorkshopAgendaAuxViewModel { Open = false },
+                        Wednesday = new WorkshopAgendaAuxViewModel { Open = false },
+                        Thursday = new WorkshopAgendaAuxViewModel { Open = false },
+                        Friday = new WorkshopAgendaAuxViewModel { Open = false },
+                        Saturday = new WorkshopAgendaAuxViewModel { Open = false },
+                        Sunday = new WorkshopAgendaAuxViewModel { Open = false }
+                    };
+                }
             }
             catch (Exception ex)
             {

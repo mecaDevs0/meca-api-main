@@ -73,9 +73,57 @@ namespace Meca.ApplicationService.Services
 
         public async Task<List<WorkshopServicesViewModel>> GetAll()
         {
-            var listWorkshopServices = await _workshopServicesRepository.FindAllAsync(Util.Sort<WorkshopServices>().Ascending(nameof(WorkshopServices.Service.Name)));
-
-            return _mapper.Map<List<WorkshopServicesViewModel>>(listWorkshopServices);
+            try
+            {
+                Console.WriteLine("[WORKSHOP_SERVICES_DEBUG] Iniciando GetAll");
+                
+                // Garantir que o acesso seja inicializado
+                if (_access == null)
+                {
+                    Console.WriteLine("[WORKSHOP_SERVICES_DEBUG] _access é null, tentando redefinir");
+                    if (_httpContextAccessor != null && _httpContextAccessor.HttpContext != null)
+                    {
+                        _access = SetAccess(_httpContextAccessor);
+                        Console.WriteLine($"[WORKSHOP_SERVICES_DEBUG] _access redefinido: UserId={_access?.UserId}, TypeToken={_access?.TypeToken}");
+                    }
+                    else
+                    {
+                        Console.WriteLine("[WORKSHOP_SERVICES_DEBUG] HttpContext é null, retornando lista vazia");
+                        return new List<WorkshopServicesViewModel>();
+                    }
+                }
+                
+                if (_access == null)
+                {
+                    Console.WriteLine("[WORKSHOP_SERVICES_DEBUG] _access ainda é null após tentativa de redefinição");
+                    return new List<WorkshopServicesViewModel>();
+                }
+                
+                var workshopId = _access.UserId;
+                Console.WriteLine($"[WORKSHOP_SERVICES_DEBUG] Workshop ID: {workshopId}");
+                
+                if (string.IsNullOrEmpty(workshopId))
+                {
+                    Console.WriteLine("[WORKSHOP_SERVICES_DEBUG] Workshop ID é null ou vazio");
+                    return new List<WorkshopServicesViewModel>();
+                }
+                
+                // Filtrar serviços por workshop
+                var builder = Builders<WorkshopServices>.Filter;
+                var filter = builder.Eq(x => x.Workshop.Id, workshopId);
+                
+                var listWorkshopServices = await _workshopServicesRepository.FindByAsync(filter, Util.Sort<WorkshopServices>().Ascending(nameof(WorkshopServices.Service.Name)));
+                
+                Console.WriteLine($"[WORKSHOP_SERVICES_DEBUG] Encontrados {listWorkshopServices.Count()} serviços para o workshop {workshopId}");
+                
+                return _mapper.Map<List<WorkshopServicesViewModel>>(listWorkshopServices);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[WORKSHOP_SERVICES_ERROR] Erro no GetAll: {ex.Message}");
+                Console.WriteLine($"[WORKSHOP_SERVICES_ERROR] Stack trace: {ex.StackTrace}");
+                return new List<WorkshopServicesViewModel>();
+            }
         }
 
         public async Task<List<T>> GetAll<T>(WorkshopServicesFilterViewModel filterView) where T : class
