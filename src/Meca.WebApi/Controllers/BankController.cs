@@ -57,7 +57,11 @@ namespace Meca.WebApi.Controllers
         {
             try
             {
+                Console.WriteLine("[BANK_DEBUG] Iniciando busca de bancos");
+                
                 var listBank = await _bankRepository.FindAllAsync(Builders<Bank>.Sort.Ascending(nameof(Bank.Name))).ConfigureAwait(false);
+                
+                Console.WriteLine($"[BANK_DEBUG] Encontrados {listBank.Count()} bancos no banco de dados");
 
                 // Remover duplicatas por nome, mantendo apenas o primeiro (código principal)
                 var uniqueBanks = listBank
@@ -65,11 +69,25 @@ namespace Meca.WebApi.Controllers
                     .Select(g => g.First())
                     .OrderBy(b => b.Name)
                     .ToList();
+                
+                Console.WriteLine($"[BANK_DEBUG] {uniqueBanks.Count} bancos únicos após remoção de duplicatas");
 
-                return Ok(Utilities.ReturnSuccess(data: _mapper.Map<List<BankViewModel>>(uniqueBanks)));
+                // Mapeamento manual para evitar problemas com AutoMapper
+                var bankViewModels = uniqueBanks.Select(b => new BankViewModel
+                {
+                    Id = b._id?.ToString() ?? "",
+                    Code = b.Code ?? "",
+                    Name = b.Name ?? ""
+                }).ToList();
+
+                Console.WriteLine($"[BANK_DEBUG] Mapeamento concluído com sucesso");
+                
+                return Ok(Utilities.ReturnSuccess(data: bankViewModels));
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"[BANK_ERROR] Erro ao buscar bancos: {ex.Message}");
+                Console.WriteLine($"[BANK_ERROR] Stack trace: {ex.StackTrace}");
                 return BadRequest(ex.ReturnErro());
             }
         }
