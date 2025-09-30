@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using UtilityFramework.Application.Core3.ViewModels;
 
@@ -24,3 +25,4 @@ namespace Meca.Domain.ViewModels
         public string FormattedTime { get; set; }
     }
 }
+
