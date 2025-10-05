@@ -506,7 +506,7 @@ namespace Meca.WebApi.Controllers
                 }
 
                 if (userAdministratorEntity == null)
-                    return BadRequest(Utilities.ReturnErro(DefaultMessages.LoginInUse));
+                    return BadRequest(Utilities.ReturnErro("Login e/ou senha inválidos."));
 
                 if (userAdministratorEntity.DataBlocked != null)
                     return BadRequest(Utilities.ReturnErro(DefaultMessages.UserAdministratorBlocked));

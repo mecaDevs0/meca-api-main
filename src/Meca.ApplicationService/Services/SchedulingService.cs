@@ -378,7 +378,21 @@ namespace Meca.ApplicationService.Services
                 schedulingEntity.Profile = _mapper.Map<ProfileAux>(profileEntity);
                 schedulingEntity.Workshop = _mapper.Map<WorkshopAux>(workshopEntity);
 
+                // Validação robusta de veículo
+                if (model.Vehicle == null || string.IsNullOrEmpty(model.Vehicle.Id))
+                {
+                    Console.WriteLine($"[Register] Veículo não informado no payload");
+                    CreateNotification("Veículo não informado. Por favor, selecione um veículo.");
+                    return null;
+                }
+
                 var vehicleEntity = await _vehicleRepository.FindByIdAsync(model.Vehicle.Id);
+                if (vehicleEntity == null)
+                {
+                    Console.WriteLine($"[Register] Veículo não encontrado - ID: {model.Vehicle.Id}");
+                    CreateNotification("Veículo não encontrado. Por favor, selecione um veículo válido.");
+                    return null;
+                }
 
                 schedulingEntity.Vehicle = _mapper.Map<VehicleAux>(vehicleEntity);
                 
