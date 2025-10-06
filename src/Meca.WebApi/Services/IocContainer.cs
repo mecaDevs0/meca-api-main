@@ -95,13 +95,9 @@ namespace Meca.WebApi.Services
             services.AddScoped(typeof(PagBankPaymentService), typeof(PagBankPaymentService));
             Console.WriteLine($"[IOC_DEBUG] Serviços PagBank registrados");
             
-            /*STRIPE - DESABILITADO PARA MIGRAÇÃO*/
-            // services.AddScoped(typeof(IStripeCustomerService), typeof(StripeCustomerService));
-            // services.AddScoped(typeof(IStripeMarketPlaceService), typeof(StripeMarketPlaceService));
-            // services.AddScoped(typeof(IStripePaymentMethodService), typeof(StripePaymentMethodService));
-            // services.AddScoped(typeof(IStripePaymentIntentService), typeof(StripePaymentIntentService));
-            // services.AddScoped(typeof(IStripeTransferService), typeof(StripeTransferService));
-            Console.WriteLine($"[IOC_DEBUG] Serviços Stripe desabilitados para migração");
+            /*STRIPE - SUBSTITUÍDO POR MOCK DURANTE MIGRAÇÃO PARA PAGBANK*/
+            services.AddScoped(typeof(IStripePaymentIntentService), typeof(StripePaymentIntentMockService));
+            Console.WriteLine($"[IOC_DEBUG] Serviços Stripe substituídos por mock durante migração para PagBank");
 
             /* NOTIFICAÇÕES & EMAIL*/
             services.AddScoped(typeof(ISenderMailService), typeof(SendService));
@@ -113,7 +109,7 @@ namespace Meca.WebApi.Services
             Console.WriteLine($"[IOC_DEBUG] Serviços Firebase registrados");
 
             /*UTILIDADES */
-            // services.AddScoped(typeof(IUtilService), typeof(UtilService)); // Comentado - UtilService não existe
+            services.AddScoped(typeof(IUtilService), typeof(UtilService));
             services.AddScoped(typeof(IHangfireService), typeof(HangfireService));
             services.AddScoped(typeof(IAgoraIOService), typeof(AgoraIOService));
             Console.WriteLine($"[IOC_DEBUG] Serviços de utilidades registrados");
