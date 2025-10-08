@@ -85,8 +85,9 @@ namespace Meca.Domain.AutoMapper
                 .ForMember(dest => dest.TypeAccount, opt => opt.MapFrom(src => src.TypeAccount))
                 .ForMember(dest => dest.PersonType, opt => opt.MapFrom(src => src.PersonType))
                 .ForMember(dest => dest.DataBankStatus, opt => opt.MapFrom(src => src.DataBankStatus));
-            // Adicionar mapeamento para WorkshopAgendaAux
+            // Adicionar mapeamentos para Auxiliaries
             CreateMap<WorkshopAgendaAuxViewModel, WorkshopAgendaAux>().ReverseMap();
+            CreateMap<BaseReferenceAuxViewModel, BaseReferenceAux>().ReverseMap();
             CreateMap<WorkshopAgendaViewModel, WorkshopAgenda>()
                 .ForMember(dest => dest._id, opt => opt.MapFrom(src => ObjectId.Parse(src.Id)));
             CreateMap<VehicleViewModel, Vehicle>()

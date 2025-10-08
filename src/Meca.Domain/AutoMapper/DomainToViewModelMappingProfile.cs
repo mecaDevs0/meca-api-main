@@ -51,6 +51,7 @@ namespace Meca.Domain.AutoMapper
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src._id.ToString()));
             CreateMap<UserAdministratorAux, UserAdministratorAuxViewModel>().ReverseMap();
             CreateMap<UserAdministratorAux, UserAdministrator>().ReverseMap();
+            CreateMap<ProfileAux, ProfileAuxViewModel>().ReverseMap();
             CreateMap<Profile, ProfileViewModel>()
                 .ForMember(dest => dest.Photo, opt => opt.MapFrom(src => src.Photo.SetPhotoProfile(src.ProviderId, null, null, null, null, 600)))
                 .ForMember(dest => dest.Blocked, opt => opt.MapFrom(src => src.DataBlocked != null))

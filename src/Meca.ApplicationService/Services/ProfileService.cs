@@ -35,7 +35,7 @@ namespace Meca.ApplicationService.Services
         private readonly IBusinessBaseAsync<Notification> _notificationRepository;
         private readonly ISenderMailService _senderMailService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IStripeCustomerService _stripeCustomerService;
+        // private readonly IStripeCustomerService _stripeCustomerService;
         private IConfiguration _configuration;
         private readonly IMapper _mapper;
 
@@ -54,8 +54,7 @@ namespace Meca.ApplicationService.Services
             IBusinessBaseAsync<Notification> notificationRepository,
             ISenderMailService senderMailService,
             IHttpContextAccessor httpContextAccessor,
-            IConfiguration configuration,
-            IStripeCustomerService stripeCustomerService)
+            IConfiguration configuration)
         {
             _mapper = mapper;
             _profileRepository = profileRepository;
@@ -63,7 +62,7 @@ namespace Meca.ApplicationService.Services
             _senderMailService = senderMailService;
             _httpContextAccessor = httpContextAccessor;
             _configuration = configuration;
-            _stripeCustomerService = stripeCustomerService;
+            // _stripeCustomerService = stripeCustomerService;
         }
 
         public async Task<List<ProfileViewModel>> GetAll()
@@ -153,7 +152,7 @@ namespace Meca.ApplicationService.Services
                     return null;
                 }
 
-                profileEntity = await SyncProfileWithStripe(profileEntity);
+                // profileEntity = await SyncProfileWithStripe(profileEntity);
 
                 var responseVm = _mapper.Map<ProfileViewModel>(profileEntity);
 
@@ -191,10 +190,10 @@ namespace Meca.ApplicationService.Services
 
                 await _profileRepository.DeleteOneAsync(id);
 
-                if (string.IsNullOrEmpty(profileEntity.ExternalId) == false)
-                {
-                    await _stripeCustomerService.DeleteCustomerAsync(profileEntity.ExternalId);
-                }
+                // if (string.IsNullOrEmpty(profileEntity.ExternalId) == false)
+                // {
+                //     await _stripeCustomerService.DeleteCustomerAsync(profileEntity.ExternalId);
+                // }
 
                 return true;
             }
@@ -224,10 +223,10 @@ namespace Meca.ApplicationService.Services
 
                 await _profileRepository.DeleteOneAsync(profileEntity.GetStringId());
 
-                if (string.IsNullOrEmpty(profileEntity.ExternalId) == false)
-                {
-                    await _stripeCustomerService.DeleteCustomerAsync(profileEntity.ExternalId);
-                }
+                // if (string.IsNullOrEmpty(profileEntity.ExternalId) == false)
+                // {
+                //     await _stripeCustomerService.DeleteCustomerAsync(profileEntity.ExternalId);
+                // }
 
                 return true;
             }
@@ -477,17 +476,22 @@ namespace Meca.ApplicationService.Services
                 var builder = Builders<Data.Entities.Profile>.Filter;
                 var conditions = new List<FilterDefinition<Data.Entities.Profile>> { builder.Where(x => x.Disabled == null) };
 
-                var columns = model.Columns.Where(x => x.Searchable && !string.IsNullOrEmpty(x.Name)).Select(x => x.Name).ToArray();
+                var columns = model.Columns != null 
+                    ? model.Columns.Where(x => x.Searchable && !string.IsNullOrEmpty(x.Name)).Select(x => x.Name).ToArray()
+                    : new string[] { };
 
                 var totalRecords = (int)await _profileRepository.GetCollectionAsync().CountDocumentsAsync(builder.And(conditions));
 
-                var sortBy = Util.MapSort<Data.Entities.Profile>(model.Order, model.Columns, model.SortOrder);
+                var sortBy = (model.Order != null && model.Columns != null) 
+                    ? Util.MapSort<Data.Entities.Profile>(model.Order, model.Columns, model.SortOrder)
+                    : Util.Sort<Data.Entities.Profile>().Ascending(x => x.Created);
 
+                var searchValue = model.Search?.Value ?? "";
                 var result = await _profileRepository
-                   .LoadDataTableAsync(model.Search.Value, sortBy, model.Start, model.Length, conditions, columns);
+                   .LoadDataTableAsync(searchValue, sortBy, model.Start, model.Length, conditions, columns);
 
-                var totalRecordsFiltered = !string.IsNullOrEmpty(model.Search.Value)
-                   ? (int)await _profileRepository.CountSearchDataTableAsync(model.Search.Value, conditions, columns)
+                var totalRecordsFiltered = !string.IsNullOrEmpty(searchValue)
+                   ? (int)await _profileRepository.CountSearchDataTableAsync(searchValue, conditions, columns)
                    : totalRecords;
 
                 response.Data = _mapper.Map<List<ProfileViewModel>>(result);
@@ -796,28 +800,29 @@ namespace Meca.ApplicationService.Services
 
         public async Task<Data.Entities.Profile> SyncProfileWithStripe(Data.Entities.Profile profileEntity)
         {
-            bool needsSync = string.IsNullOrEmpty(profileEntity.ExternalId)
-                          || profileEntity.LastSyncStripe < profileEntity.LastUpdate;
+            // bool needsSync = string.IsNullOrEmpty(profileEntity.ExternalId)
+            //               || profileEntity.LastSyncStripe < profileEntity.LastUpdate;
 
-            if (!needsSync) return profileEntity;
+            // if (!needsSync) return profileEntity;
 
-            var customerRequest = profileEntity.MapStripeCustomerRequest();
-            bool hasAccount = !string.IsNullOrEmpty(profileEntity.ExternalId);
+            // var customerRequest = profileEntity.MapStripeCustomerRequest();
+            // bool hasAccount = !string.IsNullOrEmpty(profileEntity.ExternalId);
 
-            var result = !hasAccount
-                ? await _stripeCustomerService.CreateOrGetCustomerAsync(customerRequest)
-                : await _stripeCustomerService.UpdateCustomerAsync(customerRequest);
+            // var result = !hasAccount
+            //     ? await _stripeCustomerService.CreateOrGetCustomerAsync(customerRequest)
+            //     : await _stripeCustomerService.UpdateCustomerAsync(customerRequest);
 
-            if (hasAccount && !result.Success)
-            {
-                CreateNotification(result.ErrorMessage);
-                return null;
-            }
+            // if (hasAccount && !result.Success)
+            // {
+            //     CreateNotification(result.ErrorMessage);
+            //     return null;
+            // }
 
-            profileEntity.ExternalId = result.Data?.Id ?? profileEntity.ExternalId;
-            profileEntity.LastSyncStripe = DateTimeOffset.Now.ToUnixTimeSeconds();
+            // profileEntity.ExternalId = result.Data?.Id ?? profileEntity.ExternalId;
+            // profileEntity.LastSyncStripe = DateTimeOffset.Now.ToUnixTimeSeconds();
 
-            return await _profileRepository.UpdateAsync(profileEntity);
+            // return await _profileRepository.UpdateAsync(profileEntity);
+            return profileEntity;
         }
     }
 }

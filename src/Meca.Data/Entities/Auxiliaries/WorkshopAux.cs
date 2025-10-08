@@ -1,10 +1,12 @@
 using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
 
 namespace Meca.Data.Entities.Auxiliaries
 {
     [BsonIgnoreExtraElements]
     public class WorkshopAux
     {
+        [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
         public string Photo { get; set; }
         public string FullName { get; set; }
