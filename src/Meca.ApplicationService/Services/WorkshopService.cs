@@ -257,7 +257,8 @@ namespace Meca.ApplicationService.Services
                         Console.WriteLine($"[WORKSHOP_DEBUG] Filtrando por ServiceTypes: {string.Join(", ", filterView.ServiceTypes)}");
                         
                         // Buscar WorkshopServices que oferecem os serviços solicitados
-                        var filterWorkshopServices = Builders<WorkshopServices>.Filter.In(x => x.Service.Id, filterView.ServiceTypes);
+                        // CORREÇÃO: Usar campo "Service._id" ao invés de "Service.Id" para match com MongoDB
+                        var filterWorkshopServices = Builders<WorkshopServices>.Filter.In("Service._id", filterView.ServiceTypes);
                         
                         var listWorkshopServices = await _workshopServicesRepository
                             .GetCollectionAsync()

@@ -254,4 +254,3 @@ namespace Meca.ApplicationService.Services
         public List<PagBankBankAccount> Items { get; set; }
     }
 }
-

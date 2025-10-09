@@ -24,6 +24,7 @@ using UtilityFramework.Application.Core3;
 using UtilityFramework.Infra.Core3.MongoDb.Business;
 using System.Linq;
 using MongoDB.Driver;
+using MongoDB.Bson.Serialization.Conventions;
 
 namespace Meca.WebApi
 {
@@ -35,6 +36,10 @@ namespace Meca.WebApi
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            
+            // Configurar conventions do MongoDB para mapear corretamente BsonElement em objetos aninhados
+            var conventionPack = new ConventionPack { new IgnoreExtraElementsConvention(true) };
+            ConventionRegistry.Register("IgnoreExtraElements", conventionPack, type => true);
             
             // DEBUG: Verificar se a configuração está sendo lida corretamente
             Console.WriteLine($"[DEBUG_STARTUP] Iniciando Startup");

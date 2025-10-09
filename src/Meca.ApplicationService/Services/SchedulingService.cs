@@ -2203,4 +2203,3 @@ namespace Meca.ApplicationService.Services
         //     return schedule;
         // }
     }
-}
