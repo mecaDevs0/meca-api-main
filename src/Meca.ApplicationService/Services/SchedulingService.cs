@@ -352,14 +352,13 @@ namespace Meca.ApplicationService.Services
                 var hourModelDate = schedulingDate.ToString("HH:mm");
 
                 Console.WriteLine($"[Register] Validando horário: {hourModelDate}");
-                Console.WriteLine($"[Register] WorkshopAgenda disponível: {res?.WorkshopAgenda?.Count ?? 0} horários");
+                Console.WriteLine($"[Register] Hours disponível: {res?.Hours?.Count ?? 0} horários");
                 
-                if (res != null && res.WorkshopAgenda != null)
+                if (res != null && res.Hours != null)
                 {
-                    var availableHours = res.WorkshopAgenda.Where(x => x.Available).Select(x => x.Hour).ToList();
-                    Console.WriteLine($"[Register] Horários disponíveis: {string.Join(", ", availableHours)}");
+                    Console.WriteLine($"[Register] Horários disponíveis: {string.Join(", ", res.Hours)}");
                     
-                    if (!res.WorkshopAgenda.Any(x => x.Hour == hourModelDate && x.Available))
+                    if (!res.Hours.Contains(hourModelDate))
                     {
                         Console.WriteLine($"[Register] Horário {hourModelDate} não está disponível");
                         CreateNotification("Horário inválido! Por favor, selecione um horário dentro do horário de funcionamento da oficina.");
@@ -368,7 +367,7 @@ namespace Meca.ApplicationService.Services
                 }
                 else
                 {
-                    Console.WriteLine($"[Register] Resposta ou WorkshopAgenda é null");
+                    Console.WriteLine($"[Register] Resposta ou Hours é null");
                     CreateNotification("Não foi possível verificar a disponibilidade de horários. Tente novamente.");
                     return null;
                 }
