@@ -1,0 +1,792 @@
+{
+  "oficinas": [
+    {
+      "name": "Mega Car",
+      "cnpj": "16638332000136",
+      "email": "fabiano@megaleios.com",
+      "phone": "11973991667",
+      "address": {
+        "cep": "01310-300",
+        "rua": "Avenida Paulista",
+        "numero": "2202",
+        "complemento": null,
+        "bairro": "Bela Vista",
+        "cidade": "São Paulo",
+        "estado": "SP",
+        "latitude": "-23.566084",
+        "longitude": "-46.6510528"
+      },
+      "owner_name": "Fabiano Belmonte",
+      "owner_cpf": "30163893802",
+      "birth_date": "16/10/1978",
+      "bank_details": {
+        "banco": "748",
+        "banco_nome": "Sicredi",
+        "agencia": "0726",
+        "conta": "731508",
+        "titular": "Megaleios Desenvolvimento de Software",
+        "titular_cpf": "30163893802"
+      },
+      "status": "pendente",
+      "photo_url": "1747336757686.png"
+    },
+    {
+      "name": "WK GARAGE AUTOMOTIVA",
+      "cnpj": "20410097000118",
+      "email": "wkgarageautomotiva@gmail.com",
+      "phone": "41996824567",
+      "address": {
+        "cep": "82015-000",
+        "rua": "Rua Antônio Escorsin",
+        "numero": "746",
+        "complemento": null,
+        "bairro": "Santa Felicidade",
+        "cidade": "Curitiba",
+        "estado": "PR",
+        "latitude": "-25.413549",
+        "longitude": "-49.3365903"
+      },
+      "owner_name": "Estephanie Kuster",
+      "owner_cpf": "08864026975",
+      "birth_date": "05/08/1991",
+      "bank_details": {
+        "banco": "336",
+        "banco_nome": "Banco C6",
+        "agencia": "0001",
+        "conta": "37712292-0",
+        "titular": "William Kuster",
+        "titular_cpf": "08864026975"
+      },
+      "status": "pendente",
+      "photo_url": "1747844681042.png"
+    },
+    {
+      "name": "R2 Motorsport",
+      "cnpj": "55247649000101",
+      "email": "lucanrivitti@gmail.com",
+      "phone": "11996664061",
+      "address": {
+        "cep": "05424-010",
+        "rua": "Rua Pais Leme",
+        "numero": "54",
+        "complemento": "60",
+        "bairro": "Pinheiros",
+        "cidade": "São Paulo",
+        "estado": "SP",
+        "latitude": "-23.567495700000002",
+        "longitude": "-46.6969115"
+      },
+      "owner_name": "Luca Rivitti",
+      "owner_cpf": "36777321829",
+      "birth_date": "11/08/1998",
+      "bank_details": {
+        "banco": "341",
+        "banco_nome": "Itaú",
+        "agencia": "1624",
+        "conta": "99159-0",
+        "titular": "JLR2 MOTORSPORT SOLUÇÕES AUTOMOTIVAS",
+        "titular_cpf": "36777321829"
+      },
+      "status": "pendente",
+      "photo_url": "1747845137094.png"
+    },
+    {
+      "name": "Fórmula Leliz Centro Automotivo",
+      "cnpj": "59695257000158",
+      "email": "contato@formulaleliz.com.br",
+      "phone": "11978751697",
+      "address": {
+        "cep": "04776-003",
+        "rua": "Avenida do Rio Bonito",
+        "numero": "2666",
+        "complemento": null,
+        "bairro": "Socorro",
+        "cidade": "São Paulo",
+        "estado": "SP",
+        "latitude": "-23.6961546",
+        "longitude": "-46.7017161"
+      },
+      "owner_name": "Amaury Lelis de Abreu",
+      "owner_cpf": "25448393845",
+      "birth_date": "07/08/1979",
+      "bank_details": {
+        "banco": "323",
+        "banco_nome": "Mercado Pago",
+        "agencia": "0001",
+        "conta": "6741470882-3",
+        "titular": "Formula Leliz",
+        "titular_cpf": "25448393845"
+      },
+      "status": "pendente",
+      "photo_url": "1748003560301.jpg"
+    },
+    {
+      "name": "Falcar",
+      "cnpj": "15198147000105",
+      "email": "ricardo.falco.a@gmail.com",
+      "phone": "11942118822",
+      "address": {
+        "cep": "06455-000",
+        "rua": "Alameda Araguaia",
+        "numero": "3497",
+        "complemento": null,
+        "bairro": "Alphaville Industrial",
+        "cidade": "Barueri",
+        "estado": "SP",
+        "latitude": "-23.5029664",
+        "longitude": "-46.8286524"
+      },
+      "owner_name": "Ricardo Falco",
+      "owner_cpf": "03742259822",
+      "birth_date": "15/02/1967",
+      "bank_details": {
+        "banco": "208",
+        "banco_nome": "Banco BTG Pactual",
+        "agencia": "0050",
+        "conta": "823876-7",
+        "titular": "luxor serviços",
+        "titular_cpf": "03742259822"
+      },
+      "status": "pendente",
+      "photo_url": "1748004205739.png"
+    },
+    {
+      "name": "Massaro Centro Automotivo",
+      "cnpj": "09529052000124",
+      "email": "centroautomotivomassaro@gmail.com",
+      "phone": "19974018909",
+      "address": {
+        "cep": "13487-200",
+        "rua": "Rua Comendador Jamil Abrahão Saad",
+        "numero": "790",
+        "complemento": null,
+        "bairro": "Jardim Glória",
+        "cidade": "Limeira",
+        "estado": "SP",
+        "latitude": "-22.5836456",
+        "longitude": "-47.3762861"
+      },
+      "owner_name": "Wilson Gilberto Massaro",
+      "owner_cpf": "27037679860",
+      "birth_date": "31/03/1979",
+      "bank_details": {
+        "banco": "260",
+        "banco_nome": "Nubank",
+        "agencia": "0001",
+        "conta": "355498969-4",
+        "titular": "Wilson Gilberto Massaro",
+        "titular_cpf": "27037679860"
+      },
+      "status": "pendente",
+      "photo_url": "1748005662627.jpg"
+    },
+    {
+      "name": "Oficina Mecânica Checagem Veículos",
+      "cnpj": "46710427000184",
+      "email": "checagemveiculos@hotmail.com",
+      "phone": "11994079669",
+      "address": {
+        "cep": "06712-430",
+        "rua": "Estrada Velha de Cotia",
+        "numero": "1620",
+        "complemento": null,
+        "bairro": "Jardim Passárgada I",
+        "cidade": "Cotia",
+        "estado": "SP",
+        "latitude": "-23.600751",
+        "longitude": "-46.8525148"
+      },
+      "owner_name": "Camila Narciso",
+      "owner_cpf": null,
+      "birth_date": null,
+      "bank_details": null,
+      "status": "pendente",
+      "photo_url": "1748006634765.jpg"
+    },
+    {
+      "name": "ts auto PARTS",
+      "cnpj": "53189462000165",
+      "email": "jamessolonba@gmail.com",
+      "phone": "62998895000",
+      "address": {
+        "cep": "74303-010",
+        "rua": "Rua Luiz de Matos",
+        "numero": "567",
+        "complemento": "quadra 194 lote 06",
+        "bairro": "Setor Sudoeste",
+        "cidade": "Goiânia",
+        "estado": "GO",
+        "latitude": "-16.7020041",
+        "longitude": "-49.3077092"
+      },
+      "owner_name": "james solon",
+      "owner_cpf": "42547067153",
+      "birth_date": "15/10/1964",
+      "bank_details": {
+        "banco": "033",
+        "banco_nome": "Santander",
+        "agencia": "3444",
+        "conta": "13007347-6",
+        "titular": "Ts auto parts",
+        "titular_cpf": "42547067153"
+      },
+      "status": "pendente",
+      "photo_url": "1748065788768.jpg"
+    },
+    {
+      "name": "Mister Auto Center",
+      "cnpj": "02477169000162",
+      "email": "filhowildner@gmail.com",
+      "phone": "85999166936",
+      "address": {
+        "cep": "60020-351",
+        "rua": "Avenida Eduardo Girão - lado par",
+        "numero": "410",
+        "complemento": "Ao lado da Haitai Nordeste",
+        "bairro": "Benfica",
+        "cidade": "Fortaleza",
+        "estado": "CE",
+        "latitude": "-3.7561335",
+        "longitude": "-38.5276378"
+      },
+      "owner_name": "Wildner Filho",
+      "owner_cpf": null,
+      "birth_date": null,
+      "bank_details": null,
+      "status": "pendente",
+      "photo_url": "1748431275890.png"
+    },
+    {
+      "name": "JM Pneus e Escapamentos",
+      "cnpj": "76746585000155",
+      "email": "aliton.fernando@hotmail.com",
+      "phone": "41997815801",
+      "address": {
+        "cep": "83900-112",
+        "rua": "Rua Ulisses Faria",
+        "numero": "688",
+        "complemento": null,
+        "bairro": "Centro",
+        "cidade": "São Mateus do Sul",
+        "estado": "PR",
+        "latitude": "-25.8679816",
+        "longitude": "-50.3848745"
+      },
+      "owner_name": "Aliton Fernando dos Santos",
+      "owner_cpf": null,
+      "birth_date": null,
+      "bank_details": null,
+      "status": "pendente",
+      "photo_url": "1749423869311.jpg"
+    },
+    {
+      "name": "Oficina S/A",
+      "cnpj": "14148624000165",
+      "email": "atendimentoofinasa@gmail.com",
+      "phone": "43991721614",
+      "address": {
+        "cep": "86010-490",
+        "rua": "Avenida Celso Garcia Cid - até 955/956",
+        "numero": "756",
+        "complemento": "Esquina c/ Jorge Casoni",
+        "bairro": "Centro",
+        "cidade": "Londrina",
+        "estado": "PR",
+        "latitude": "-23.3149533",
+        "longitude": "-51.146998"
+      },
+      "owner_name": "Alessandro Fernandes Da Silva",
+      "owner_cpf": "04540333976",
+      "birth_date": "18/04/1985",
+      "bank_details": null,
+      "status": "pendente",
+      "photo_url": "1749664269095.jpg"
+    },
+    {
+      "name": "BR CAR",
+      "cnpj": "53288184000101",
+      "email": "brcar1708@gmail.com",
+      "phone": "51992251186",
+      "address": {
+        "cep": "91910-530",
+        "rua": "Rua Coronel Massot",
+        "numero": "883",
+        "complemento": null,
+        "bairro": "Cristal",
+        "cidade": "Porto Alegre",
+        "estado": "RS",
+        "latitude": "-30.0993011",
+        "longitude": "-51.2398635"
+      },
+      "owner_name": "Fernando de Freitas Rodrigues",
+      "owner_cpf": null,
+      "birth_date": null,
+      "bank_details": null,
+      "status": "pendente",
+      "photo_url": "1749770060252.jpg"
+    },
+    {
+      "name": "Mecânica Avanço",
+      "cnpj": "54814958000145",
+      "email": "oficina.avanco@gmail.com",
+      "phone": "11948082880",
+      "address": {
+        "cep": "06740-604",
+        "rua": "Estrada da Mineração Ouro Branco",
+        "numero": "2780",
+        "complemento": null,
+        "bairro": "Tijuco Preto",
+        "cidade": "Vargem Grande Paulista",
+        "estado": "SP",
+        "latitude": "-23.640322500000003",
+        "longitude": "-46.991187599999996"
+      },
+      "owner_name": "Erick Reissler",
+      "owner_cpf": null,
+      "birth_date": null,
+      "bank_details": null,
+      "status": "pendente",
+      "photo_url": "1751329655026.jpg"
+    },
+    {
+      "name": "Megap Lub Auto Center",
+      "cnpj": "43349286000128",
+      "email": "megaplub@gmail.com",
+      "phone": "31972283677",
+      "address": {
+        "cep": "31250-535",
+        "rua": "Avenida Presidente Antônio Carlos",
+        "numero": "3265",
+        "complemento": "Galpão Laranja",
+        "bairro": "Nova Cachoeirinha",
+        "cidade": "Belo Horizonte",
+        "estado": "MG",
+        "latitude": "-19.8833546",
+        "longitude": "-43.950997"
+      },
+      "owner_name": "Giovanni Eger",
+      "owner_cpf": null,
+      "birth_date": null,
+      "bank_details": null,
+      "status": "pendente",
+      "photo_url": "1751331636436.png"
+    },
+    {
+      "name": "Gimenis Studio Automotivo",
+      "cnpj": "58738520000186",
+      "email": "djogimenis@gmail.com",
+      "phone": "47992501909",
+      "address": {
+        "cep": "88311-156",
+        "rua": "Rua Maurício da Silva",
+        "numero": "328",
+        "complemento": null,
+        "bairro": "Cordeiros",
+        "cidade": "Itajaí",
+        "estado": "SC",
+        "latitude": "-26.8839746",
+        "longitude": "-48.6992431"
+      },
+      "owner_name": "Djonata Gimenis",
+      "owner_cpf": "00977884066",
+      "birth_date": "14/09/1989",
+      "bank_details": null,
+      "status": "pendente",
+      "photo_url": "1752718894832.jpg"
+    }
+  ],
+  "services": [
+    {
+      "title": "Mecânica geral",
+      "description": "Serviços amplos de manutenção e reparo em componentes básicos como motor, câmbio, embreagem e sistemas auxiliares.",
+      "category": "outros",
+      "min_time_hours": "1.0",
+      "photo_url": "1747337294282.jpeg"
+    },
+    {
+      "title": "Auto elétrica",
+      "description": "Diagnóstico e reparo de sistemas elétricos como bateria, alternador, faróis, vidros elétricos e módulos eletrônicos.",
+      "category": "eletrica",
+      "min_time_hours": "1.0",
+      "photo_url": "1747337407802.png"
+    },
+    {
+      "title": "Ar-condicionado automotivo",
+      "description": "Reparo, carga de gás, higienização e manutenção do sistema de climatização do veículo.",
+      "category": "ar_condicionado",
+      "min_time_hours": "2.0",
+      "photo_url": "1747337490658.jpeg"
+    },
+    {
+      "title": "Injeção eletrônica",
+      "description": "Diagnóstico e limpeza de bicos injetores, sensores e atuadores relacionados à alimentação de combustível.",
+      "category": "outros",
+      "min_time_hours": "1.0",
+      "photo_url": "1747831895408.png"
+    },
+    {
+      "title": "Freios e suspensão",
+      "description": "Troca de pastilhas, discos, amortecedores, molas e análise do sistema de estabilidade.",
+      "category": "freios",
+      "min_time_hours": "1.0",
+      "photo_url": "1747831552157.jpg"
+    },
+    {
+      "title": "Alinhamento e balanceamento",
+      "description": "Correção de geometria da suspensão e ajuste das rodas para rodagem mais segura e confortável.",
+      "category": "alinhamento_balanceamento",
+      "min_time_hours": "1.0",
+      "photo_url": "1747832080744.jpg"
+    },
+    {
+      "title": "Troca de óleo e filtros",
+      "description": "Substituição de óleo lubrificante do motor e filtros (óleo, ar, combustível, cabine).",
+      "category": "troca_oleo",
+      "min_time_hours": "1.0",
+      "photo_url": "1747832156728.jpg"
+    },
+    {
+      "title": "Serviços de motor e câmbio",
+      "description": "Reparo, retífica ou troca de componentes internos e externos do motor e transmissão (manual ou automática).",
+      "category": "motor",
+      "min_time_hours": "1.0",
+      "photo_url": "1747832353741.png"
+    },
+    {
+      "title": "Revisões Preventivas",
+      "description": "Check-up completo com base na quilometragem para garantir o bom funcionamento e evitar quebras futuras.",
+      "category": "manutencao_preventiva",
+      "min_time_hours": "1.0",
+      "photo_url": "1747832506814.png"
+    },
+    {
+      "title": "Diagnóstico eletrônico",
+      "description": "Leitura de códigos de falha com scanner e análise de parâmetros para identificar problemas nos sistemas eletrônicos.",
+      "category": "eletrica",
+      "min_time_hours": "1.0",
+      "photo_url": "1747832616242.jpg"
+    },
+    {
+      "title": "Funilaria e pintura",
+      "description": "Reparos estruturais e estéticos na lataria, além de pintura parcial ou total do veículo.",
+      "category": "outros",
+      "min_time_hours": "1.0",
+      "photo_url": "1747832684590.jpg"
+    },
+    {
+      "title": "Martelinho de ouro",
+      "description": "Remoção de amassados sem danificar a pintura original, ideal para pequenos impactos.",
+      "category": "outros",
+      "min_time_hours": "1.0",
+      "photo_url": "1747832773053.jpg"
+    },
+    {
+      "title": "Serviços para carros antigos (restauração)",
+      "description": "Restauração de componentes originais, estética e mecânica de veículos clássicos.",
+      "category": "outros",
+      "min_time_hours": "1.0",
+      "photo_url": "1747832948142.png"
+    },
+    {
+      "title": "Oficina especializada em carros nacionais",
+      "description": "Equipe com expertise em modelos produzidos no Brasil, com peças e diagnósticos específicos.",
+      "category": "outros",
+      "min_time_hours": "0.0",
+      "photo_url": "1747833039075.png"
+    },
+    {
+      "title": "Oficina especializada em carros importados",
+      "description": "Atendimento especializado para veículos de fora do país, com equipamentos e conhecimento adequados.",
+      "category": "outros",
+      "min_time_hours": "0.0",
+      "photo_url": "1751902195321.jpg"
+    },
+    {
+      "title": "Oficina especializada em pick-ups e utilitários",
+      "description": "Foco em veículos de carga leve, com atenção a reforços de suspensão e torque.",
+      "category": "outros",
+      "min_time_hours": "0.0",
+      "photo_url": "1747833080410.png"
+    },
+    {
+      "title": "Oficina especializada em SUVs e 4x4",
+      "description": "Serviços específicos para veículos utilitários e off-road, como revisão de tração, diferencial e suspensão reforçada.",
+      "category": "outros",
+      "min_time_hours": "0.0",
+      "photo_url": "1751893490516.png"
+    },
+    {
+      "title": "Oficina especializada em veículos premium ou de luxo",
+      "description": "Atendimento técnico para marcas como BMW, Audi, Mercedes, Lexus etc., com padrão elevado de serviço.",
+      "category": "outros",
+      "min_time_hours": "0.0",
+      "photo_url": "1751894914134.png"
+    },
+    {
+      "title": "Performance/tuning",
+      "description": "Preparação de motores, reprogramação de ECU e modificações para alta performance.",
+      "category": "outros",
+      "min_time_hours": "1.0",
+      "photo_url": "1747833204545.jpg"
+    },
+    {
+      "title": "Instalação de acessórios",
+      "description": "Instalação de itens como central multimídia, sensores de estacionamento, câmeras, alarmes, rastreadores etc.",
+      "category": "outros",
+      "min_time_hours": "1.0",
+      "photo_url": "1747833266912.jpg"
+    },
+    {
+      "title": "Serviços de escapamento",
+      "description": "Troca, reparo ou personalização do sistema de exaustão, incluindo catalisador e abafadores.",
+      "category": "outros",
+      "min_time_hours": "1.0",
+      "photo_url": "1747833447820.jpg"
+    },
+    {
+      "title": "Serviços de direção hidráulica/elétrica",
+      "description": "Reparo ou substituição de bombas, caixas de direção e sensores do sistema de direção.",
+      "category": "eletrica",
+      "min_time_hours": "1.0",
+      "photo_url": "1747833526424.jpg"
+    },
+    {
+      "title": "Troca de correia dentada e correias auxiliares",
+      "description": "Substituição de componentes essenciais para sincronismo do motor.",
+      "category": "outros",
+      "min_time_hours": "1.0",
+      "photo_url": "1747833576267.jpg"
+    },
+    {
+      "title": "Revisão para venda/compra de veículo",
+      "description": "Avaliação geral do estado do carro, com checklist completo para garantir segurança e valor de mercado.",
+      "category": "manutencao_preventiva",
+      "min_time_hours": "1.0",
+      "photo_url": "1747833658006.jpg"
+    },
+    {
+      "title": "Lavagem técnica e estética automotiva",
+      "description": "Limpeza detalhada interna/externa, polimento, cristalização, vitrificação etc.",
+      "category": "outros",
+      "min_time_hours": "1.0",
+      "photo_url": "1747833726794.jpg"
+    },
+    {
+      "title": "Blindagem e manutenção de veículos blindados",
+      "description": "Revisão e pequenos reparos em vidros, mantas e mecanismos blindados.",
+      "category": "outros",
+      "min_time_hours": "1.0",
+      "photo_url": "1747833770344.jpg"
+    },
+    {
+      "title": "Sistema de arrefecimento (radiador e bomba d’água)",
+      "description": "Troca e manutenção de componentes que regulam a temperatura do motor.",
+      "category": "outros",
+      "min_time_hours": "1.0",
+      "photo_url": "1747833982991.jpg"
+    },
+    {
+      "title": "Sistema de Embreagem",
+      "description": "Troca de kit de embreagem, cabo e fluido de acionamento.",
+      "category": "outros",
+      "min_time_hours": "1.0",
+      "photo_url": "1747834032508.jpg"
+    },
+    {
+      "title": "Lava Rapido (externo e/ou interno)",
+      "description": "Lavagem externa e, se desejado, interna do veículo com foco em limpeza rápida e eficiente.",
+      "category": "outros",
+      "min_time_hours": "1.0",
+      "photo_url": "1747834172115.jpg"
+    },
+    {
+      "title": "Alinhamento simples",
+      "description": "Ajuste rápido da geometria da direção para veículos com leve desvio.",
+      "category": "alinhamento_balanceamento",
+      "min_time_hours": "1.0",
+      "photo_url": "1747834224777.png"
+    }
+  ],
+  "vehicles": [
+    {
+      "marca": "FORD",
+      "modelo": "FIESTA 16SE",
+      "ano": "2017",
+      "placa": "GIG6765",
+      "cor": "Branca",
+      "km_atual": "15852.0",
+      "customer_email": "fabianobelmonte@gmail.com",
+      "customer_name": "Fabiano Belmonte"
+    },
+    {
+      "marca": "HONDA",
+      "modelo": "CIVIC LXS FLEX",
+      "ano": "2009",
+      "placa": "JIH6865",
+      "cor": "PRATA",
+      "km_atual": "58888.0",
+      "customer_email": "fabianobelmonte@gmail.com",
+      "customer_name": "Fabiano Belmonte"
+    },
+    {
+      "marca": "Mitsubishi",
+      "modelo": "OUTLANDER SPT HPEAWD",
+      "ano": "2021",
+      "placa": "GFW1D76",
+      "cor": "PRETA",
+      "km_atual": "30611.0",
+      "customer_email": "silenelelis@gmail.com",
+      "customer_name": "Silene Maria Lelis Pinheiro"
+    },
+    {
+      "marca": "VW",
+      "modelo": "UP MOVE MDV",
+      "ano": "2017",
+      "placa": "PBD5044",
+      "cor": "PRATA",
+      "km_atual": "112.0",
+      "customer_email": "pedrolucassantana@gmail.com",
+      "customer_name": "Pedro Lucas Figueiredo Santana"
+    },
+    {
+      "marca": "VW",
+      "modelo": "TAOS HL TSI",
+      "ano": "2024",
+      "placa": "TKM3J76",
+      "cor": "PRETA",
+      "km_atual": "7000.0",
+      "customer_email": "filippotudisco90@gmail.com",
+      "customer_name": "Filippo"
+    },
+    {
+      "marca": "M.BENZ",
+      "modelo": "C",
+      "ano": "2011",
+      "placa": "EUE4411",
+      "cor": "Branca",
+      "km_atual": "110000.0",
+      "customer_email": "jp@mecabr.com",
+      "customer_name": "Joao Posses"
+    },
+    {
+      "marca": "VW",
+      "modelo": "TAOS HL TSI",
+      "ano": "2024",
+      "placa": "TKM3J76",
+      "cor": "PRETA",
+      "km_atual": "7500.0",
+      "customer_email": "ff@mecabr.com",
+      "customer_name": "Filippo"
+    },
+    {
+      "marca": "BMW",
+      "modelo": "X1 XDRIVE2.8I VM31",
+      "ano": "2010",
+      "placa": "EMT5252",
+      "cor": "BRANCA",
+      "km_atual": "45000.0",
+      "customer_email": "possesdill@gmail.com",
+      "customer_name": "Diego Teixeira Posses"
+    },
+    {
+      "marca": "VW",
+      "modelo": "POLO HL AD",
+      "ano": "2019",
+      "placa": "FUU9D55",
+      "cor": "PRATA",
+      "km_atual": "50000.0",
+      "customer_email": "ingrid.damaso12@hotmail.com",
+      "customer_name": "Ingrid"
+    },
+    {
+      "marca": "VW",
+      "modelo": "UP MOVE MDV",
+      "ano": "2017",
+      "placa": "PBD5044",
+      "cor": "PRATA",
+      "km_atual": "2222.0",
+      "customer_email": "pedrolucassantana@gmail.com",
+      "customer_name": "Pedro Lucas"
+    },
+    {
+      "marca": "TOYOTA",
+      "modelo": "ETIOS SD X 15L MT",
+      "ano": "2017",
+      "placa": "PBE5044",
+      "cor": "Cinza",
+      "km_atual": "1212.0",
+      "customer_email": "pedrolucassantana@gmail.com",
+      "customer_name": "Pedro Lucas"
+    },
+    {
+      "marca": "CHEV",
+      "modelo": "TRACKER PREMIER",
+      "ano": "2017",
+      "placa": "PBC5043",
+      "cor": "PRATA",
+      "km_atual": "11111.0",
+      "customer_email": "pedrolucassantana@gmail.com",
+      "customer_name": "Pedro Lucas"
+    },
+    {
+      "marca": "TOYOTA",
+      "modelo": "ETIOS HB CROSS AT",
+      "ano": "2017",
+      "placa": "PBC5044",
+      "cor": "CINZA",
+      "km_atual": "112121.0",
+      "customer_email": "pedrolucassantana@gmail.com",
+      "customer_name": "Pedro Lucas"
+    },
+    {
+      "marca": "VW",
+      "modelo": "VOYAGE CITY MB S",
+      "ano": "2014",
+      "placa": "PDQ5044",
+      "cor": "PRATA",
+      "km_atual": "120000.0",
+      "customer_email": "pedrolucassantana@gmail.com",
+      "customer_name": "Pedro Lucas"
+    },
+    {
+      "marca": "CHEVROLET",
+      "modelo": "ONIX 1.4MT LTZ",
+      "ano": "2017",
+      "placa": "PBB5044",
+      "cor": "AZUL",
+      "km_atual": "121212.0",
+      "customer_email": "pedrolucassantana@gmail.com",
+      "customer_name": "Pedro Lucas"
+    },
+    {
+      "marca": "BMW",
+      "modelo": "X1 S20I M SPORT",
+      "ano": "2024",
+      "placa": "CPC1F23",
+      "cor": "PRETA",
+      "km_atual": "2000.0",
+      "customer_email": "filippotudisco90@gmail.com",
+      "customer_name": "Filippo"
+    },
+    {
+      "marca": "FORD",
+      "modelo": "ECOSPORT SE 1.5",
+      "ano": "2019",
+      "placa": "PBT5044",
+      "cor": "Vermelha",
+      "km_atual": "121212.0",
+      "customer_email": "pedrolucassantana@gmail.com",
+      "customer_name": "Pedro Lucas"
+    },
+    {
+      "marca": "FIAT",
+      "modelo": "TORO ENDURANCE AT6",
+      "ano": "2020",
+      "placa": "GDR4B25",
+      "cor": "VERMELHA",
+      "km_atual": "50000.0",
+      "customer_email": "ana.cpucci214@gmail.com",
+      "customer_name": "ana pucci"
+    }
+  ]
+}
