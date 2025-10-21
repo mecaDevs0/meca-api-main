@@ -1,6 +1,7 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { OFICINA_MODULE } from "../../../modules/oficina"
 import { AuthService } from "../../../services/auth"
+import { EmailService } from "../../../services/email"
 
 export const AUTHENTICATE = false
 
@@ -67,6 +68,11 @@ export async function POST(
       metadata: {
         password_hash: passwordHash
       }
+    })
+
+    // Enviar email de boas-vindas (não bloquear resposta)
+    EmailService.sendWelcomeWorkshop(email, name).catch(err => {
+      console.error('Erro ao enviar email de boas-vindas:', err)
     })
 
     return res.status(201).json({

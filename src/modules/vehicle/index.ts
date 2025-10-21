@@ -1,7 +1,11 @@
-import VehicleModuleService from "./service"
 import { Module } from "@medusajs/framework/utils"
-import Vehicle from "./models/vehicle"
+import VehicleModuleService from "./services/vehicle"
 
+export const VEHICLE_MODULE = "vehicleModuleService"
+
+export default Module(VEHICLE_MODULE, {
+  service: VehicleModuleService,
+})
 /**
  * Definição do Módulo Vehicle
  * 
@@ -13,7 +17,6 @@ export const VEHICLE_MODULE = "vehicle"
 const vehicleModule = Module(VEHICLE_MODULE, {
   service: VehicleModuleService,
 })
-
 export default vehicleModule
 
 // Exportar linkable para uso em Module Links
@@ -26,4 +29,9 @@ export const linkable = {
 }
 
 export * from "./models/vehicle"
+
+
+export * from "./models/vehicle"
+
+
 

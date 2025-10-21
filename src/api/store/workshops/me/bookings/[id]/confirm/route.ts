@@ -1,7 +1,9 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { Modules } from "@medusajs/framework/utils"
 import { BOOKING_MODULE } from "../../../../../../../modules/booking"
 import { OFICINA_MODULE } from "../../../../../../../modules/oficina"
 import { BookingStatus } from "../../../../../../../modules/booking/models/booking"
+import { EmailService } from "../../../../../../../services/email"
 
 /**
  * POST /store/workshops/me/bookings/:id/confirm
@@ -14,6 +16,7 @@ export async function POST(
 ) {
   const bookingModuleService = req.scope.resolve(BOOKING_MODULE)
   const oficinaModuleService = req.scope.resolve(OFICINA_MODULE)
+  const customerService = req.scope.resolve(Modules.CUSTOMER)
   const eventBusService = req.scope.resolve("eventBus")
   
   const userId = req.auth_context?.actor_id
@@ -53,6 +56,23 @@ export async function POST(
       status: BookingStatus.CONFIRMADO,
       confirmed_at: new Date(),
     })
+    
+    // Buscar dados do cliente para enviar email
+    const customer = await customerService.retrieveCustomer(booking.customer_id)
+    const oficina = oficinas[0]
+    
+    // Enviar email de confirmação ao cliente (não bloquear resposta)
+    if (customer && customer.email) {
+      EmailService.sendBookingConfirmed(
+        customer.email,
+        customer.first_name || 'Cliente',
+        oficina.name,
+        booking.service_title || 'Serviço',
+        new Date(booking.scheduled_at)
+      ).catch(err => {
+        console.error('Erro ao enviar email de confirmação:', err)
+      })
+    }
     
     // Emitir evento para notificar o cliente
     await eventBusService.emit("booking.confirmed", {

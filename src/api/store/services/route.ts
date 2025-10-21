@@ -1,28 +1,48 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { Modules } from "@medusajs/framework/utils"
-import { OFICINA_MODULE } from "../../../modules/oficina"
-import { OficinaStatus } from "../../../modules/oficina/models/oficina"
+
+export const AUTHENTICATE = false
 
 /**
  * GET /store/services
- * 
- * Busca serviços disponíveis com filtros opcionais
- * 
- * Query params:
- * - q: termo de busca (nome do serviço)
- * - cidade: filtro por cidade
- * - estado: filtro por estado
- * - limit: limite de resultados (default: 20)
- * - offset: offset para paginação (default: 0)
+ *
+ * Listar todos os serviços disponíveis
  */
 export async function GET(
   req: MedusaRequest,
   res: MedusaResponse
 ) {
   const productModuleService = req.scope.resolve(Modules.PRODUCT)
-  const oficinaModuleService = req.scope.resolve(OFICINA_MODULE)
-  const query = req.scope.resolve("query")
   
+  try {
+    const products = await productModuleService.listProducts({
+      status: "published"
+    })
+
+    const formattedServices = products.map(product => ({
+      id: product.id,
+      title: product.title,
+      description: product.description,
+      price: product.price,
+      images: product.images,
+      metadata: product.metadata,
+      created_at: product.created_at,
+      updated_at: product.updated_at
+    }))
+
+    return res.json({
+      products: formattedServices,
+      total: formattedServices.length
+    })
+
+  } catch (error) {
+    console.error("Erro ao buscar serviços:", error)
+    return res.status(500).json({
+      message: "Erro ao buscar serviços",
+      error: error.message
+    })
+  }
+}
   const { 
     q, 
     cidade, 
@@ -106,4 +126,24 @@ export async function GET(
     offset: Number(offset)
   })
 }
+
+    filteredServices = servicesWithOficina.filter(service => {
+      const oficina = service.oficina
+      if (!oficina?.address) return false
+      
+      const matchCidade = cidade ? oficina.address.cidade?.toLowerCase() === cidade.toLowerCase() : true
+      const matchEstado = estado ? oficina.address.estado?.toLowerCase() === estado.toLowerCase() : true
+      
+      return matchCidade && matchEstado
+    })
+  }
+  
+  return res.json({
+    services: filteredServices,
+    count: metadata.count,
+    limit: Number(limit),
+    offset: Number(offset)
+  })
+}
+
 

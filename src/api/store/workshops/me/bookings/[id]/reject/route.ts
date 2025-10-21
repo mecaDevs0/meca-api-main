@@ -1,7 +1,9 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { Modules } from "@medusajs/framework/utils"
 import { BOOKING_MODULE } from "../../../../../../../modules/booking"
 import { OFICINA_MODULE } from "../../../../../../../modules/oficina"
 import { BookingStatus } from "../../../../../../../modules/booking/models/booking"
+import { EmailService } from "../../../../../../../services/email"
 
 /**
  * POST /store/workshops/me/bookings/:id/reject
@@ -14,6 +16,7 @@ export async function POST(
 ) {
   const bookingModuleService = req.scope.resolve(BOOKING_MODULE)
   const oficinaModuleService = req.scope.resolve(OFICINA_MODULE)
+  const customerService = req.scope.resolve(Modules.CUSTOMER)
   const eventBusService = req.scope.resolve("eventBus")
   
   const userId = req.auth_context?.actor_id
@@ -42,22 +45,50 @@ export async function POST(
       return res.status(403).json({ message: "Acesso negado" })
     }
     
-    // Atualizar status para recusado
+    // Verificar se o status permite rejeição
+    if (booking.status !== BookingStatus.PENDENTE_OFICINA) {
+      return res.status(400).json({
+        message: "Este agendamento não pode ser rejeitado. Status atual: " + booking.status
+      })
+    }
+    
+    // Atualizar status para rejeitado
     const updatedBooking = await bookingModuleService.updateBookings(bookingId, {
       status: BookingStatus.RECUSADO,
-      oficina_notes: reason || "Agendamento recusado pela oficina",
+      metadata: {
+        ...booking.metadata,
+        rejection_reason: reason || 'Não informado',
+        rejected_at: new Date().toISOString()
+      }
     })
+    
+    // Buscar dados do cliente para enviar email
+    const customer = await customerService.retrieveCustomer(booking.customer_id)
+    const oficina = oficinas[0]
+    
+    // Enviar email de rejeição ao cliente (não bloquear resposta)
+    if (customer && customer.email) {
+      EmailService.sendBookingRejected(
+        customer.email,
+        customer.first_name || 'Cliente',
+        oficina.name,
+        booking.service_title || 'Serviço',
+        reason
+      ).catch(err => {
+        console.error('Erro ao enviar email de rejeição:', err)
+      })
+    }
     
     // Emitir evento para notificar o cliente
     await eventBusService.emit("booking.rejected", {
       booking_id: bookingId,
       customer_id: booking.customer_id,
       oficina_id: oficinaId,
-      reason: reason || "Agendamento recusado pela oficina",
+      reason: reason || 'Não informado'
     })
     
     return res.json({
-      message: "Agendamento recusado",
+      message: "Agendamento rejeitado",
       booking: updatedBooking
     })
     
@@ -70,4 +101,3 @@ export async function POST(
     })
   }
 }
-

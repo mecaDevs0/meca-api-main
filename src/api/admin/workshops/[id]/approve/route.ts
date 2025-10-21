@@ -1,6 +1,7 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { OFICINA_MODULE } from "../../../../../modules/oficina"
 import { OficinaStatus } from "../../../../../modules/oficina/models/oficina"
+import { EmailService } from "../../../../../services/email"
 
 export const AUTHENTICATE = false
 
@@ -46,6 +47,11 @@ export async function POST(
     }])
     
     const updatedOficina = Array.isArray(updatedOficinas) ? updatedOficinas[0] : updatedOficinas
+    
+    // Enviar email de aprovação (não bloquear resposta)
+    EmailService.sendWorkshopApproved(oficina.email, oficina.name).catch(err => {
+      console.error('Erro ao enviar email de aprovação:', err)
+    })
     
     return res.json({
       message: "Oficina aprovada com sucesso",

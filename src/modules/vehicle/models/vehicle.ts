@@ -1,5 +1,22 @@
-import { model } from "@medusajs/framework/utils"
+import { BaseEntity, generateEntityId } from "@medusajs/framework/utils"
 
+export class Vehicle extends BaseEntity {
+  id: string
+  customer_id: string
+  plate: string
+  brand: string
+  model: string
+  year: number
+  color?: string
+  fuel?: string
+  is_primary: boolean
+  created_at: Date
+  updated_at: Date
+
+  private beforeInsert() {
+    this.id = generateEntityId(this.id, "veh")
+  }
+}
 /**
  * Módulo Vehicle - Representa um veículo de um cliente
  * 
@@ -29,4 +46,21 @@ const Vehicle = model.define("vehicle", {
 })
 
 export default Vehicle
+
+  placa: model.text(), // ex: "ABC-1234"
+  cor: model.text().nullable(),
+  
+  // Informações Adicionais
+  km_atual: model.number().nullable(),
+  combustivel: model.text().nullable(), // gasolina, etanol, diesel, flex, eletrico
+  observacoes: model.text().nullable(),
+  
+  // Relação com Customer (será criada via Module Link)
+  customer_id: model.text(),
+  
+  // created_at, updated_at, deleted_at são implícitos no Medusa
+})
+
+export default Vehicle
+
 

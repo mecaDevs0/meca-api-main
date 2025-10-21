@@ -1,7 +1,11 @@
-import BookingModuleService from "./service"
 import { Module } from "@medusajs/framework/utils"
-import Booking from "./models/booking"
+import BookingModuleService from "./services/booking"
 
+export const BOOKING_MODULE = "bookingModuleService"
+
+export default Module(BOOKING_MODULE, {
+  service: BookingModuleService,
+})
 /**
  * Definição do Módulo Booking
  * 
@@ -13,7 +17,6 @@ export const BOOKING_MODULE = "booking"
 const bookingModule = Module(BOOKING_MODULE, {
   service: BookingModuleService,
 })
-
 export default bookingModule
 
 // Exportar linkable para uso em Module Links
@@ -26,4 +29,9 @@ export const linkable = {
 }
 
 export * from "./models/booking"
+
+
+export * from "./models/booking"
+
+
 

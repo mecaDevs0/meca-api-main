@@ -1,5 +1,7 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { Modules } from "@medusajs/framework/utils"
+import { AuthService } from "../../../services/auth"
+import { EmailService } from "../../../services/email"
 
 export const AUTHENTICATE = false
 
@@ -38,6 +40,9 @@ export async function POST(
       })
     }
 
+    // Hash da senha
+    const passwordHash = await AuthService.hashPassword(password)
+
     // Criar cliente
     const customer = await customerService.createCustomers({
       email,
@@ -45,8 +50,13 @@ export async function POST(
       last_name: last_name || '',
       phone,
       metadata: {
-        password // Em produção, usar hash
+        password_hash: passwordHash
       }
+    })
+
+    // Enviar email de boas-vindas (não bloquear resposta)
+    EmailService.sendWelcomeCustomer(email, first_name).catch(err => {
+      console.error('Erro ao enviar email de boas-vindas:', err)
     })
 
     return res.status(201).json({
