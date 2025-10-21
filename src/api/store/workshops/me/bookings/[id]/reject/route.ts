@@ -1,8 +1,8 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { Modules } from "@medusajs/framework/utils"
 import { BOOKING_MODULE } from "../../../../../../../modules/booking"
-import { OFICINA_MODULE } from "../../../../../../../modules/oficina"
 import { BookingStatus } from "../../../../../../../modules/booking/models/booking"
+import { OFICINA_MODULE } from "../../../../../../../modules/oficina"
 import { EmailService } from "../../../../../../../services/email"
 
 /**
