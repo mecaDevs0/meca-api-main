@@ -7,12 +7,17 @@ const { Client } = require('pg');
 async function createPublishableKey() {
   console.log('🚀 Criando publishable key na EC2...');
   
+  // Parse DATABASE_URL
+  const databaseUrl = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/medusa-learning-medusa';
+  const url = new URL(databaseUrl);
+  
   const client = new Client({
-    host: process.env.DATABASE_HOST || 'localhost',
-    port: process.env.DATABASE_PORT || 5432,
-    database: process.env.DATABASE_NAME || 'medusa-learning-medusa',
-    user: process.env.DATABASE_USER || 'ec2-user',
-    password: process.env.DATABASE_PASSWORD || ''
+    host: url.hostname,
+    port: parseInt(url.port) || 5432,
+    database: url.pathname.substring(1),
+    user: url.username,
+    password: url.password,
+    ssl: url.searchParams.get('sslmode') === 'no-verify' ? { rejectUnauthorized: false } : false
   });
   
   try {
