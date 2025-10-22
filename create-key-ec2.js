@@ -50,10 +50,14 @@ async function createPublishableKey() {
     
     const redacted = token.substring(0, 8) + '***' + token.substring(token.length - 3);
     
+    // Buscar um usuário existente para created_by
+    const userResult = await client.query('SELECT id FROM "user" LIMIT 1');
+    const createdBy = userResult.rows.length > 0 ? userResult.rows[0].id : null;
+    
     const result = await client.query(`
-      INSERT INTO api_key (id, title, token, type, salt, redacted, created_at, updated_at)
-      VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
-    `, [keyId, 'MECA API Key', token, 'publishable', salt, redacted]);
+      INSERT INTO api_key (id, title, token, type, salt, redacted, created_by, created_at, updated_at)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW())
+    `, [keyId, 'MECA API Key', token, 'publishable', salt, redacted, createdBy]);
     
     console.log('✅ Publishable key criada:', token);
     
