@@ -242,3 +242,4 @@ O script `deploy-docker.sh` faz:
 **Criado por:** MECA Team  
 **Última atualização:** 2025-10-21
 
+

@@ -15,7 +15,7 @@ module.exports = defineConfig({
     workerMode: process.env.WORKER_MODE === 'true' ? 'worker' : 'shared',
   },
   admin: {
-    disable: true, // Desabilitar admin do Medusa para usar Next.js separado
+    disable: false, // Habilitar admin do Medusa
   },
   modules: [
     {

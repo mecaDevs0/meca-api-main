@@ -46,3 +46,4 @@ status: ## Status dos containers
 	@echo "\n📊 Health status:"
 	@curl -s http://localhost:9000/health 2>/dev/null | python3 -m json.tool || echo "API não está respondendo"
 
+

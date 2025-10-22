@@ -132,3 +132,4 @@ ssh -i "$EC2_KEY" ${EC2_USER}@${EC2_HOST} "tail -50 ${REMOTE_DIR}/out.log"
 
 exit 1
 
+
