@@ -48,10 +48,12 @@ async function createPublishableKey() {
     const keyId = 'apk_' + require('crypto').randomBytes(16).toString('hex');
     const salt = require('crypto').randomBytes(16).toString('hex');
     
+    const redacted = token.substring(0, 8) + '***' + token.substring(token.length - 3);
+    
     const result = await client.query(`
-      INSERT INTO api_key (id, title, token, type, salt, created_at, updated_at)
-      VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
-    `, [keyId, 'MECA API Key', token, 'publishable', salt]);
+      INSERT INTO api_key (id, title, token, type, salt, redacted, created_at, updated_at)
+      VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
+    `, [keyId, 'MECA API Key', token, 'publishable', salt, redacted]);
     
     console.log('✅ Publishable key criada:', token);
     
