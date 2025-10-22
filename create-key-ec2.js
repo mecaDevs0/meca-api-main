@@ -1,0 +1,94 @@
+/**
+ * Script para criar publishable key na EC2
+ */
+
+const { Client } = require('pg');
+
+async function createPublishableKey() {
+  console.log('🚀 Criando publishable key na EC2...');
+  
+  const client = new Client({
+    host: process.env.DATABASE_HOST || 'localhost',
+    port: process.env.DATABASE_PORT || 5432,
+    database: process.env.DATABASE_NAME || 'medusa-learning-medusa',
+    user: process.env.DATABASE_USER || 'ec2-user',
+    password: process.env.DATABASE_PASSWORD || ''
+  });
+  
+  try {
+    await client.connect();
+    console.log('✅ Conectado ao PostgreSQL');
+    
+    // Verificar se já existe uma publishable key
+    const existingKey = await client.query(`
+      SELECT * FROM api_key 
+      WHERE type = 'publishable' 
+      AND revoked_at IS NULL
+    `);
+    
+    if (existingKey.rows.length > 0) {
+      console.log('✅ Publishable key já existe:', existingKey.rows[0].token);
+      return existingKey.rows[0].token;
+    }
+    
+    // Criar nova publishable key
+    const token = 'pk_' + require('crypto').randomBytes(32).toString('hex');
+    const keyId = 'apk_' + require('crypto').randomBytes(16).toString('hex');
+    
+    const result = await client.query(`
+      INSERT INTO api_key (id, title, token, type, created_at, updated_at)
+      VALUES ($1, $2, $3, $4, NOW(), NOW())
+    `, [keyId, 'MECA API Key', token, 'publishable']);
+    
+    console.log('✅ Publishable key criada:', token);
+    
+    // Criar sales channel se não existir
+    const existingChannel = await client.query(`
+      SELECT * FROM sales_channel 
+      WHERE name = 'MECA Store'
+    `);
+    
+    if (existingChannel.rows.length === 0) {
+      const channelId = 'sc_' + require('crypto').randomBytes(16).toString('hex');
+      
+      await client.query(`
+        INSERT INTO sales_channel (id, name, description, is_disabled, created_at, updated_at)
+        VALUES ($1, $2, $3, $4, NOW(), NOW())
+      `, [channelId, 'MECA Store', 'Canal de vendas da MECA', false]);
+      
+      console.log('✅ Sales channel criado: MECA Store');
+      
+      // Associar key com sales channel
+      await client.query(`
+        INSERT INTO publishable_api_key_sales_channel (publishable_api_key_id, sales_channel_id)
+        VALUES ($1, $2)
+      `, [keyId, channelId]);
+      
+      console.log('✅ Publishable key associada ao sales channel');
+    }
+    
+    return token;
+    
+  } catch (error) {
+    console.error('❌ Erro ao criar publishable key:', error);
+    throw error;
+  } finally {
+    await client.end();
+  }
+}
+
+// Executar se chamado diretamente
+if (require.main === module) {
+  createPublishableKey()
+    .then(token => {
+      console.log('\n🎉 Publishable key criada com sucesso!');
+      console.log('Token:', token);
+      process.exit(0);
+    })
+    .catch(error => {
+      console.error('❌ Erro:', error);
+      process.exit(1);
+    });
+}
+
+module.exports = { createPublishableKey };
