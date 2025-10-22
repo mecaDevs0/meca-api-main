@@ -3,7 +3,7 @@
  * Envia emails transacionais lindos e personalizados (boas-vindas, recuperação de senha, notificações)
  */
 
-import nodemailer from 'nodemailer'
+import * as nodemailer from 'nodemailer'
 import path from 'path'
 
 // Configurações SMTP do Gmail
