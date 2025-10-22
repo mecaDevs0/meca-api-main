@@ -79,9 +79,9 @@ async function createPublishableKey() {
       
       // Associar key com sales channel
       await client.query(`
-        INSERT INTO publishable_api_key_sales_channel (publishable_api_key_id, sales_channel_id)
-        VALUES ($1, $2)
-      `, [keyId, channelId]);
+        INSERT INTO publishable_api_key_sales_channel (id, publishable_key_id, sales_channel_id)
+        VALUES ($1, $2, $3)
+      `, [require('crypto').randomBytes(16).toString('hex'), keyId, channelId]);
       
       console.log('✅ Publishable key associada ao sales channel');
     }
