@@ -3,8 +3,8 @@
  * POST /store/register
  */
 
-import { MedusaRequest, MedusaResponse } from "@medusajs/medusa"
 import { Modules } from "@medusajs/framework/utils"
+import { MedusaRequest, MedusaResponse } from "@medusajs/medusa"
 import { AuthService } from "../../../services/auth"
 import EmailService from "../../../services/email"
 

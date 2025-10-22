@@ -3,8 +3,8 @@
  * POST /store/login
  */
 
-import { MedusaRequest, MedusaResponse } from "@medusajs/medusa"
 import { Modules } from "@medusajs/framework/utils"
+import { MedusaRequest, MedusaResponse } from "@medusajs/medusa"
 import { AuthService } from "../../../services/auth"
 
 export const AUTHENTICATE = false

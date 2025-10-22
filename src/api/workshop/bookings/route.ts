@@ -6,7 +6,6 @@
  */
 
 import { MedusaRequest, MedusaResponse } from "@medusajs/medusa"
-import EmailService from "../../../services/email"
 
 export const AUTHENTICATE = false
 
