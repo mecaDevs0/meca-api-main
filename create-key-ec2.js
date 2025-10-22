@@ -9,7 +9,14 @@ async function createPublishableKey() {
   
   // Parse DATABASE_URL
   const databaseUrl = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/medusa-learning-medusa';
+  console.log('DATABASE_URL:', databaseUrl);
   const url = new URL(databaseUrl);
+  console.log('Parsed URL:', {
+    hostname: url.hostname,
+    port: url.port,
+    database: url.pathname.substring(1),
+    user: url.username
+  });
   
   const client = new Client({
     host: url.hostname,
