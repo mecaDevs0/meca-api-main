@@ -3,10 +3,10 @@
  * POST /auth/customer/forgot-password
  */
 
-import { MedusaRequest, MedusaResponse } from "@medusajs/medusa"
 import { Modules } from "@medusajs/framework/utils"
-import EmailService from "../../../services/email"
+import { MedusaRequest, MedusaResponse } from "@medusajs/medusa"
 import { randomBytes } from "crypto"
+import EmailService from "../../../services/email"
 
 export const AUTHENTICATE = false
 
