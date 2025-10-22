@@ -1,4 +1,4 @@
-import { MedusaRequest, MedusaResponse, MedusaNextFunction } from "@medusajs/medusa"
+import { MedusaNextFunction, MedusaRequest, MedusaResponse } from "@medusajs/medusa"
 
 /**
  * Rate Limiting Middleware

@@ -1,0 +1,44 @@
+version: '3.8'
+
+# Configuração para desenvolvimento local
+services:
+  meca-api-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: base
+    container_name: meca-api-dev
+    ports:
+      - "9000:9000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=${JWT_SECRET:-devsecret}
+      - COOKIE_SECRET=${COOKIE_SECRET:-devcookie}
+      - STORE_CORS=http://localhost:3000
+      - ADMIN_CORS=http://localhost:7001
+    volumes:
+      - ./src:/app/src
+      - ./medusa-config.ts:/app/medusa-config.ts
+      - /app/node_modules
+    depends_on:
+      - redis
+    restart: unless-stopped
+    networks:
+      - meca-network
+    command: npm run dev
+
+  redis:
+    image: redis:7-alpine
+    container_name: meca-redis-dev
+    ports:
+      - "6379:6379"
+    networks:
+      - meca-network
+    command: redis-server --appendonly yes
+
+networks:
+  meca-network:
+    driver: bridge
+

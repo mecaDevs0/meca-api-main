@@ -1,0 +1,48 @@
+# Node
+node_modules
+npm-debug.log
+yarn-error.log
+.pnpm-store
+
+# Build
+.medusa
+dist
+build
+.cache
+
+# Logs
+*.log
+logs
+combined.log
+error.log
+out.log
+
+# Environment
+.env.local
+.env.*.local
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Testing
+coverage
+.nyc_output
+
+# Misc
+*.md
+!README.md
+.prettierrc
+.eslintrc
+

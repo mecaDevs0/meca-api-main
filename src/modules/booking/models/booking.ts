@@ -1,38 +1,4 @@
-import { BaseEntity, generateEntityId } from "@medusajs/framework/utils"
-
-export class Booking extends BaseEntity {
-  id: string
-  customer_id: string
-  workshop_id: string
-  workshop_name: string
-  vehicle_id: string
-  vehicle_plate: string
-  service_ids: string[]
-  service_names: string[]
-  scheduled_date: string
-  scheduled_time: string
-  status: "pendente" | "confirmado" | "em_andamento" | "concluido" | "cancelado"
-  total_price: number
-  meca_fee: number
-  payment_status: "pendente" | "pago" | "reembolsado"
-  notes?: string
-  created_at: Date
-  updated_at: Date
-
-  private beforeInsert() {
-    this.id = generateEntityId(this.id, "book")
-  }
-}
-/**
- * Módulo Booking - Representa um Agendamento de Serviço
- * 
- * Esta é a entidade central do MECA que conecta:
- * - Cliente (Customer)
- * - Veículo (Vehicle)
- * - Oficina (Oficina)
- * - Serviço (Product)
- * - Pedido (Order)
- */
+import { model } from "@medusajs/framework/utils"
 
 export enum BookingStatus {
   PENDENTE_OFICINA = "pendente_oficina",        // Aguardando confirmação da oficina
@@ -58,28 +24,6 @@ const Booking = model.define("booking", {
   order_id: model.text().nullable(),  // Pedido gerado a partir deste agendamento
   
   // Status do Agendamento
-  status: model.enum(BookingStatus).default(BookingStatus.PENDENTE_OFICINA),
-  status_history: model.json().nullable(), // histórico de mudanças de status
-  
-  // Informações do Veículo no momento do agendamento (snapshot)
-  vehicle_snapshot: model.json().nullable(), // { marca, modelo, ano, placa, km }
-  
-  // Observações
-  customer_notes: model.text().nullable(),  // Observações do cliente
-  oficina_notes: model.text().nullable(),   // Observações da oficina
-  
-  // Informações de Preço (podem mudar após agendamento)
-  estimated_price: model.number().nullable(),
-  final_price: model.number().nullable(),
-  
-  // Timestamps Customizados (created_at, updated_at, deleted_at são implícitos)
-  confirmed_at: model.dateTime().nullable(),
-  completed_at: model.dateTime().nullable(),
-  cancelled_at: model.dateTime().nullable(),
-})
-
-export default Booking
-
   status: model.enum(BookingStatus).default(BookingStatus.PENDENTE_OFICINA),
   status_history: model.json().nullable(), // histórico de mudanças de status
   
