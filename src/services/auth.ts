@@ -94,3 +94,43 @@ export class AuthService {
   }
 }
 
+
+      
+      return decoded
+    } catch (error) {
+      // Limpar cache se token inválido
+      tokenCache.delete(token)
+      throw new Error('Invalid or expired token')
+    }
+  }
+
+  /**
+   * Extract token from Authorization header
+   */
+  static extractTokenFromHeader(authHeader: string | undefined): string | null {
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return null
+    }
+    return authHeader.substring(7)
+  }
+
+  /**
+   * Limpar cache expirado (para performance)
+   */
+  static clearExpiredCache(): void {
+    const now = Date.now()
+    for (const [token, data] of tokenCache.entries()) {
+      if (data.expires <= now) {
+        tokenCache.delete(token)
+      }
+    }
+  }
+
+  /**
+   * Invalidar token específico
+   */
+  static invalidateToken(token: string): void {
+    tokenCache.delete(token)
+  }
+}
+
