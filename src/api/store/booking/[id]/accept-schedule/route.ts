@@ -94,3 +94,11 @@ async function sendConfirmationNotification(booking: Booking) {
     console.error(`❌ Erro ao enviar notificação de confirmação:`, error)
   }
 }
+
+
+
+
+
+
+
+

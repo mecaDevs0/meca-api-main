@@ -171,3 +171,11 @@ echo "   • Status: pm2 status"
 echo "   • Monitor: pm2 monit"
 echo ""
 echo "🚀 MECA está rodando em produção!"
+
+
+
+
+
+
+
+

@@ -123,3 +123,11 @@ if (require.main === module) {
 }
 
 module.exports = { setupS3Bucket };
+
+
+
+
+
+
+
+

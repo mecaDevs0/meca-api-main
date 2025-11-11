@@ -172,3 +172,11 @@ LEFT JOIN bookings b ON w.id = b.workshop_id
 GROUP BY w.id, w.name;
 
 COMMIT;
+
+
+
+
+
+
+
+

@@ -240,3 +240,11 @@ async function sendPaymentNotifications(booking: Booking, status: 'approved' | '
     // Não falhar o webhook por causa das notificações
   }
 }
+
+
+
+
+
+
+
+

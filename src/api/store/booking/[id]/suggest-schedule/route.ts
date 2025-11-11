@@ -129,3 +129,11 @@ async function sendScheduleNotification(
     console.error(`❌ Erro ao enviar notificação de sugestão:`, error)
   }
 }
+
+
+
+
+
+
+
+
