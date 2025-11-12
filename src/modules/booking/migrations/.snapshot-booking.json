@@ -79,8 +79,19 @@
           "nullable": false,
           "default": "'pendente_oficina'",
           "enumItems": [
+            "pending",
+            "confirmed",
+            "started",
+            "in_progress",
+            "completed",
+            "cancelled",
+            "suggested_time",
             "pendente_oficina",
+            "pendente_cliente",
             "confirmado",
+            "em_andamento",
+            "finalizado_aguardando_pagamento",
+            "pago",
             "recusado",
             "finalizado_mecanico",
             "finalizado_cliente",
@@ -142,6 +153,15 @@
           "primary": false,
           "nullable": true,
           "mappedType": "integer"
+        },
+        "total_amount": {
+          "name": "total_amount",
+          "type": "numeric",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "float"
         },
         "confirmed_at": {
           "name": "confirmed_at",
